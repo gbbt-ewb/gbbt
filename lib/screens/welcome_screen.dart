@@ -32,12 +32,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             opacity: _visible ? 1 : 0,
             duration: const Duration(milliseconds: 700),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Column(
                 children: [
-                  const Spacer(flex: 2),
+                  const Align(
+                    alignment: Alignment.topRight,
+                    child: AppModeToggleSwitch(),
+                  ),
+                  const Spacer(flex: 1),
                   const FunBadge(text: '👑 100% FICTIONAL & EXTRA BONGGA 💅'),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
                   
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -97,7 +101,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ),
                     ),
                   ),
-                  const Spacer(flex: 3),
+                  const Spacer(flex: 2),
 
                   GradientButton(
                     label: 'Sign In Bestie 💅',
@@ -134,7 +138,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 36),
+                  const SizedBox(height: 24),
                 ],
               ),
             ),
