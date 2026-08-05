@@ -24,6 +24,8 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   bool _balanceVisible = true;
 
+  int _selectedIndex = 0;
+
   String get _greeting {
     final hour = DateTime.now().hour;
     if (hour < 12) return 'Good morning, queen';
@@ -37,6 +39,208 @@ class _DashboardScreenState extends State<DashboardScreen> {
       (route) => false,
     );
   }
+
+  void _onNavTap(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 1:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => TransferScreen(user: widget.user),
+          ),
+        );
+        break;
+
+      case 2:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => DatingScreen(user: widget.user),
+          ),
+        );
+        break;
+
+      case 3:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ChatbotScreen(),
+          ),
+        );
+        break;
+
+      case 4:
+        _showMoreFeatures();
+        break;
+    }
+  }
+
+  void _showMoreFeatures() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(24),
+        ),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Text('🌈'),
+                  title: const Text('Aura Exchange'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const AuraExchangeScreen(),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Text('✨'),
+                  title: const Text('Vibe Check'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const VibeCheckScreen(),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Text('💸'),
+                  title: const Text('Broke Finder'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const BrokeFinderScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+    void initState() {
+      super.initState();
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (context) => Dialog(
+            backgroundColor: Colors.transparent,
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(
+                  color: Colors.pinkAccent,
+                  width: 4,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.pink.withOpacity(.3),
+                    blurRadius: 20,
+                    spreadRadius: 5,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    '🌈✨👑',
+                    style: TextStyle(fontSize: 50),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  Text(
+                    'WELCOME BACK!',
+                    style: GoogleFonts.fredoka(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.ink,
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  Text(
+                    'Welcome back, ${widget.user.firstName}! Ready to slay? 💅',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      color: AppColors.inkMuted,
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 20,
+                      horizontal: 30,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: electricRainbowGradient,
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: Text(
+                      '✨ LET\'S GO ✨',
+                      style: GoogleFonts.fredoka(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      child: const Text('SLAY! 💅'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      });
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -684,8 +888,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+      currentIndex: _selectedIndex,
+      onTap: _onNavTap,
+      type: BottomNavigationBarType.fixed,
+
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.send),
+          label: 'Transfer',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.favorite),
+          label: 'Dating',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.smart_toy),
+          label: 'Chat',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.grid_view),
+          label: 'More',
+        ),
+      ],
+    ),
     );
   }
 }

@@ -132,31 +132,43 @@ class _ProfileCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Container(
-            height: 160,
-            decoration: BoxDecoration(
-              gradient: isMatch ? electricRainbowGradient : rainbowGradient,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-            ),
-            child: Center(
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                child: CircleAvatar(
-                  radius: 42,
-                  backgroundColor: AppColors.cream,
-                  child: Text(
-                    profile.name[0],
-                    style: GoogleFonts.fredoka(
-                      fontSize: 36,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.hotPink,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+         Stack(
+  clipBehavior: Clip.none,
+  children: [
+    Container(
+      height: 180,
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(24),
+        ),
+        image: DecorationImage(
+          image: AssetImage(profile.coverPhoto),
+          fit: BoxFit.cover,
+        ),
+      ),
+    ),
+
+    Positioned(
+      bottom: -36,
+      left: 20,
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+        ),
+        child: CircleAvatar(
+          radius: 38,
+          backgroundImage: AssetImage(
+            profile.photo,
           ),
+        ),
+      ),
+    ),
+  ],
+),
+
+const SizedBox(height: 40),
           Padding(
             padding: const EdgeInsets.all(18),
             child: Column(
