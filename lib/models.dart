@@ -72,6 +72,8 @@ class DatingProfile {
   final String name;
   final int age;
   final String bio;
+  final String photo;
+  final String coverPhoto;
   final String taxBracket;
   final double savings;
 
@@ -85,6 +87,9 @@ class DatingProfile {
     required this.bio,
     required this.taxBracket,
     required this.savings,
+    required this.photo,
+    required this.coverPhoto,
+
 
     this.location,
     this.verified = false,
@@ -97,6 +102,8 @@ const mockDatingProfiles = [
     name: 'Andi',
     age: 27,
     taxBracket: 'Bracket B · Rising',
+    photo: 'assets/dating/1.jpg',
+    coverPhoto: 'assets/dating/1_cover.jpg',
     savings: 85000,
     bio: 'Loves oat milk lattes and long walks to the ATM.',
     location: 'Manila',
@@ -112,6 +119,8 @@ const mockDatingProfiles = [
     name: 'Jamie',
     age: 30,
     taxBracket: 'Bracket C · Established',
+    photo: 'assets/dating/2.jpg',
+    coverPhoto: 'assets/dating/2_cover.jpg',
     savings: 210000,
     bio: 'Spreadsheet enthusiast. Will split the bill exactly 50/50.',
     location: 'Quezon City',
@@ -127,6 +136,8 @@ const mockDatingProfiles = [
     name: 'Reign',
     age: 24,
     taxBracket: 'Bracket A · Entry',
+    photo: 'assets/dating/3.jpg',
+    coverPhoto: 'assets/dating/3_cover.jpg',
     savings: 12000,
     bio: 'Broke but the vibes are immaculate.',
     location: 'Cebu',
@@ -142,6 +153,8 @@ const mockDatingProfiles = [
     name: 'Kai',
     age: 29,
     taxBracket: 'Bracket B · Rising',
+    photo: 'assets/dating/4.jpg',
+    coverPhoto: 'assets/dating/4_cover.jpg',
     savings: 92000,
     bio: 'Budgets in one tab, dreams in another.',
     location: 'Makati',
@@ -157,6 +170,8 @@ const mockDatingProfiles = [
     name: 'Sam',
     age: 33,
     taxBracket: 'Bracket D · Elite',
+    photo: 'assets/dating/5.jpg',
+    coverPhoto: 'assets/dating/5_cover.jpg',
     savings: 540000,
     bio: 'Will pay you back within the hour, no cap.',
     location: 'BGC',
@@ -172,6 +187,8 @@ const mockDatingProfiles = [
     name: 'Blue',
     age: 26,
     taxBracket: 'Bracket A · Entry',
+    photo: 'assets/dating/6.jpg',
+    coverPhoto: 'assets/dating/6_cover.jpg',
     savings: 15000,
     bio: 'Coupon collector. Certified thrift queen.',
     location: 'Davao',
