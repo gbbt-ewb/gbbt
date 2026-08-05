@@ -6,6 +6,93 @@ import 'package:google_fonts/google_fonts.dart';
 import 'app_theme.dart';
 
 // ═══════════════════════════════════════════════════════════
+// APP MODE CONTROLLER — LGBT+ Mode (Bongga Rainbow) vs Straight Mode (Strict Black & White Flat UI)
+// ═══════════════════════════════════════════════════════════
+class AppModeController extends ValueNotifier<bool> {
+  AppModeController._() : super(true); // true = LGBT+ Mode (Default Rainbow), false = Straight Mode (Strict Black & White)
+  static final instance = AppModeController._();
+
+  bool get isLgbtMode => value;
+  bool get isStraightMode => !value;
+
+  void toggleMode() {
+    value = !value;
+    if (value) {
+      FunAudioPlayer.playStickerPop();
+    } else {
+      FunAudioPlayer.playPassSound();
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODE TOGGLE SWITCH WIDGET (LGBT+ Mode vs Straight Mode)
+// ═══════════════════════════════════════════════════════════
+class AppModeToggleSwitch extends StatelessWidget {
+  const AppModeToggleSwitch({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: AppModeController.instance,
+      builder: (context, isLgbtMode, _) {
+        return GestureDetector(
+          onTap: () => AppModeController.instance.toggleMode(),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+            decoration: BoxDecoration(
+              gradient: isLgbtMode ? electricRainbowGradient : null,
+              color: isLgbtMode ? null : const Color(0xFF111111),
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(
+                color: isLgbtMode ? Colors.white : Colors.black,
+                width: 1.5,
+              ),
+              boxShadow: isLgbtMode
+                  ? AppShadow.soft
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  isLgbtMode ? '🌈 LGBT+ MODE' : '👔 STRAIGHT MODE',
+                  style: isLgbtMode
+                      ? GoogleFonts.fredoka(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                        )
+                      : GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                ),
+                const SizedBox(width: 6),
+                Icon(
+                  isLgbtMode ? Icons.auto_awesome_rounded : Icons.business_center_rounded,
+                  color: isLgbtMode ? AppColors.neonGold : Colors.white70,
+                  size: 16,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
 // FUNNY CARTOON AUDIO SYNTHESIZER 🎵🤪
 // Generates funny, humorous sound effects for stickers & popups!
 // ═══════════════════════════════════════════════════════════
@@ -57,7 +144,6 @@ class FunAudioPlayer {
     const numSamples = 3200; // 0.2s
     final samples = List<int>.generate(numSamples, (i) {
       final t = i / rate;
-      // Funny spring wobble pitch + slide
       final wobble = math.sin(t * 85.0) * 180.0;
       final freq = 260.0 + wobble + (t * 2200.0);
       final amplitude = (1.0 - (t / 0.2)).clamp(0.0, 1.0);
@@ -90,7 +176,7 @@ class FunAudioPlayer {
     const numSamples = 4800; // 0.3s
     final samples = List<int>.generate(numSamples, (i) {
       final t = i / rate;
-      final freq = 500.0 + math.sin(t * 140.0) * 320.0; // Fast squeaky heart vibrato
+      final freq = 500.0 + math.sin(t * 140.0) * 320.0;
       final amplitude = (1.0 - (t / 0.3)).clamp(0.0, 1.0);
       final val = (math.sin(t * freq * 2 * math.pi) * 127.0 * amplitude).toInt();
       return (val + 128).clamp(0, 255);
@@ -107,9 +193,8 @@ class FunAudioPlayer {
       double freq = 340.0;
       if (t > 0.1) freq = 300.0;
       if (t > 0.2) freq = 260.0;
-      if (t > 0.3) freq = 180.0 - (t * 200.0); // Wha-wha-whaa slide down
+      if (t > 0.3) freq = 180.0 - (t * 200.0);
       final amplitude = (1.0 - (t / 0.4)).clamp(0.0, 1.0);
-      // Sawtooth waveform for classic cartoon trombone sound
       final phase = (t * freq) % 1.0;
       final val = ((phase - 0.5) * 200.0 * amplitude).toInt();
       return (val + 128).clamp(0, 255);
@@ -119,8 +204,7 @@ class FunAudioPlayer {
 }
 
 // ═══════════════════════════════════════════════════════════
-// ANIMATED "BONGGA" BACKGROUND — Floating & Drifting Stickers
-// (✨ 💖 🦄 👑 🌈 💸 💅 💎 🌟) for that OA extra vibe!
+// ANIMATED "BONGGA" BACKGROUND — Dynamically Switches for LGBT+ vs Straight Mode
 // ═══════════════════════════════════════════════════════════
 class BonggaBackground extends StatefulWidget {
   final Widget child;
@@ -133,10 +217,10 @@ class BonggaBackground extends StatefulWidget {
 
 class _BonggaBackgroundState extends State<BonggaBackground> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-  final List<_FloatingStickerData> _stickers = [];
+  final List<_FloatingStickerData> _lgbtStickers = [];
   final math.Random _random = math.Random(42);
 
-  static const List<String> _stickerEmojis = [
+  static const List<String> _rainbowEmojis = [
     '✨', '🦄', '💖', '👑', '🌈', '💸', '💅', '💎', '🌟', '⚡', '🔥', '🎉'
   ];
 
@@ -149,8 +233,8 @@ class _BonggaBackgroundState extends State<BonggaBackground> with SingleTickerPr
     )..repeat();
 
     for (int i = 0; i < 16; i++) {
-      _stickers.add(_FloatingStickerData(
-        emoji: _stickerEmojis[i % _stickerEmojis.length],
+      _lgbtStickers.add(_FloatingStickerData(
+        emoji: _rainbowEmojis[i % _rainbowEmojis.length],
         x: _random.nextDouble(),
         y: _random.nextDouble(),
         speedX: (_random.nextDouble() - 0.5) * 0.15,
@@ -169,68 +253,72 @@ class _BonggaBackgroundState extends State<BonggaBackground> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: BoxDecoration(
-            gradient: widget.darkOverlay
-                ? const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color(0xFF2C003E),
-                      Color(0xFF19002E),
-                      Color(0xFF03001E),
-                    ],
-                  )
-                : const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xFFFFF0F6),
-                      Color(0xFFFBE4FF),
-                      Color(0xFFE8F0FE),
-                      Color(0xFFFFF5F5),
-                    ],
-                  ),
-          ),
-        ),
-        AnimatedBuilder(
-          animation: _controller,
-          builder: (context, _) {
-            final value = _controller.value;
-            final size = MediaQuery.of(context).size;
-            return Stack(
-              children: _stickers.map((s) {
-                final currentX = ((s.x + s.speedX * value * 3) % 1.0) * size.width;
-                final currentY = ((s.y + s.speedY * value * 3) % 1.0) * size.height;
-                final bobbing = math.sin(value * 2 * math.pi + s.x * 10) * 8;
-
-                return Positioned(
-                  left: currentX,
-                  top: currentY + bobbing,
-                  child: Transform.rotate(
-                    angle: s.rotation + math.sin(value * 2 * math.pi) * 0.1,
-                    child: Transform.scale(
-                      scale: s.scale,
-                      child: Opacity(
-                        opacity: widget.darkOverlay ? 0.35 : 0.22,
-                        child: Text(
-                          s.emoji,
-                          style: const TextStyle(fontSize: 28),
-                        ),
+    return ValueListenableBuilder<bool>(
+      valueListenable: AppModeController.instance,
+      builder: (context, isLgbtMode, _) {
+        return Stack(
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                gradient: isLgbtMode
+                    ? (widget.darkOverlay
+                        ? const LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [Color(0xFF2C003E), Color(0xFF19002E), Color(0xFF03001E)],
+                          )
+                        : const LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [Color(0xFFFFF0F6), Color(0xFFFBE4FF), Color(0xFFE8F0FE), Color(0xFFFFF5F5)],
+                          ))
+                    : const LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Color(0xFFFFFFFF), Color(0xFFFAFAFA), Color(0xFFF5F5F5)],
                       ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            );
-          },
-        ),
-        widget.child,
-      ],
+              ),
+            ),
+            if (isLgbtMode)
+              AnimatedBuilder(
+                animation: _controller,
+                builder: (context, _) {
+                  final value = _controller.value;
+                  final size = MediaQuery.of(context).size;
+                  return Stack(
+                    children: _lgbtStickers.map((s) {
+                      final currentX = ((s.x + s.speedX * value * 3) % 1.0) * size.width;
+                      final currentY = ((s.y + s.speedY * value * 3) % 1.0) * size.height;
+                      final bobbing = math.sin(value * 2 * math.pi + s.x * 10) * 8;
+
+                      return Positioned(
+                        left: currentX,
+                        top: currentY + bobbing,
+                        child: Transform.rotate(
+                          angle: s.rotation + math.sin(value * 2 * math.pi) * 0.1,
+                          child: Transform.scale(
+                            scale: s.scale,
+                            child: Opacity(
+                              opacity: widget.darkOverlay ? 0.35 : 0.22,
+                              child: Text(
+                                s.emoji,
+                                style: const TextStyle(fontSize: 28),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  );
+                },
+              ),
+            widget.child,
+          ],
+        );
+      },
     );
   }
 }
@@ -256,7 +344,7 @@ class _FloatingStickerData {
 }
 
 // ═══════════════════════════════════════════════════════════
-// RAINBOW SHIMMER TEXT — Shimmering animated text gradient
+// RAINBOW SHIMMER TEXT — Switches to Pure Black Text in Straight Mode
 // ═══════════════════════════════════════════════════════════
 class RainbowShimmerText extends StatefulWidget {
   final String text;
@@ -296,35 +384,52 @@ class _RainbowShimmerTextState extends State<RainbowShimmerText> with SingleTick
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, _) {
-        return ShaderMask(
-          shaderCallback: (bounds) {
-            return SweepGradient(
-              center: Alignment.center,
-              startAngle: 0,
-              endAngle: math.pi * 2,
-              transform: GradientRotation(_controller.value * math.pi * 2),
-              colors: const [
-                AppColors.hotPink,
-                AppColors.electricPurple,
-                AppColors.cyanSparkle,
-                AppColors.limeGreen,
-                AppColors.neonGold,
-                AppColors.hotPink,
-              ],
-            ).createShader(bounds);
-          },
-          child: Text(
+    return ValueListenableBuilder<bool>(
+      valueListenable: AppModeController.instance,
+      builder: (context, isLgbtMode, _) {
+        if (!isLgbtMode) {
+          return Text(
             widget.text,
             textAlign: widget.textAlign,
-            style: GoogleFonts.fredoka(
+            style: GoogleFonts.inter(
               fontSize: widget.fontSize,
               fontWeight: widget.fontWeight,
-              color: Colors.white,
+              color: Colors.black,
             ),
-          ),
+          );
+        }
+
+        return AnimatedBuilder(
+          animation: _controller,
+          builder: (context, _) {
+            return ShaderMask(
+              shaderCallback: (bounds) {
+                return SweepGradient(
+                  center: Alignment.center,
+                  startAngle: 0,
+                  endAngle: math.pi * 2,
+                  transform: GradientRotation(_controller.value * math.pi * 2),
+                  colors: const [
+                    AppColors.hotPink,
+                    AppColors.electricPurple,
+                    AppColors.cyanSparkle,
+                    AppColors.limeGreen,
+                    AppColors.neonGold,
+                    AppColors.hotPink,
+                  ],
+                ).createShader(bounds);
+              },
+              child: Text(
+                widget.text,
+                textAlign: widget.textAlign,
+                style: GoogleFonts.fredoka(
+                  fontSize: widget.fontSize,
+                  fontWeight: widget.fontWeight,
+                  color: Colors.white,
+                ),
+              ),
+            );
+          },
         );
       },
     );
@@ -332,7 +437,7 @@ class _RainbowShimmerTextState extends State<RainbowShimmerText> with SingleTick
 }
 
 // ═══════════════════════════════════════════════════════════
-// BONGGA GLASS CARD — Frosted Card with Glowing Border
+// BONGGA GLASS CARD — Switches to Strict Pure White Card in Straight Mode
 // ═══════════════════════════════════════════════════════════
 class BonggaCard extends StatefulWidget {
   final Widget child;
@@ -357,35 +462,50 @@ class _BonggaCardState extends State<BonggaCard> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _isPressed = true),
-      onTapUp: (_) => setState(() => _isPressed = false),
-      onTapCancel: () => setState(() => _isPressed = false),
-      onTap: widget.onTap,
-      child: AnimatedScale(
-        scale: _isPressed ? 0.96 : 1.0,
-        duration: const Duration(milliseconds: 150),
-        curve: Curves.easeOutCubic,
-        child: Container(
-          padding: widget.padding ?? const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(26),
-            gradient: glassGradient,
-            boxShadow: widget.hasRainbowGlow ? AppShadow.lifted : AppShadow.soft,
-            border: Border.all(
-              color: Colors.white.withOpacity(0.9),
-              width: 2,
+    return ValueListenableBuilder<bool>(
+      valueListenable: AppModeController.instance,
+      builder: (context, isLgbtMode, _) {
+        return GestureDetector(
+          onTapDown: (_) => setState(() => _isPressed = true),
+          onTapUp: (_) => setState(() => _isPressed = false),
+          onTapCancel: () => setState(() => _isPressed = false),
+          onTap: widget.onTap,
+          child: AnimatedScale(
+            scale: _isPressed ? 0.96 : 1.0,
+            duration: const Duration(milliseconds: 150),
+            curve: Curves.easeOutCubic,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              padding: widget.padding ?? const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(isLgbtMode ? 26 : 14),
+                color: isLgbtMode ? null : Colors.white,
+                gradient: isLgbtMode ? glassGradient : null,
+                boxShadow: isLgbtMode
+                    ? (widget.hasRainbowGlow ? AppShadow.lifted : AppShadow.soft)
+                    : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.06),
+                          blurRadius: 10,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                border: Border.all(
+                  color: isLgbtMode ? Colors.white.withOpacity(0.9) : const Color(0xFFE5E7EB),
+                  width: isLgbtMode ? 2 : 1.5,
+                ),
+              ),
+              child: widget.child,
             ),
           ),
-          child: widget.child,
-        ),
-      ),
+        );
+      },
     );
   }
 }
 
 // ═══════════════════════════════════════════════════════════
-// INTERACTIVE STICKER BADGE — Extra "OA" Philippine slang stickers!
+// INTERACTIVE STICKER BADGE — Switches to Flat Black/Grey Tag in Straight Mode
 // ═══════════════════════════════════════════════════════════
 class InteractiveSticker extends StatefulWidget {
   final String text;
@@ -418,46 +538,65 @@ class _InteractiveStickerState extends State<InteractiveSticker> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _pop,
-      child: Transform.rotate(
-        angle: widget.rotateAngle,
-        child: AnimatedScale(
-          scale: _scale,
-          duration: const Duration(milliseconds: 180),
-          curve: Curves.elasticOut,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-            decoration: BoxDecoration(
-              color: widget.backgroundColor,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: widget.backgroundColor.withOpacity(0.4),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
+    return ValueListenableBuilder<bool>(
+      valueListenable: AppModeController.instance,
+      builder: (context, isLgbtMode, _) {
+        final activeColor = isLgbtMode ? widget.backgroundColor : const Color(0xFFF3F4F6);
+        final activeAngle = isLgbtMode ? widget.rotateAngle : 0.0;
+
+        return GestureDetector(
+          onTap: _pop,
+          child: Transform.rotate(
+            angle: activeAngle,
+            child: AnimatedScale(
+              scale: _scale,
+              duration: const Duration(milliseconds: 180),
+              curve: Curves.elasticOut,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                decoration: BoxDecoration(
+                  color: activeColor,
+                  borderRadius: BorderRadius.circular(isLgbtMode ? 20 : 8),
+                  boxShadow: isLgbtMode
+                      ? [
+                          BoxShadow(
+                            color: activeColor.withOpacity(0.4),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ]
+                      : null,
+                  border: Border.all(
+                    color: isLgbtMode ? Colors.white : const Color(0xFFD1D5DB),
+                    width: 1,
+                  ),
                 ),
-              ],
-              border: Border.all(color: Colors.white, width: 2),
-            ),
-            child: Text(
-              widget.text,
-              style: GoogleFonts.fredoka(
-                color: widget.textColor,
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5,
+                child: Text(
+                  widget.text,
+                  style: isLgbtMode
+                      ? GoogleFonts.fredoka(
+                          color: widget.textColor,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                        )
+                      : GoogleFonts.inter(
+                          color: Colors.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
 
 // ═══════════════════════════════════════════════════════════
-// REVAMPED RAINBOW MARK (GBBT UNICORN LOGO MARK)
+// RAINBOW MARK (GBBT LOGO MARK) — Switches to Strict Black/White Bank Icon in Straight Mode
 // ═══════════════════════════════════════════════════════════
 class RainbowMark extends StatefulWidget {
   final double size;
@@ -488,47 +627,74 @@ class _RainbowMarkState extends State<RainbowMark> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     final size = widget.size;
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        RotationTransition(
-          turns: _rotationController,
-          child: Container(
-            width: size * 1.25,
-            height: size * 1.25,
+    return ValueListenableBuilder<bool>(
+      valueListenable: AppModeController.instance,
+      builder: (context, isLgbtMode, _) {
+        if (!isLgbtMode) {
+          return Container(
+            width: size,
+            height: size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: SweepGradient(
-                colors: [
-                  AppColors.hotPink.withOpacity(0.6),
-                  AppColors.cyanSparkle.withOpacity(0.6),
-                  AppColors.neonGold.withOpacity(0.6),
-                  AppColors.limeGreen.withOpacity(0.6),
-                  AppColors.electricPurple.withOpacity(0.6),
-                  AppColors.hotPink.withOpacity(0.6),
-                ],
+              color: Colors.white,
+              border: Border.all(color: Colors.black, width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.06),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Center(
+              child: Icon(Icons.account_balance_rounded, size: size * 0.5, color: Colors.black),
+            ),
+          );
+        }
+
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            RotationTransition(
+              turns: _rotationController,
+              child: Container(
+                width: size * 1.25,
+                height: size * 1.25,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: SweepGradient(
+                    colors: [
+                      AppColors.hotPink.withOpacity(0.6),
+                      AppColors.cyanSparkle.withOpacity(0.6),
+                      AppColors.neonGold.withOpacity(0.6),
+                      AppColors.limeGreen.withOpacity(0.6),
+                      AppColors.electricPurple.withOpacity(0.6),
+                      AppColors.hotPink.withOpacity(0.6),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-        Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(size * 0.35),
-            color: Colors.white,
-            boxShadow: AppShadow.neonGlow,
-            border: Border.all(color: AppColors.neonGold, width: 3),
-          ),
-          child: Center(
-            child: SizedBox(
-              width: size * 0.6,
-              height: size * 0.6,
-              child: CustomPaint(painter: _UnicornHornPainter()),
+            Container(
+              width: size,
+              height: size,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(size * 0.35),
+                color: Colors.white,
+                boxShadow: AppShadow.neonGlow,
+                border: Border.all(color: AppColors.neonGold, width: 3),
+              ),
+              child: Center(
+                child: SizedBox(
+                  width: size * 0.6,
+                  height: size * 0.6,
+                  child: CustomPaint(painter: _UnicornHornPainter()),
+                ),
+              ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 }
@@ -605,34 +771,48 @@ class FunBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        gradient: electricRainbowGradient,
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.hotPink.withOpacity(0.35),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+    return ValueListenableBuilder<bool>(
+      valueListenable: AppModeController.instance,
+      builder: (context, isLgbtMode, _) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            gradient: isLgbtMode ? electricRainbowGradient : null,
+            color: isLgbtMode ? null : const Color(0xFFF3F4F6),
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: isLgbtMode
+                ? [
+                    BoxShadow(
+                      color: AppColors.hotPink.withOpacity(0.35),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : null,
+            border: Border.all(color: isLgbtMode ? Colors.white : const Color(0xFFD1D5DB), width: 1.5),
           ),
-        ],
-        border: Border.all(color: Colors.white, width: 2),
-      ),
-      child: Text(
-        text,
-        style: GoogleFonts.fredoka(
-          color: Colors.white,
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+          child: Text(
+            text,
+            style: isLgbtMode
+                ? GoogleFonts.fredoka(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  )
+                : GoogleFonts.inter(
+                    color: Colors.black,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+          ),
+        );
+      },
     );
   }
 }
 
 // ═══════════════════════════════════════════════════════════
-// BOUNCY BONGGA GRADIENT BUTTON
+// GRADIENT / FLAT MONOCHROME BUTTON
 // ═══════════════════════════════════════════════════════════
 class GradientButton extends StatefulWidget {
   final String label;
@@ -658,63 +838,87 @@ class _GradientButtonState extends State<GradientButton> {
   @override
   Widget build(BuildContext context) {
     final disabled = widget.onPressed == null;
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _isPressed = true),
-      onTapUp: (_) => setState(() => _isPressed = false),
-      onTapCancel: () => setState(() => _isPressed = false),
-      child: AnimatedScale(
-        scale: _isPressed ? 0.94 : 1.0,
-        duration: const Duration(milliseconds: 120),
-        curve: Curves.easeOutBack,
-        child: Opacity(
-          opacity: disabled && !widget.isLoading ? 0.5 : 1.0,
-          child: Container(
-            height: 58,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              gradient: electricRainbowGradient,
-              boxShadow: AppShadow.lifted,
-              border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(20),
-                onTap: widget.isLoading ? null : widget.onPressed,
-                child: Center(
-                  child: widget.isLoading
-                      ? const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 3,
-                            valueColor: AlwaysStoppedAnimation(Colors.white),
+    return ValueListenableBuilder<bool>(
+      valueListenable: AppModeController.instance,
+      builder: (context, isLgbtMode, _) {
+        return GestureDetector(
+          onTapDown: (_) => setState(() => _isPressed = true),
+          onTapUp: (_) => setState(() => _isPressed = false),
+          onTapCancel: () => setState(() => _isPressed = false),
+          child: AnimatedScale(
+            scale: _isPressed ? 0.94 : 1.0,
+            duration: const Duration(milliseconds: 120),
+            curve: Curves.easeOutBack,
+            child: Opacity(
+              opacity: disabled && !widget.isLoading ? 0.5 : 1.0,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                height: 54,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(isLgbtMode ? 20 : 12),
+                  gradient: isLgbtMode ? electricRainbowGradient : null,
+                  color: isLgbtMode ? null : Colors.black,
+                  boxShadow: isLgbtMode
+                      ? AppShadow.lifted
+                      : [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
                           ),
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (widget.icon != null) ...[
-                              Icon(widget.icon, color: Colors.white, size: 22),
-                              const SizedBox(width: 8),
-                            ],
-                            Text(
-                              widget.label,
-                              style: GoogleFonts.fredoka(
-                                color: Colors.white,
-                                fontSize: 17,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 0.5,
+                        ],
+                  border: Border.all(
+                    color: isLgbtMode ? Colors.white.withOpacity(0.6) : Colors.black,
+                    width: 1.5,
+                  ),
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(isLgbtMode ? 20 : 12),
+                    onTap: widget.isLoading ? null : widget.onPressed,
+                    child: Center(
+                      child: widget.isLoading
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                                valueColor: AlwaysStoppedAnimation(Colors.white),
                               ),
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (widget.icon != null) ...[
+                                  Icon(widget.icon, color: Colors.white, size: 20),
+                                  const SizedBox(width: 8),
+                                ],
+                                Text(
+                                  widget.label,
+                                  style: isLgbtMode
+                                      ? GoogleFonts.fredoka(
+                                          color: Colors.white,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 0.5,
+                                        )
+                                      : GoogleFonts.inter(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -741,7 +945,6 @@ Future<void> showOaSuccessDialog(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Explosive Emoji Badge
           const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -783,7 +986,6 @@ Future<void> showOaSuccessDialog(
           ),
           const SizedBox(height: 20),
 
-          // Transaction Breakdown Card
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -840,7 +1042,6 @@ Future<void> showOaLikeDialog(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Buzzing Hearts
           const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -1042,9 +1243,7 @@ Future<void> showOaVibeDialog(
   );
 }
 
-// ═══════════════════════════════════════════════════════════
 // ANIMATED EXPLOSIVE PARTY POPPER CONFETTI OVERLAY 🥳🎉💥
-// ═══════════════════════════════════════════════════════════
 class PartyPopperOverlay extends StatefulWidget {
   final Widget child;
   const PartyPopperOverlay({super.key, required this.child});
@@ -1077,9 +1276,8 @@ class _PartyPopperOverlayState extends State<PartyPopperOverlay> with SingleTick
       duration: const Duration(milliseconds: 1600),
     );
 
-    // Blast 50 explosive particles from top-center of dialog!
     for (int i = 0; i < 50; i++) {
-      final angle = -math.pi * 0.95 + _rng.nextDouble() * (math.pi * 0.9); // upward arc
+      final angle = -math.pi * 0.95 + _rng.nextDouble() * (math.pi * 0.9);
       final speed = 150.0 + _rng.nextDouble() * 350.0;
       _particles.add(_ConfettiParticle(
         color: _particleColors[i % _particleColors.length],
@@ -1146,7 +1344,7 @@ class _ConfettiPainter extends CustomPainter {
     if (progress >= 1.0) return;
 
     final originX = size.width / 2;
-    final originY = size.height * 0.15; // Explosive blast location
+    final originY = size.height * 0.15;
 
     final gravity = 500.0 * progress * progress;
     final opacity = (1.0 - progress * 1.05).clamp(0.0, 1.0);
@@ -1230,7 +1428,6 @@ class _OaDialogWrapperState extends State<_OaDialogWrapper> with SingleTickerPro
             alignment: Alignment.center,
             clipBehavior: Clip.none,
             children: [
-              // Background Drifting Confetti Emojis
               Positioned(
                 top: -24,
                 left: 10,
