@@ -12,8 +12,17 @@ import 'package:latlong2/latlong.dart';
 // real person's wealth to a map is a genuine safety risk (it's exactly
 // the info used to target people for robbery/extortion), so this stays
 // aggregated and anonymized, same as the models.dart comment explains.
-class BrokeFinderScreen extends StatelessWidget {
+class BrokeFinderScreen extends StatefulWidget {
   const BrokeFinderScreen({super.key});
+
+  @override
+  State<BrokeFinderScreen> createState() => _BrokeFinderScreenState();
+}
+
+class _BrokeFinderScreenState extends State<BrokeFinderScreen> {
+  final MapController _mapController = MapController();
+
+  double _zoom = 5.3;
 
   @override
   Widget build(BuildContext context) {
@@ -77,37 +86,82 @@ class BrokeFinderScreen extends StatelessWidget {
                   height: 350,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
-                    child: FlutterMap(
-                      options: MapOptions(
-                        initialCenter: const LatLng(12.8797, 121.7740),
-                        initialZoom: 5.3,
-                      ),
+                    child: Stack(
                       children: [
-                        TileLayer(
-                          urlTemplate:
-                              'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                          userAgentPackageName: 'com.example.gbbt_bank',
+                        FlutterMap(
+                          mapController: _mapController,
+                          options: MapOptions(
+                            initialCenter: const LatLng(12.8797, 121.7740),
+                            initialZoom: _zoom,
+                          ),
+                          children: [
+                            TileLayer(
+                              urlTemplate:
+                                  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                              userAgentPackageName: 'com.example.gbbt_bank',
+                            ),
+                            MarkerLayer(
+                              markers: mockCityWealth.map((city) {
+                                return Marker(
+                                  point: LatLng(city.latitude, city.longitude),
+                                  width: 50,
+                                  height: 50,
+                                  child: GestureDetector(
+                                    onTap: () => _showCityDetail(context, city),
+                                    child: Icon(
+                                      Icons.location_on,
+                                      color: city.avgSavings >= 500000
+                                          ? Colors.green
+                                          : city.avgSavings >= 200000
+                                          ? Colors.orange
+                                          : Colors.red,
+                                      size: 40,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ],
                         ),
-                        MarkerLayer(
-                          markers: mockCityWealth.map((city) {
-                            return Marker(
-                              point: LatLng(city.latitude, city.longitude),
-                              width: 50,
-                              height: 50,
-                              child: GestureDetector(
-                                onTap: () => _showCityDetail(context, city),
-                                child: Icon(
-                                  Icons.location_on,
-                                  color: city.avgSavings >= 500000
-                                      ? Colors.green
-                                      : city.avgSavings >= 200000
-                                      ? Colors.orange
-                                      : Colors.red,
-                                  size: 40,
-                                ),
+
+                        Positioned(
+                          top: 12,
+                          right: 12,
+                          child: Column(
+                            children: [
+                              FloatingActionButton.small(
+                                heroTag: 'zoomIn',
+                                backgroundColor: Colors.white,
+                                onPressed: () {
+                                  setState(() {
+                                    _zoom++;
+                                  });
+
+                                  _mapController.move(
+                                    _mapController.camera.center,
+                                    _zoom,
+                                  );
+                                },
+                                child: const Icon(Icons.add),
                               ),
-                            );
-                          }).toList(),
+                              const SizedBox(height: 8),
+                              FloatingActionButton.small(
+                                heroTag: 'zoomOut',
+                                backgroundColor: Colors.white,
+                                onPressed: () {
+                                  setState(() {
+                                    _zoom--;
+                                  });
+
+                                  _mapController.move(
+                                    _mapController.camera.center,
+                                    _zoom,
+                                  );
+                                },
+                                child: const Icon(Icons.remove),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
