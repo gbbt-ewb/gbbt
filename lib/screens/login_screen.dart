@@ -58,262 +58,235 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BonggaBackground(
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: AppColors.ink),
-                    style: IconButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      elevation: 2,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  Center(
-                    child: Column(
-                      children: [
-                        const RainbowMark(size: 72),
-                        const SizedBox(height: 16),
-                        const InteractiveSticker(text: '💅 SIGN IN BESTIE', rotateAngle: -0.05),
-                        const SizedBox(height: 12),
-                        const RainbowShimmerText(text: 'Welcome Back!', fontSize: 32),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Access your ultra fabulous GBBT vault ✨',
-                          style: GoogleFonts.inter(color: AppColors.inkMuted, fontSize: 14),
+    return ValueListenableBuilder<bool>(
+      valueListenable: AppModeController.instance,
+      builder: (context, isLgbtMode, _) {
+        return Scaffold(
+          body: BonggaBackground(
+            child: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: Icon(Icons.arrow_back_ios_new, size: 20, color: isLgbtMode ? AppColors.ink : Colors.black),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          elevation: 2,
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
+                      ),
+                      const SizedBox(height: 12),
 
-                  BonggaCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Username', style: Theme.of(context).textTheme.labelLarge),
-                        const SizedBox(height: 8),
-                        TextFormField(
-                          controller: _usernameController,
-                          decoration: const InputDecoration(
-                            hintText: 'Enter your fabulous handle',
-                            prefixIcon: Icon(Icons.person_outline_rounded, color: AppColors.hotPink, size: 22),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) return 'Username is required, bestie!';
-                            if (value.trim().length < 3) return 'Must be at least 3 characters';
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        Text('Password', style: Theme.of(context).textTheme.labelLarge),
-                        const SizedBox(height: 8),
-                        TextFormField(
-                          controller: _passwordController,
-                          obscureText: _obscurePassword,
-                          decoration: InputDecoration(
-                            hintText: 'Enter secret passphrase',
-                            prefixIcon: const Icon(Icons.lock_outline_rounded, color: AppColors.electricPurple, size: 22),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                                color: AppColors.hotPink,
-                                size: 22,
-                              ),
-                              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                      Center(
+                        child: Column(
+                          children: [
+                            const RainbowMark(size: 72),
+                            const SizedBox(height: 16),
+                            InteractiveSticker(
+                              text: isLgbtMode ? '💅 SIGN IN BESTIE' : 'SIGN IN',
+                              rotateAngle: isLgbtMode ? -0.05 : 0.0,
                             ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) return 'Password cannot be empty!';
-                            if (value.length < 6) return 'Must be at least 6 characters';
-                            return null;
-                          },
+                            const SizedBox(height: 12),
+                            const RainbowShimmerText(text: 'Welcome Back!', fontSize: 32),
+                            const SizedBox(height: 4),
+                            Text(
+                              isLgbtMode ? 'Access your ultra fabulous GBBT vault ✨' : 'Access your GBBT account',
+                              style: GoogleFonts.inter(
+                                color: isLgbtMode ? AppColors.inkMuted : Colors.grey[700],
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
                         ),
-                      
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            final forgotPassFormKey = GlobalKey<FormState>();
-                            final newPassController = TextEditingController();
-                            final confirmPassController = TextEditingController();
+                      ),
+                      const SizedBox(height: 24),
 
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                title: const Text('Forgot Password 🔐'),
-                                content: Form(
-                                  key: forgotPassFormKey,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      TextFormField(
-                                        controller: newPassController,
-                                        obscureText: true,
-                                        decoration: const InputDecoration(
-                                          labelText: 'New Password',
-                                          prefixIcon: Icon(Icons.lock_outline),
-                                        ),
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Password is required';
-                                          }
-                                          if (value.length < 6) {
-                                            return 'Must be at least 6 characters';
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                      const SizedBox(height: 12),
-                                      TextFormField(
-                                        controller: confirmPassController,
-                                        obscureText: true,
-                                        decoration: const InputDecoration(
-                                          labelText: 'Confirm New Password',
-                                          prefixIcon: Icon(Icons.verified_user_outlined),
-                                        ),
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please confirm your password';
-                                          }
-                                          if (value != newPassController.text) {
-                                            return 'Passwords do not match';
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                    ],
+                      BonggaCard(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Username',
+                              style: isLgbtMode
+                                  ? GoogleFonts.fredoka(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.ink)
+                                  : GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black),
+                            ),
+                            const SizedBox(height: 8),
+                            TextFormField(
+                              controller: _usernameController,
+                              decoration: InputDecoration(
+                                hintText: isLgbtMode ? 'Enter your fabulous handle' : 'Enter your username',
+                                prefixIcon: Icon(Icons.person_outline_rounded, color: isLgbtMode ? AppColors.hotPink : Colors.black, size: 22),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) return 'Username is required!';
+                                if (value.trim().length < 3) return 'Must be at least 3 characters';
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 20),
+
+                            Text(
+                              'Password',
+                              style: isLgbtMode
+                                  ? GoogleFonts.fredoka(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.ink)
+                                  : GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black),
+                            ),
+                            const SizedBox(height: 8),
+                            TextFormField(
+                              controller: _passwordController,
+                              obscureText: _obscurePassword,
+                              decoration: InputDecoration(
+                                hintText: 'Enter secret passphrase',
+                                prefixIcon: Icon(Icons.lock_outline_rounded, color: isLgbtMode ? AppColors.electricPurple : Colors.black, size: 22),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                                    color: isLgbtMode ? AppColors.hotPink : Colors.black,
+                                    size: 22,
                                   ),
+                                  onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                                 ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text('Cancel'),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      if (!forgotPassFormKey.currentState!.validate()) {
-                                        return;
-                                      }
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) return 'Password cannot be empty!';
+                                if (value.length < 6) return 'Must be at least 6 characters';
+                                return null;
+                              },
+                            ),
+                          
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                onPressed: () {
+                                  final forgotPassFormKey = GlobalKey<FormState>();
+                                  final newPassController = TextEditingController();
+                                  final confirmPassController = TextEditingController();
 
-                                      Navigator.pop(context);
-
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(20),
-                                          ),
-                                          title: const Text('Payment Required 💳'),
-                                          content: const Text(
-                                            'Password reset is a premium service.\n\n'
-                                            'Recovery Fee: ₱99.99\n\n'
-                                            'Please complete payment to continue.',
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () => Navigator.pop(context),
-                                              child: const Text('Maybe Later'),
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(isLgbtMode ? 20 : 12),
+                                      ),
+                                      title: Text('Forgot Password 🔐', style: isLgbtMode ? GoogleFonts.fredoka() : GoogleFonts.inter()),
+                                      content: Form(
+                                        key: forgotPassFormKey,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            TextFormField(
+                                              controller: newPassController,
+                                              obscureText: true,
+                                              decoration: const InputDecoration(
+                                                labelText: 'New Password',
+                                                prefixIcon: Icon(Icons.lock_outline),
+                                              ),
+                                              validator: (value) {
+                                                if (value == null || value.isEmpty) return 'Password is required';
+                                                if (value.length < 6) return 'Must be at least 6 characters';
+                                                return null;
+                                              },
                                             ),
-                                            ElevatedButton.icon(
-                                              icon: const Icon(Icons.payments_outlined),
-                                              label: const Text('Pay Now'),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) => AlertDialog(
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(20),
-                                                    ),
-                                                    title: const Text('Payment Confirmed ✅'),
-                                                    content: const Text(
-                                                      '₱99.99 has been successfully deducted from your bank account.\n\n'
-                                                      'Your password reset request has been received and is being processed.',
-                                                    ),
-                                                    actions: [
-                                                      ElevatedButton(
-                                                        onPressed: () {
-                                                          Navigator.pop(context);
-                                                        },
-                                                        child: const Text('OK'),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
+                                            const SizedBox(height: 12),
+                                            TextFormField(
+                                              controller: confirmPassController,
+                                              obscureText: true,
+                                              decoration: const InputDecoration(
+                                                labelText: 'Confirm New Password',
+                                                prefixIcon: Icon(Icons.verified_user_outlined),
+                                              ),
+                                              validator: (value) {
+                                                if (value == null || value.isEmpty) return 'Please confirm password';
+                                                if (value != newPassController.text) return 'Passwords do not match';
+                                                return null;
                                               },
                                             ),
                                           ],
                                         ),
-                                      );
-                                    },
-                                    child: const Text('Submit'),
-                                  ),
-                                ],
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context),
+                                          child: Text('Cancel', style: TextStyle(color: isLgbtMode ? AppColors.hotPink : Colors.black)),
+                                        ),
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: isLgbtMode ? AppColors.hotPink : Colors.black,
+                                            foregroundColor: Colors.white,
+                                          ),
+                                          onPressed: () {
+                                            if (forgotPassFormKey.currentState!.validate()) {
+                                              Navigator.pop(context);
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(
+                                                  behavior: SnackBarBehavior.floating,
+                                                  backgroundColor: isLgbtMode ? AppColors.ink : Colors.black,
+                                                  content: Text(
+                                                    'Password reset successfully! 🔐',
+                                                    style: isLgbtMode ? GoogleFonts.fredoka() : GoogleFonts.inter(),
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          },
+                                          child: const Text('Reset Password'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  'Forgot Password?',
+                                  style: isLgbtMode
+                                      ? GoogleFonts.fredoka(color: AppColors.hotPink, fontWeight: FontWeight.w600)
+                                      : GoogleFonts.inter(color: Colors.black, fontWeight: FontWeight.w600),
+                                ),
                               ),
-                            );
-                          },
-                          child: Text(
-                            'Forgot Password?',
-                            style: GoogleFonts.fredoka(
-                              color: AppColors.hotPink,
-                              fontWeight: FontWeight.w700,
                             ),
+                            const SizedBox(height: 16),
+
+                            GradientButton(
+                              label: isLgbtMode ? 'Sign In Now ✨' : 'Sign In',
+                              icon: Icons.login_rounded,
+                              isLoading: _isLoading,
+                              onPressed: _handleLogin,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
+                      Center(
+                        child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: GoogleFonts.inter(color: isLgbtMode ? AppColors.inkMuted : Colors.grey[700], fontSize: 14),
+                            children: [
+                              const TextSpan(text: "Don't have an account yet? "),
+                              TextSpan(
+                                recognizer: _createAccountTap,
+                                text: isLgbtMode ? 'Join the Glamour 💅' : 'Create Account',
+                                style: isLgbtMode
+                                    ? GoogleFonts.fredoka(color: AppColors.hotPink, fontWeight: FontWeight.w700)
+                                    : GoogleFonts.inter(color: Colors.black, fontWeight: FontWeight.w700),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-
-                      const SizedBox(height: 28),
-                    
-                      GradientButton(
-                          label: 'Login to GBBT 👑',
-                          icon: Icons.auto_awesome_rounded,
-                          isLoading: _isLoading,
-                          onPressed: _handleLogin,
-                        ),
-                      ],
-                    ),
+                    ],
                   ),
-                  const SizedBox(height: 24),
-
-                  Center(
-                    child: RichText(
-                      text: TextSpan(
-                        style: GoogleFonts.inter(color: AppColors.ink, fontSize: 14.5),
-                        children: [
-                          const TextSpan(text: "Don't have an account yet? "),
-                          TextSpan(
-                            text: 'Create one now 💖',
-                            style: GoogleFonts.fredoka(
-                              color: AppColors.hotPink,
-                              fontWeight: FontWeight.w700,
-                              decoration: TextDecoration.underline,
-                            ),
-                            recognizer: _createAccountTap,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

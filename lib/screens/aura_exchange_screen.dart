@@ -42,10 +42,10 @@ class _AuraExchangeScreenState extends State<AuraExchangeScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.ink,
+        backgroundColor: AppModeController.instance.isLgbtMode ? AppColors.ink : Colors.black,
         content: Text(
           '🎁 Daily reward claimed (+250 GBBT Coins)!',
-          style: GoogleFonts.fredoka(),
+          style: AppModeController.instance.isLgbtMode ? GoogleFonts.fredoka() : GoogleFonts.inter(),
         ),
       ),
     );
@@ -56,10 +56,10 @@ class _AuraExchangeScreenState extends State<AuraExchangeScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           behavior: SnackBarBehavior.floating,
-          backgroundColor: AppColors.hotPink,
+          backgroundColor: AppModeController.instance.isLgbtMode ? AppColors.hotPink : Colors.black,
           content: Text(
             'Not enough GBBT Coins 💸',
-            style: GoogleFonts.fredoka(),
+            style: AppModeController.instance.isLgbtMode ? GoogleFonts.fredoka() : GoogleFonts.inter(),
           ),
         ),
       );
@@ -75,10 +75,10 @@ class _AuraExchangeScreenState extends State<AuraExchangeScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.ink,
+        backgroundColor: AppModeController.instance.isLgbtMode ? AppColors.ink : Colors.black,
         content: Text(
           '🚀 Invested ${amount.toStringAsFixed(0)} coins into ${stock.name}!',
-          style: GoogleFonts.fredoka(),
+          style: AppModeController.instance.isLgbtMode ? GoogleFonts.fredoka() : GoogleFonts.inter(),
         ),
       ),
     );
@@ -91,10 +91,10 @@ class _AuraExchangeScreenState extends State<AuraExchangeScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           behavior: SnackBarBehavior.floating,
-          backgroundColor: AppColors.hotPink,
+          backgroundColor: AppModeController.instance.isLgbtMode ? AppColors.hotPink : Colors.black,
           content: Text(
-            'Not enough holdings to sell! 💅',
-            style: GoogleFonts.fredoka(),
+            'Not enough holdings to sell!',
+            style: AppModeController.instance.isLgbtMode ? GoogleFonts.fredoka() : GoogleFonts.inter(),
           ),
         ),
       );
@@ -110,10 +110,10 @@ class _AuraExchangeScreenState extends State<AuraExchangeScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.ink,
+        backgroundColor: AppModeController.instance.isLgbtMode ? AppColors.ink : Colors.black,
         content: Text(
           '💰 Sold ${amount.toStringAsFixed(0)} coins from ${stock.name}!',
-          style: GoogleFonts.fredoka(),
+          style: AppModeController.instance.isLgbtMode ? GoogleFonts.fredoka() : GoogleFonts.inter(),
         ),
       ),
     );
@@ -135,7 +135,7 @@ class _AuraExchangeScreenState extends State<AuraExchangeScreen> {
                     children: [
                       IconButton(
                         onPressed: () => Navigator.pop(context),
-                        icon: const Icon(Icons.arrow_back_ios_new, size: 18, color: AppColors.ink),
+                        icon: Icon(Icons.arrow_back_ios_new, size: 18, color: isLgbtMode ? AppColors.ink : Colors.black),
                         style: IconButton.styleFrom(backgroundColor: Colors.white, elevation: 2),
                       ),
                       const SizedBox(width: 10),
@@ -149,7 +149,7 @@ class _AuraExchangeScreenState extends State<AuraExchangeScreen> {
                         text: isLgbtMode ? '🚀 BULLISH' : 'MARKET',
                         backgroundColor: isLgbtMode ? AppColors.limeGreen : const Color(0xFFF3F4F6),
                         textColor: isLgbtMode ? AppColors.ink : Colors.black,
-                        rotateAngle: 0.04,
+                        rotateAngle: isLgbtMode ? 0.04 : 0.0,
                       ),
                     ],
                   ),
