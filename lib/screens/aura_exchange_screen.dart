@@ -5,121 +5,385 @@ import '../app_theme.dart';
 import '../models.dart';
 import '../shared_widgets.dart';
 
-// Note: Aura Score here comes from mock ENGAGEMENT stats (login streaks,
-// chatbot activity, referrals) — it's deliberately not connected to Vibe
-// Check or any camera/photo, so nobody's "investment value" is tied to
-// how they look.
 class AuraExchangeScreen extends StatefulWidget {
   const AuraExchangeScreen({super.key});
 
   @override
-  State<AuraExchangeScreen> createState() => _AuraExchangeScreenState();
+  State<AuraExchangeScreen> createState() =>
+      _AuraExchangeScreenState();
 }
 
-class _AuraExchangeScreenState extends State<AuraExchangeScreen> {
+class _AuraExchangeScreenState
+    extends State<AuraExchangeScreen> {
   double _coins = 5000;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: BonggaBackground(
-        child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-            children: [
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: AppColors.ink),
-                    style: IconButton.styleFrom(backgroundColor: Colors.white, elevation: 2),
-                  ),
-                  const SizedBox(width: 12),
-                  const RainbowShimmerText(text: 'Aura Exchange 📈', fontSize: 24),
-                ],
-              ),
-              const SizedBox(height: 18),
+  bool _claimedReward = false;
 
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: electricRainbowGradient,
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: AppShadow.lifted,
-                ),
-                child: Column(
-                  children: [
-                    const Text('📈', style: TextStyle(fontSize: 40)),
-                    const SizedBox(height: 8),
-                    Text('Aura Exchange ✨', style: GoogleFonts.fredoka(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w700)),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Invest GBBT Coins in your besties\' Aura — powered by streaks & sass, not selfies. 💅',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.inter(color: Colors.white.withOpacity(0.92), fontSize: 13),
-                    ),
-                    const SizedBox(height: 14),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(color: Colors.white.withOpacity(0.22), borderRadius: BorderRadius.circular(20)),
-                      child: Text('💰 ${_coins.toStringAsFixed(0)} GBBT Coins available', style: GoogleFonts.fredoka(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
+  final Map<String, double> _portfolio = {};
 
-              Text('Trending Auras', style: GoogleFonts.fredoka(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.ink)),
-              const SizedBox(height: 12),
+  double get _portfolioValue {
+    double total = 0;
 
-              ...mockAuraStocks.map((stock) => _AuraStockCard(
-                    stock: stock,
-                    onInvest: (amount) => _handleInvest(stock, amount),
-                  )),
-            ],
-          ),
+    for (final value in _portfolio.values) {
+      total += value;
+    }
+
+    return total;
+  }
+
+  double get _auraIndex {
+    return mockAuraStocks
+            .map((e) => e.auraScore)
+            .reduce((a, b) => a + b) /
+        mockAuraStocks.length;
+  }
+
+  void _claimReward() {
+    if (_claimedReward) return;
+
+    setState(() {
+      _coins += 250;
+      _claimedReward = true;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          '🎁 Daily reward claimed! +250 Coins',
         ),
       ),
     );
   }
 
-  void _handleInvest(AuraStock stock, double amount) {
+  void _handleInvest(
+    AuraStock stock,
+    double amount,
+  ) {
     if (amount > _coins) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Not enough GBBT Coins, bestie! 💸")),
+        const SnackBar(
+          content: Text(
+            'Not enough GBBT Coins 💸',
+          ),
+        ),
       );
       return;
     }
-    setState(() => _coins -= amount);
-    showDialog<void>(
-      context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-        backgroundColor: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('🚀', style: TextStyle(fontSize: 48)),
-              const SizedBox(height: 12),
-              InteractiveSticker(text: '💸 INVESTED IN ${stock.name.toUpperCase()}', rotateAngle: -0.03),
-              const SizedBox(height: 14),
-              Text('Aura Stake Confirmed!', style: GoogleFonts.fredoka(fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.ink), textAlign: TextAlign.center),
-              const SizedBox(height: 8),
-              Text(
-                'You put ${amount.toStringAsFixed(0)} GBBT Coins behind ${stock.name}\'s aura. May their streaks stay strong! 🌈',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.inkMuted, height: 1.4),
+
+    setState(() {
+      _coins -= amount;
+
+      _portfolio[stock.name] =
+          (_portfolio[stock.name] ?? 0) +
+              amount;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          '🚀 Invested ${amount.toStringAsFixed(0)} coins into ${stock.name}',
+        ),
+      ),
+    );
+  }
+
+  void _sell(
+    AuraStock stock,
+    double amount,
+  ) {
+    final current =
+        _portfolio[stock.name] ?? 0;
+
+    if (current < amount) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content:
+              Text('Not enough holdings'),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _portfolio[stock.name] =
+          current - amount;
+      _coins += amount;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          '💰 Sold ${amount.toStringAsFixed(0)} coins from ${stock.name}',
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.cream,
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Aura Exchange 📈',
+                  style:
+                      GoogleFonts.fredoka(
+                    fontWeight:
+                        FontWeight.bold,
+                    fontSize: 24,
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+
+            Container(
+              padding:
+                  const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient:
+                    electricRainbowGradient,
+                borderRadius:
+                    BorderRadius.circular(
+                  24,
+                ),
+                boxShadow:
+                    AppShadow.lifted,
               ),
-              const SizedBox(height: 24),
-              GradientButton(
-                label: 'SLAY! 💅',
-                icon: Icons.check_circle_rounded,
-                onPressed: () => Navigator.of(context).pop(),
+              child: Column(
+                children: [
+                  const Text(
+                    '💰',
+                    style: TextStyle(
+                      fontSize: 44,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    '${_coins.toStringAsFixed(0)} GBBT Coins',
+                    style:
+                        GoogleFonts.fredoka(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight:
+                          FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 6,
+                  ),
+                  Text(
+                    'Available Balance',
+                    style:
+                        GoogleFonts.inter(
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+
+            const SizedBox(height: 20),
+
+            GradientButton(
+              label: _claimedReward
+                  ? 'Reward Claimed ✅'
+                  : 'Claim Daily Reward 🎁',
+              onPressed:
+                  _claimedReward
+                      ? null
+                      : _claimReward,
+            ),
+
+            const SizedBox(height: 20),
+
+            Container(
+              padding:
+                  const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius:
+                    BorderRadius.circular(
+                  24,
+                ),
+                boxShadow:
+                    AppShadow.soft,
+              ),
+              child: Column(
+                children: [
+                  const Text(
+                    '📊 Aura Index',
+                    style: TextStyle(
+                      fontWeight:
+                          FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  Text(
+                    _auraIndex
+                        .toStringAsFixed(1),
+                    style:
+                        const TextStyle(
+                      fontSize: 42,
+                      fontWeight:
+                          FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  const Text(
+                    'The vibes are bullish today ✨',
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            Container(
+              padding:
+                  const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius:
+                    BorderRadius.circular(
+                  24,
+                ),
+                boxShadow:
+                    AppShadow.soft,
+              ),
+              child: Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    '🏆 Top Auras',
+                    style: TextStyle(
+                      fontWeight:
+                          FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Text(
+                      '🥇 Sam'),
+                  const Text(
+                      '🥈 Andi'),
+                  const Text(
+                      '🥉 Jamie'),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            Container(
+              padding:
+                  const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius:
+                    BorderRadius.circular(
+                  24,
+                ),
+                boxShadow:
+                    AppShadow.soft,
+              ),
+              child: Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    '💼 Portfolio',
+                    style: TextStyle(
+                      fontWeight:
+                          FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  Text(
+                    'Total Invested: ${_portfolioValue.toStringAsFixed(0)} Coins',
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  if (_portfolio.isEmpty)
+                    const Text(
+                      'No investments yet.',
+                    ),
+                  ..._portfolio.entries.map(
+                    (entry) => ListTile(
+                      title: Text(
+                        entry.key,
+                      ),
+                      trailing: Text(
+                        '${entry.value.toStringAsFixed(0)} Coins',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            Text(
+              'Trending Auras',
+              style:
+                  GoogleFonts.fredoka(
+                fontSize: 20,
+                fontWeight:
+                    FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            ...mockAuraStocks.map(
+              (stock) => _AuraStockCard(
+                stock: stock,
+                investedAmount:
+                    _portfolio[stock.name] ??
+                        0,
+                onInvest: (amount) =>
+                    _handleInvest(
+                  stock,
+                  amount,
+                ),
+                onSell: (amount) =>
+                    _sell(
+                  stock,
+                  amount,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -128,99 +392,156 @@ class _AuraExchangeScreenState extends State<AuraExchangeScreen> {
 
 class _AuraStockCard extends StatelessWidget {
   final AuraStock stock;
-  final void Function(double amount) onInvest;
-  const _AuraStockCard({required this.stock, required this.onInvest});
+  final double investedAmount;
+  final Function(double) onInvest;
+  final Function(double) onSell;
+
+  const _AuraStockCard({
+    required this.stock,
+    required this.investedAmount,
+    required this.onInvest,
+    required this.onSell,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final isUp = stock.changePercent >= 0;
+    final isUp =
+        stock.changePercent >= 0;
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 14),
-      padding: const EdgeInsets.all(16),
+      margin:
+          const EdgeInsets.only(
+        bottom: 16,
+      ),
+      padding:
+          const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: AppShadow.soft,
-        border: Border.all(color: AppColors.line, width: 1.5),
+        color: Colors.white,
+        borderRadius:
+            BorderRadius.circular(
+          24,
+        ),
+        boxShadow:
+            AppShadow.soft,
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: const BoxDecoration(gradient: electricRainbowGradient, shape: BoxShape.circle),
-                child: Center(child: Text(stock.name[0], style: GoogleFonts.fredoka(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18))),
+              CircleAvatar(
+                radius: 24,
+                child: Text(
+                  stock.name[0],
+                ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(
+                width: 12,
+              ),
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                      CrossAxisAlignment
+                          .start,
                   children: [
-                    Text(stock.name, style: GoogleFonts.fredoka(fontWeight: FontWeight.w700, fontSize: 15, color: AppColors.ink)),
-                    Text(stock.tagline, style: GoogleFonts.inter(fontSize: 11.5, color: AppColors.inkMuted)),
+                    Text(
+                      stock.name,
+                      style:
+                          const TextStyle(
+                        fontWeight:
+                            FontWeight
+                                .bold,
+                      ),
+                    ),
+                    Text(
+                      stock.tagline,
+                    ),
                   ],
                 ),
               ),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text('₱${stock.pricePerShare.toStringAsFixed(2)}', style: GoogleFonts.fredoka(fontWeight: FontWeight.w700, fontSize: 15, color: AppColors.ink)),
                   Text(
-                    '${isUp ? '▲' : '▼'} ${stock.changePercent.abs().toStringAsFixed(1)}%',
-                    style: GoogleFonts.fredoka(fontWeight: FontWeight.w700, fontSize: 12, color: isUp ? AppColors.limeGreen : AppColors.hotPink),
+                    '₱${stock.pricePerShare}',
+                  ),
+                  Text(
+                    '${isUp ? "▲" : "▼"} ${stock.changePercent.toStringAsFixed(1)}%',
+                    style: TextStyle(
+                      color: isUp
+                          ? Colors.green
+                          : Colors.red,
+                    ),
                   ),
                 ],
               ),
             ],
           ),
+
           const SizedBox(height: 12),
+
+          LinearProgressIndicator(
+            value:
+                stock.auraScore / 100,
+          ),
+
+          const SizedBox(height: 8),
+
+          Text(
+            'Aura Score ${stock.auraScore}/100',
+          ),
+
+          const SizedBox(height: 12),
+
+          if (investedAmount > 0)
+            Text(
+              'Holding: ${investedAmount.toStringAsFixed(0)} Coins',
+              style: const TextStyle(
+                fontWeight:
+                    FontWeight.bold,
+              ),
+            ),
+
+          const SizedBox(height: 12),
+
           Row(
             children: [
               Expanded(
-                child: Text('Aura Score', style: GoogleFonts.inter(fontSize: 12, color: AppColors.inkMuted)),
+                child:
+                    OutlinedButton(
+                  onPressed: () =>
+                      onInvest(100),
+                  child: const Text(
+                      '+100'),
+                ),
               ),
-              Text('${stock.auraScore}/100', style: GoogleFonts.fredoka(fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.electricPurple)),
-            ],
-          ),
-          const SizedBox(height: 4),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: LinearProgressIndicator(
-              value: stock.auraScore / 100,
-              minHeight: 8,
-              backgroundColor: AppColors.line,
-              valueColor: const AlwaysStoppedAnimation(AppColors.electricPurple),
-            ),
-          ),
-          const SizedBox(height: 14),
-          Row(
-            children: [
-              _investChip(context, 100),
-              const SizedBox(width: 8),
-              _investChip(context, 500),
-              const SizedBox(width: 8),
-              _investChip(context, 1000),
+              const SizedBox(
+                width: 8,
+              ),
+              Expanded(
+                child:
+                    OutlinedButton(
+                  onPressed: () =>
+                      onInvest(500),
+                  child: const Text(
+                      '+500'),
+                ),
+              ),
+              const SizedBox(
+                width: 8,
+              ),
+              Expanded(
+                child:
+                    FilledButton(
+                  onPressed: () =>
+                      onSell(100),
+                  child:
+                      const Text(
+                    'Sell',
+                  ),
+                ),
+              ),
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _investChip(BuildContext context, double amount) {
-    return Expanded(
-      child: OutlinedButton(
-        onPressed: () => onInvest(amount),
-        style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          foregroundColor: AppColors.hotPink,
-          side: const BorderSide(color: AppColors.hotPink, width: 1.5),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        ),
-        child: Text('+${amount.toStringAsFixed(0)}', style: GoogleFonts.fredoka(fontWeight: FontWeight.w700, fontSize: 12.5)),
       ),
     );
   }

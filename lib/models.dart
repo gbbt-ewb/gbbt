@@ -232,23 +232,47 @@ const mockCityWealth = [
 class AuraStock {
   final String name;
   final String tagline;
-  final int auraScore;
   final double pricePerShare;
   final double changePercent;
+  final int auraScore;
 
   const AuraStock({
     required this.name,
     required this.tagline,
-    required this.auraScore,
     required this.pricePerShare,
     required this.changePercent,
+    required this.auraScore,
   });
 }
 
 const mockAuraStocks = [
-  AuraStock(name: 'Divine C.', tagline: 'Comeback queen energy · 47-day login streak 🔥', auraScore: 88, pricePerShare: 42.50, changePercent: 5.2),
-  AuraStock(name: 'Andi S.', tagline: 'Chaotic good vibes · Top chatbot roaster 🌈', auraScore: 76, pricePerShare: 31.10, changePercent: -1.4),
-  AuraStock(name: 'Jamie C.', tagline: 'Spreadsheet royalty · Never missed a bill 👑', auraScore: 91, pricePerShare: 58.00, changePercent: 8.9),
-  AuraStock(name: 'Kai R.', tagline: 'Soft launch legend · Quietly maxing savings ✨', auraScore: 82, pricePerShare: 39.75, changePercent: 2.1),
-  AuraStock(name: 'Reign T.', tagline: 'Certified bestie material · Referred 12 friends 💖', auraScore: 70, pricePerShare: 24.30, changePercent: -3.0),
+  AuraStock(
+    name: 'Andi',
+    tagline: 'Latte-powered icon',
+    pricePerShare: 125,
+    changePercent: 8.4,
+    auraScore: 96,
+  ),
+  AuraStock(
+    name: 'Jamie',
+    tagline: 'Spreadsheet royalty',
+    pricePerShare: 98,
+    changePercent: 5.2,
+    auraScore: 91,
+  ),
+  AuraStock(
+    name: 'Kai',
+    tagline: 'Budgeting legend',
+    pricePerShare: 86,
+    changePercent: 3.8,
+    auraScore: 88,
+  ),
+  AuraStock(
+    name: 'Sam',
+    tagline: 'Elite aura energy',
+    pricePerShare: 220,
+    changePercent: 12.3,
+    auraScore: 99,
+  ),
 ];
+
