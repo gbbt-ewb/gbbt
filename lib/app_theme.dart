@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // ═══════════════════════════════════════════════════════════
-// DESIGN TOKENS — "OA & SUPER BONGGA" RAINBOW GLAMOUR
+// DESIGN TOKENS — "OA & SUPER BONGGA" RAINBOW GLAMOUR vs MONOCHROME
 // Vibrant, electric, glowing, extra, and unabashedly fabulous!
 // ═══════════════════════════════════════════════════════════
 class AppColors {
@@ -54,6 +54,15 @@ const electricRainbowGradient = LinearGradient(
     Color(0xFFFFD700),
     Color(0xFF00F5FF),
     Color(0xFF9D00FF),
+  ],
+);
+
+const monoDarkGradient = LinearGradient(
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+  colors: [
+    Color(0xFF1F2937),
+    Color(0xFF111827),
   ],
 );
 

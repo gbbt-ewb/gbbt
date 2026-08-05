@@ -6,10 +6,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'app_theme.dart';
 
 // ═══════════════════════════════════════════════════════════
-// APP MODE CONTROLLER — LGBT+ Mode (Bongga Rainbow) vs Straight Mode (Strict Black & White Flat UI)
+// APP MODE CONTROLLER — LGBT+ Mode (Bongga Rainbow) vs Straight Mode (100% Monochrome Black & White)
 // ═══════════════════════════════════════════════════════════
 class AppModeController extends ValueNotifier<bool> {
-  AppModeController._() : super(true); // true = LGBT+ Mode (Default Rainbow), false = Straight Mode (Strict Black & White)
+  AppModeController._() : super(true); // true = LGBT+ Mode (Default Rainbow), false = Straight Mode (Black & White Monochrome)
   static final instance = AppModeController._();
 
   bool get isLgbtMode => value;
@@ -43,18 +43,18 @@ class AppModeToggleSwitch extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
             decoration: BoxDecoration(
               gradient: isLgbtMode ? electricRainbowGradient : null,
-              color: isLgbtMode ? null : const Color(0xFF111111),
+              color: isLgbtMode ? null : Colors.white,
               borderRadius: BorderRadius.circular(22),
               border: Border.all(
-                color: isLgbtMode ? Colors.white : Colors.black,
+                color: isLgbtMode ? Colors.white : const Color(0xFFCBD5E1),
                 width: 1.5,
               ),
               boxShadow: isLgbtMode
                   ? AppShadow.soft
                   : [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 6,
+                        color: Colors.black.withOpacity(0.06),
+                        blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
                     ],
@@ -72,7 +72,7 @@ class AppModeToggleSwitch extends StatelessWidget {
                           letterSpacing: 0.5,
                         )
                       : GoogleFonts.inter(
-                          color: Colors.white,
+                          color: const Color(0xFF1F2937),
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -80,7 +80,7 @@ class AppModeToggleSwitch extends StatelessWidget {
                 const SizedBox(width: 6),
                 Icon(
                   isLgbtMode ? Icons.auto_awesome_rounded : Icons.business_center_rounded,
-                  color: isLgbtMode ? AppColors.neonGold : Colors.white70,
+                  color: isLgbtMode ? AppColors.neonGold : const Color(0xFF475569),
                   size: 16,
                 ),
               ],
@@ -278,7 +278,7 @@ class _BonggaBackgroundState extends State<BonggaBackground> with SingleTickerPr
                     : const LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [Color(0xFFFFFFFF), Color(0xFFFAFAFA), Color(0xFFF5F5F5)],
+                        colors: [Color(0xFFFFFFFF), Color(0xFFF8F9FA), Color(0xFFF1F5F9)],
                       ),
               ),
             ),
@@ -344,7 +344,7 @@ class _FloatingStickerData {
 }
 
 // ═══════════════════════════════════════════════════════════
-// RAINBOW SHIMMER TEXT — Switches to Pure Black Text in Straight Mode
+// RAINBOW SHIMMER TEXT — Switches to Solid Dark Text in Straight Mode
 // ═══════════════════════════════════════════════════════════
 class RainbowShimmerText extends StatefulWidget {
   final String text;
@@ -437,7 +437,7 @@ class _RainbowShimmerTextState extends State<RainbowShimmerText> with SingleTick
 }
 
 // ═══════════════════════════════════════════════════════════
-// BONGGA GLASS CARD — Switches to Strict Pure White Card in Straight Mode
+// BONGGA GLASS CARD — Switches to Clean Flat White Card in Straight Mode
 // ═══════════════════════════════════════════════════════════
 class BonggaCard extends StatefulWidget {
   final Widget child;
@@ -478,21 +478,21 @@ class _BonggaCardState extends State<BonggaCard> {
               duration: const Duration(milliseconds: 300),
               padding: widget.padding ?? const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(isLgbtMode ? 26 : 14),
+                borderRadius: BorderRadius.circular(isLgbtMode ? 26 : 16),
                 color: isLgbtMode ? null : Colors.white,
                 gradient: isLgbtMode ? glassGradient : null,
                 boxShadow: isLgbtMode
                     ? (widget.hasRainbowGlow ? AppShadow.lifted : AppShadow.soft)
                     : [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.06),
+                          color: Colors.black.withOpacity(0.05),
                           blurRadius: 10,
                           offset: const Offset(0, 3),
                         ),
                       ],
                 border: Border.all(
-                  color: isLgbtMode ? Colors.white.withOpacity(0.9) : const Color(0xFFE5E7EB),
-                  width: isLgbtMode ? 2 : 1.5,
+                  color: isLgbtMode ? Colors.white.withOpacity(0.9) : const Color(0xFFE2E8F0),
+                  width: isLgbtMode ? 2 : 1,
                 ),
               ),
               child: widget.child,
@@ -505,7 +505,7 @@ class _BonggaCardState extends State<BonggaCard> {
 }
 
 // ═══════════════════════════════════════════════════════════
-// INTERACTIVE STICKER BADGE — Switches to Flat Black/Grey Tag in Straight Mode
+// INTERACTIVE STICKER BADGE — Switches to Flat Slate Tag in Straight Mode
 // ═══════════════════════════════════════════════════════════
 class InteractiveSticker extends StatefulWidget {
   final String text;
@@ -541,7 +541,7 @@ class _InteractiveStickerState extends State<InteractiveSticker> {
     return ValueListenableBuilder<bool>(
       valueListenable: AppModeController.instance,
       builder: (context, isLgbtMode, _) {
-        final activeColor = isLgbtMode ? widget.backgroundColor : const Color(0xFFF3F4F6);
+        final activeColor = isLgbtMode ? widget.backgroundColor : const Color(0xFFF1F5F9);
         final activeAngle = isLgbtMode ? widget.rotateAngle : 0.0;
 
         return GestureDetector(
@@ -567,7 +567,7 @@ class _InteractiveStickerState extends State<InteractiveSticker> {
                         ]
                       : null,
                   border: Border.all(
-                    color: isLgbtMode ? Colors.white : const Color(0xFFD1D5DB),
+                    color: isLgbtMode ? Colors.white : const Color(0xFFCBD5E1),
                     width: 1,
                   ),
                 ),
@@ -581,7 +581,7 @@ class _InteractiveStickerState extends State<InteractiveSticker> {
                           letterSpacing: 0.5,
                         )
                       : GoogleFonts.inter(
-                          color: Colors.black,
+                          color: const Color(0xFF1F2937),
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -596,7 +596,7 @@ class _InteractiveStickerState extends State<InteractiveSticker> {
 }
 
 // ═══════════════════════════════════════════════════════════
-// RAINBOW MARK (GBBT LOGO MARK) — Switches to Strict Black/White Bank Icon in Straight Mode
+// RAINBOW MARK (GBBT LOGO MARK) — Switches to Corporate Bank Icon in Straight Mode
 // ═══════════════════════════════════════════════════════════
 class RainbowMark extends StatefulWidget {
   final double size;
@@ -637,10 +637,10 @@ class _RainbowMarkState extends State<RainbowMark> with SingleTickerProviderStat
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.white,
-              border: Border.all(color: Colors.black, width: 2),
+              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.5),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
+                  color: Colors.black.withOpacity(0.04),
                   blurRadius: 6,
                   offset: const Offset(0, 2),
                 ),
@@ -778,7 +778,7 @@ class FunBadge extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
             gradient: isLgbtMode ? electricRainbowGradient : null,
-            color: isLgbtMode ? null : const Color(0xFFF3F4F6),
+            color: isLgbtMode ? null : const Color(0xFFF1F5F9),
             borderRadius: BorderRadius.circular(30),
             boxShadow: isLgbtMode
                 ? [
@@ -789,7 +789,7 @@ class FunBadge extends StatelessWidget {
                     ),
                   ]
                 : null,
-            border: Border.all(color: isLgbtMode ? Colors.white : const Color(0xFFD1D5DB), width: 1.5),
+            border: Border.all(color: isLgbtMode ? Colors.white : const Color(0xFFCBD5E1), width: 1.5),
           ),
           child: Text(
             text,
@@ -812,7 +812,7 @@ class FunBadge extends StatelessWidget {
 }
 
 // ═══════════════════════════════════════════════════════════
-// GRADIENT / FLAT MONOCHROME BUTTON
+// GRADIENT / FLAT BUTTON
 // ═══════════════════════════════════════════════════════════
 class GradientButton extends StatefulWidget {
   final String label;
@@ -862,13 +862,13 @@ class _GradientButtonState extends State<GradientButton> {
                       ? AppShadow.lifted
                       : [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withOpacity(0.08),
                             blurRadius: 8,
                             offset: const Offset(0, 3),
                           ),
                         ],
                   border: Border.all(
-                    color: isLgbtMode ? Colors.white.withOpacity(0.6) : Colors.black,
+                    color: isLgbtMode ? Colors.white.withOpacity(0.6) : Colors.transparent,
                     width: 1.5,
                   ),
                 ),
@@ -937,7 +937,8 @@ Future<void> showOaSuccessDialog(
   String? purpose,
   required double fee,
 }) async {
-  FunAudioPlayer.playPopupFanfare();
+  final isLgbtMode = AppModeController.instance.isLgbtMode;
+  if (isLgbtMode) FunAudioPlayer.playPopupFanfare();
   return showDialog<void>(
     context: context,
     barrierDismissible: true,
@@ -945,34 +946,45 @@ Future<void> showOaSuccessDialog(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('🎉', style: TextStyle(fontSize: 42)),
-              SizedBox(width: 4),
-              Text('💸', style: TextStyle(fontSize: 54)),
-              SizedBox(width: 4),
-              Text('🥳', style: TextStyle(fontSize: 42)),
-            ],
-          ),
+          if (isLgbtMode)
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('🎉', style: TextStyle(fontSize: 42)),
+                SizedBox(width: 4),
+                Text('💸', style: TextStyle(fontSize: 54)),
+                SizedBox(width: 4),
+                Text('🥳', style: TextStyle(fontSize: 42)),
+              ],
+            )
+          else
+            const Icon(Icons.check_circle_outline_rounded, size: 54, color: Colors.black),
           const SizedBox(height: 12),
 
           InteractiveSticker(
-            text: fee == 0 ? '✨ ₱0 FEE WAIVED 🌈' : '⚡ ₱${fee.toStringAsFixed(2)} FEE',
-            backgroundColor: fee == 0 ? AppColors.limeGreen : AppColors.neonGold,
-            textColor: AppColors.ink,
-            rotateAngle: -0.04,
+            text: fee == 0
+                ? (isLgbtMode ? '✨ ₱0 FEE WAIVED 🌈' : '₱0 FEE WAIVED')
+                : '₱${fee.toStringAsFixed(2)} FEE',
+            backgroundColor: isLgbtMode ? (fee == 0 ? AppColors.limeGreen : AppColors.neonGold) : const Color(0xFFF1F5F9),
+            textColor: Colors.black,
+            rotateAngle: isLgbtMode ? -0.04 : 0.0,
           ),
           const SizedBox(height: 14),
 
           Text(
             title,
             textAlign: TextAlign.center,
-            style: GoogleFonts.fredoka(
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              color: AppColors.ink,
-            ),
+            style: isLgbtMode
+                ? GoogleFonts.fredoka(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.ink,
+                  )
+                : GoogleFonts.inter(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
           ),
           const SizedBox(height: 6),
 
@@ -981,7 +993,7 @@ Future<void> showOaSuccessDialog(
             textAlign: TextAlign.center,
             style: GoogleFonts.inter(
               fontSize: 13.5,
-              color: AppColors.inkMuted,
+              color: isLgbtMode ? AppColors.inkMuted : Colors.grey[700],
             ),
           ),
           const SizedBox(height: 20),
@@ -989,24 +1001,30 @@ Future<void> showOaSuccessDialog(
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              gradient: electricRainbowGradient,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: AppShadow.soft,
+              gradient: isLgbtMode ? electricRainbowGradient : monoDarkGradient,
+              borderRadius: BorderRadius.circular(isLgbtMode ? 20 : 12),
+              boxShadow: isLgbtMode ? AppShadow.soft : null,
             ),
             child: Column(
               children: [
                 Text(
                   '₱${amount.toStringAsFixed(2)}',
-                  style: GoogleFonts.fredoka(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
+                  style: isLgbtMode
+                      ? GoogleFonts.fredoka(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        )
+                      : GoogleFonts.inter(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Recipient: $recipient',
-                  style: GoogleFonts.fredoka(color: Colors.white.withOpacity(0.9), fontSize: 13),
+                  style: GoogleFonts.inter(color: Colors.white.withOpacity(0.9), fontSize: 13),
                 ),
                 if (purpose != null && purpose.isNotEmpty)
                   Text(
@@ -1019,7 +1037,7 @@ Future<void> showOaSuccessDialog(
           const SizedBox(height: 24),
 
           GradientButton(
-            label: 'SLAY! 💅',
+            label: isLgbtMode ? 'SLAY! 💅' : 'Done',
             icon: Icons.check_circle_rounded,
             onPressed: () => Navigator.of(context).pop(),
           ),
@@ -1034,7 +1052,8 @@ Future<void> showOaLikeDialog(
   BuildContext context, {
   required String name,
 }) async {
-  FunAudioPlayer.playLoveMatchSound();
+  final isLgbtMode = AppModeController.instance.isLgbtMode;
+  if (isLgbtMode) FunAudioPlayer.playLoveMatchSound();
   return showDialog<void>(
     context: context,
     barrierDismissible: true,
@@ -1042,49 +1061,60 @@ Future<void> showOaLikeDialog(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('💓', style: TextStyle(fontSize: 40)),
-              SizedBox(width: 6),
-              Text('💘', style: TextStyle(fontSize: 60)),
-              SizedBox(width: 6),
-              Text('💖', style: TextStyle(fontSize: 40)),
-            ],
-          ),
+          if (isLgbtMode)
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('💓', style: TextStyle(fontSize: 40)),
+                SizedBox(width: 6),
+                Text('💘', style: TextStyle(fontSize: 60)),
+                SizedBox(width: 6),
+                Text('💖', style: TextStyle(fontSize: 40)),
+              ],
+            )
+          else
+            const Icon(Icons.favorite_border_rounded, size: 54, color: Colors.black),
           const SizedBox(height: 12),
 
-          const InteractiveSticker(
-            text: '🔥 100% FINANCE MATCH',
-            backgroundColor: AppColors.hotPink,
-            rotateAngle: 0.05,
+          InteractiveSticker(
+            text: isLgbtMode ? '🔥 100% FINANCE MATCH' : '100% FINANCE MATCH',
+            backgroundColor: isLgbtMode ? AppColors.hotPink : const Color(0xFFF1F5F9),
+            rotateAngle: isLgbtMode ? 0.05 : 0.0,
           ),
           const SizedBox(height: 14),
 
           Text(
-            "IT'S A MATCH QUEEN! 💘",
+            isLgbtMode ? "IT'S A MATCH QUEEN! 💘" : "MATCH CONFIRMED",
             textAlign: TextAlign.center,
-            style: GoogleFonts.fredoka(
-              fontSize: 26,
-              fontWeight: FontWeight.w700,
-              color: AppColors.hotPink,
-            ),
+            style: isLgbtMode
+                ? GoogleFonts.fredoka(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.hotPink,
+                  )
+                : GoogleFonts.inter(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
           ),
           const SizedBox(height: 8),
 
           Text(
-            "You and $name are financially & spiritually compatible! Sparkles & interest rates are flying! ✨💸",
+            isLgbtMode
+                ? "You and $name are financially & spiritually compatible! Sparkles & interest rates are flying! ✨💸"
+                : "You and $name are financially compatible based on portfolio data.",
             textAlign: TextAlign.center,
             style: GoogleFonts.inter(
               fontSize: 14,
-              color: AppColors.ink,
+              color: isLgbtMode ? AppColors.ink : Colors.black,
               height: 1.45,
             ),
           ),
           const SizedBox(height: 24),
 
           GradientButton(
-            label: 'CHAT SOON BESTIE 💬',
+            label: isLgbtMode ? 'CHAT SOON BESTIE 💬' : 'Continue',
             icon: Icons.favorite_rounded,
             onPressed: () => Navigator.of(context).pop(),
           ),
@@ -1099,7 +1129,8 @@ Future<void> showOaPassDialog(
   BuildContext context, {
   required String name,
 }) async {
-  FunAudioPlayer.playPassSound();
+  final isLgbtMode = AppModeController.instance.isLgbtMode;
+  if (isLgbtMode) FunAudioPlayer.playPassSound();
   return showDialog<void>(
     context: context,
     barrierDismissible: true,
@@ -1107,33 +1138,44 @@ Future<void> showOaPassDialog(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('💔', style: TextStyle(fontSize: 54)),
+          if (isLgbtMode)
+            const Text('💔', style: TextStyle(fontSize: 54))
+          else
+            const Icon(Icons.close_rounded, size: 54, color: Colors.black),
           const SizedBox(height: 12),
 
-          const InteractiveSticker(
-            text: '💅 NEXT FABULOUS SINGLE',
-            backgroundColor: AppColors.electricPurple,
-            rotateAngle: -0.04,
+          InteractiveSticker(
+            text: isLgbtMode ? '💅 NEXT FABULOUS SINGLE' : 'PASSED PROFILE',
+            backgroundColor: isLgbtMode ? AppColors.electricPurple : const Color(0xFFF1F5F9),
+            rotateAngle: isLgbtMode ? -0.04 : 0.0,
           ),
           const SizedBox(height: 14),
 
           Text(
-            "BYE FELICIA! 💅❌",
+            isLgbtMode ? "BYE FELICIA! 💅❌" : "PROFILE PASSED",
             textAlign: TextAlign.center,
-            style: GoogleFonts.fredoka(
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              color: AppColors.ink,
-            ),
+            style: isLgbtMode
+                ? GoogleFonts.fredoka(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.ink,
+                  )
+                : GoogleFonts.inter(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
           ),
           const SizedBox(height: 8),
 
           Text(
-            "Passed on $name. Onto someone with bigger savings & better vibes! 💸🚀",
+            isLgbtMode
+                ? "Passed on $name. Onto someone with bigger savings & better vibes! 💸🚀"
+                : "Passed on $name's profile. Moving to next match candidate.",
             textAlign: TextAlign.center,
             style: GoogleFonts.inter(
               fontSize: 14,
-              color: AppColors.inkMuted,
+              color: isLgbtMode ? AppColors.inkMuted : Colors.grey[700],
               height: 1.45,
             ),
           ),
@@ -1145,12 +1187,14 @@ Future<void> showOaPassDialog(
             child: OutlinedButton(
               onPressed: () => Navigator.of(context).pop(),
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: AppColors.hotPink, width: 2),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                side: BorderSide(color: isLgbtMode ? AppColors.hotPink : Colors.black, width: 2),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(isLgbtMode ? 18 : 12)),
               ),
               child: Text(
-                'KEEP SWIPING 🚀',
-                style: GoogleFonts.fredoka(color: AppColors.hotPink, fontSize: 16, fontWeight: FontWeight.w600),
+                isLgbtMode ? 'KEEP SWIPING 🚀' : 'Continue',
+                style: isLgbtMode
+                    ? GoogleFonts.fredoka(color: AppColors.hotPink, fontSize: 16, fontWeight: FontWeight.w600)
+                    : GoogleFonts.inter(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -1166,7 +1210,8 @@ Future<void> showOaVibeDialog(
   required int score,
   required String result,
 }) async {
-  FunAudioPlayer.playPopupFanfare();
+  final isLgbtMode = AppModeController.instance.isLgbtMode;
+  if (isLgbtMode) FunAudioPlayer.playPopupFanfare();
   return showDialog<void>(
     context: context,
     barrierDismissible: true,
@@ -1174,38 +1219,47 @@ Future<void> showOaVibeDialog(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('🎉', style: TextStyle(fontSize: 40)),
-              SizedBox(width: 4),
-              Text('👑', style: TextStyle(fontSize: 56)),
-              SizedBox(width: 4),
-              Text('✨', style: TextStyle(fontSize: 40)),
-            ],
-          ),
+          if (isLgbtMode)
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('🎉', style: TextStyle(fontSize: 40)),
+                SizedBox(width: 4),
+                Text('👑', style: TextStyle(fontSize: 56)),
+                SizedBox(width: 4),
+                Text('✨', style: TextStyle(fontSize: 40)),
+              ],
+            )
+          else
+            const Icon(Icons.auto_awesome_outlined, size: 54, color: Colors.black),
           const SizedBox(height: 12),
 
-          const InteractiveSticker(
-            text: '💥 VIBE SCAN COMPLETE',
-            backgroundColor: AppColors.neonGold,
-            textColor: AppColors.ink,
-            rotateAngle: 0.04,
+          InteractiveSticker(
+            text: isLgbtMode ? '💥 VIBE SCAN COMPLETE' : 'VIBE SCAN COMPLETE',
+            backgroundColor: isLgbtMode ? AppColors.neonGold : const Color(0xFFF1F5F9),
+            textColor: Colors.black,
+            rotateAngle: isLgbtMode ? 0.04 : 0.0,
           ),
           const SizedBox(height: 14),
 
           Text(
             '$score%',
-            style: GoogleFonts.fredoka(
-              fontSize: 52,
-              fontWeight: FontWeight.w700,
-              color: AppColors.hotPink,
-            ),
+            style: isLgbtMode
+                ? GoogleFonts.fredoka(
+                    fontSize: 52,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.hotPink,
+                  )
+                : GoogleFonts.inter(
+                    fontSize: 48,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
           ),
           Text(
             'VIBE SCORE',
-            style: GoogleFonts.fredoka(
-              color: AppColors.inkMuted,
+            style: GoogleFonts.inter(
+              color: isLgbtMode ? AppColors.inkMuted : Colors.grey[700],
               letterSpacing: 2,
               fontSize: 12,
               fontWeight: FontWeight.w600,
@@ -1216,24 +1270,30 @@ Future<void> showOaVibeDialog(
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              gradient: electricRainbowGradient,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: AppShadow.soft,
+              gradient: isLgbtMode ? electricRainbowGradient : monoDarkGradient,
+              borderRadius: BorderRadius.circular(isLgbtMode ? 20 : 12),
+              boxShadow: isLgbtMode ? AppShadow.soft : null,
             ),
             child: Text(
               result,
               textAlign: TextAlign.center,
-              style: GoogleFonts.fredoka(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-              ),
+              style: isLgbtMode
+                  ? GoogleFonts.fredoka(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    )
+                  : GoogleFonts.inter(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
             ),
           ),
           const SizedBox(height: 24),
 
           GradientButton(
-            label: 'SLAY AGAIN 💅',
+            label: isLgbtMode ? 'SLAY AGAIN 💅' : 'Scan Again',
             icon: Icons.auto_awesome_rounded,
             onPressed: () => Navigator.of(context).pop(),
           ),
@@ -1276,20 +1336,21 @@ class _PartyPopperOverlayState extends State<PartyPopperOverlay> with SingleTick
       duration: const Duration(milliseconds: 1600),
     );
 
-    for (int i = 0; i < 50; i++) {
-      final angle = -math.pi * 0.95 + _rng.nextDouble() * (math.pi * 0.9);
-      final speed = 150.0 + _rng.nextDouble() * 350.0;
-      _particles.add(_ConfettiParticle(
-        color: _particleColors[i % _particleColors.length],
-        vx: math.cos(angle) * speed,
-        vy: math.sin(angle) * speed,
-        size: 7.0 + _rng.nextDouble() * 9.0,
-        rotationSpeed: (_rng.nextDouble() - 0.5) * 14.0,
-        isCircle: i % 2 == 0,
-      ));
+    if (AppModeController.instance.isLgbtMode) {
+      for (int i = 0; i < 50; i++) {
+        final angle = -math.pi * 0.95 + _rng.nextDouble() * (math.pi * 0.9);
+        final speed = 150.0 + _rng.nextDouble() * 350.0;
+        _particles.add(_ConfettiParticle(
+          color: _particleColors[i % _particleColors.length],
+          vx: math.cos(angle) * speed,
+          vy: math.sin(angle) * speed,
+          size: 7.0 + _rng.nextDouble() * 9.0,
+          rotationSpeed: (_rng.nextDouble() - 0.5) * 14.0,
+          isCircle: i % 2 == 0,
+        ));
+      }
+      _controller.forward();
     }
-
-    _controller.forward();
   }
 
   @override
@@ -1300,6 +1361,9 @@ class _PartyPopperOverlayState extends State<PartyPopperOverlay> with SingleTick
 
   @override
   Widget build(BuildContext context) {
+    if (!AppModeController.instance.isLgbtMode) {
+      return widget.child;
+    }
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, _) {
@@ -1396,7 +1460,8 @@ class _OaDialogWrapperState extends State<_OaDialogWrapper> with SingleTickerPro
   @override
   void initState() {
     super.initState();
-    FunAudioPlayer.playPopupFanfare();
+    final isLgbtMode = AppModeController.instance.isLgbtMode;
+    if (isLgbtMode) FunAudioPlayer.playPopupFanfare();
     _animController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 400),
@@ -1405,7 +1470,7 @@ class _OaDialogWrapperState extends State<_OaDialogWrapper> with SingleTickerPro
       parent: _animController,
       curve: Curves.elasticOut,
     );
-    _rotateAnim = Tween<double>(begin: -0.06, end: 0.0).animate(
+    _rotateAnim = Tween<double>(begin: isLgbtMode ? -0.06 : 0.0, end: 0.0).animate(
       CurvedAnimation(parent: _animController, curve: Curves.easeOutBack),
     );
     _animController.forward();
@@ -1419,6 +1484,8 @@ class _OaDialogWrapperState extends State<_OaDialogWrapper> with SingleTickerPro
 
   @override
   Widget build(BuildContext context) {
+    final isLgbtMode = AppModeController.instance.isLgbtMode;
+
     return ScaleTransition(
       scale: _scaleAnim,
       child: Transform.rotate(
@@ -1428,33 +1495,38 @@ class _OaDialogWrapperState extends State<_OaDialogWrapper> with SingleTickerPro
             alignment: Alignment.center,
             clipBehavior: Clip.none,
             children: [
-              Positioned(
-                top: -24,
-                left: 10,
-                child: Transform.rotate(angle: -0.2, child: const Text('✨', style: TextStyle(fontSize: 32))),
-              ),
-              Positioned(
-                top: -30,
-                right: 15,
-                child: Transform.rotate(angle: 0.3, child: const Text('🎉', style: TextStyle(fontSize: 36))),
-              ),
-              Positioned(
-                bottom: -20,
-                right: 25,
-                child: Transform.rotate(angle: -0.15, child: const Text('💸', style: TextStyle(fontSize: 32))),
-              ),
-              Positioned(
-                bottom: -15,
-                left: 20,
-                child: Transform.rotate(angle: 0.25, child: const Text('👑', style: TextStyle(fontSize: 30))),
-              ),
+              if (isLgbtMode) ...[
+                Positioned(
+                  top: -24,
+                  left: 10,
+                  child: Transform.rotate(angle: -0.2, child: const Text('✨', style: TextStyle(fontSize: 32))),
+                ),
+                Positioned(
+                  top: -30,
+                  right: 15,
+                  child: Transform.rotate(angle: 0.3, child: const Text('🎉', style: TextStyle(fontSize: 36))),
+                ),
+                Positioned(
+                  bottom: -20,
+                  right: 25,
+                  child: Transform.rotate(angle: -0.15, child: const Text('💸', style: TextStyle(fontSize: 32))),
+                ),
+                Positioned(
+                  bottom: -15,
+                  left: 20,
+                  child: Transform.rotate(angle: 0.25, child: const Text('👑', style: TextStyle(fontSize: 30))),
+                ),
+              ],
 
               Dialog(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(32),
-                  side: const BorderSide(color: AppColors.hotPink, width: 3),
+                  borderRadius: BorderRadius.circular(isLgbtMode ? 32 : 16),
+                  side: BorderSide(
+                    color: isLgbtMode ? AppColors.hotPink : const Color(0xFFCBD5E1),
+                    width: isLgbtMode ? 3 : 1,
+                  ),
                 ),
-                elevation: 20,
+                elevation: isLgbtMode ? 20 : 4,
                 backgroundColor: Colors.white,
                 child: Padding(
                   padding: const EdgeInsets.all(24),

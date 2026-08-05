@@ -25,126 +25,162 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BonggaBackground(
-        child: SafeArea(
-          child: AnimatedOpacity(
-            opacity: _visible ? 1 : 0,
-            duration: const Duration(milliseconds: 700),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              child: Column(
-                children: [
-                  const Align(
-                    alignment: Alignment.topRight,
-                    child: AppModeToggleSwitch(),
-                  ),
-                  const Spacer(flex: 1),
-                  const FunBadge(text: '👑 100% FICTIONAL & EXTRA BONGGA 💅'),
-                  const SizedBox(height: 20),
-                  
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+    return ValueListenableBuilder<bool>(
+      valueListenable: AppModeController.instance,
+      builder: (context, isLgbtMode, _) {
+        return Scaffold(
+          body: BonggaBackground(
+            child: SafeArea(
+              child: AnimatedOpacity(
+                opacity: _visible ? 1 : 0,
+                duration: const Duration(milliseconds: 700),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  child: Column(
                     children: [
-                      InteractiveSticker(text: '✨ SLAY!', rotateAngle: -0.1),
-                      SizedBox(width: 8),
-                      InteractiveSticker(
-                        text: '💅 PAK!',
-                        backgroundColor: AppColors.electricPurple,
-                        rotateAngle: 0.08,
+                      const Align(
+                        alignment: Alignment.topRight,
+                        child: AppModeToggleSwitch(),
                       ),
-                      SizedBox(width: 8),
-                      InteractiveSticker(
-                        text: '💸 KACHING',
-                        backgroundColor: AppColors.neonGold,
-                        textColor: AppColors.ink,
-                        rotateAngle: -0.05,
+                      const Spacer(flex: 1),
+                      FunBadge(
+                        text: isLgbtMode ? '👑 100% FICTIONAL & EXTRA BONGGA 💅' : 'GBBT PARODY BANKING 🏦',
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-
-                  const RainbowMark(size: 100),
-                  const SizedBox(height: 28),
-
-                  const RainbowShimmerText(
-                    text: 'GBBT Bank',
-                    fontSize: 46,
-                    fontWeight: FontWeight.w800,
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Girl Bakla Bakla Tombits Bank',
-                    style: GoogleFonts.fredoka(
-                      color: AppColors.electricPurple,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.white, width: 2),
-                    ),
-                    child: Text(
-                      "Banking so fabulous, extra & over-the-top, it's illegal to be this stylish. 🌈🦄💖",
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.inter(
-                        color: AppColors.ink,
-                        fontSize: 14.5,
-                        fontWeight: FontWeight.w500,
-                        height: 1.45,
-                      ),
-                    ),
-                  ),
-                  const Spacer(flex: 2),
-
-                  GradientButton(
-                    label: 'Sign In Bestie 💅',
-                    icon: Icons.login_rounded,
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const LoginScreen()),
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-
-                  SizedBox(
-                    width: double.infinity,
-                    height: 58,
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const CreateAccountScreen()),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.white.withOpacity(0.85),
-                        foregroundColor: AppColors.hotPink,
-                        side: const BorderSide(color: AppColors.hotPink, width: 2.5),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      ),
-                      child: Row(
+                      const SizedBox(height: 20),
+                      
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.person_add_rounded, size: 22),
+                          InteractiveSticker(
+                            text: isLgbtMode ? '✨ SLAY!' : 'SECURE',
+                            rotateAngle: isLgbtMode ? -0.1 : 0.0,
+                          ),
                           const SizedBox(width: 8),
-                          Text(
-                            'Create Account ✨',
-                            style: GoogleFonts.fredoka(fontSize: 17, fontWeight: FontWeight.w600),
+                          InteractiveSticker(
+                            text: isLgbtMode ? '💅 PAK!' : 'FINANCE',
+                            backgroundColor: isLgbtMode ? AppColors.electricPurple : const Color(0xFFF1F5F9),
+                            textColor: isLgbtMode ? Colors.white : Colors.black,
+                            rotateAngle: isLgbtMode ? 0.08 : 0.0,
+                          ),
+                          const SizedBox(width: 8),
+                          InteractiveSticker(
+                            text: isLgbtMode ? '💸 KACHING' : 'PARODY',
+                            backgroundColor: isLgbtMode ? AppColors.neonGold : const Color(0xFFF1F5F9),
+                            textColor: Colors.black,
+                            rotateAngle: isLgbtMode ? -0.05 : 0.0,
                           ),
                         ],
                       ),
-                    ),
+                      const SizedBox(height: 24),
+
+                      const RainbowMark(size: 100),
+                      const SizedBox(height: 28),
+
+                      const RainbowShimmerText(
+                        text: 'GBBT Bank',
+                        fontSize: 46,
+                        fontWeight: FontWeight.w800,
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Girl Bakla Bakla Tombits Bank',
+                        style: isLgbtMode
+                            ? GoogleFonts.fredoka(
+                                color: AppColors.electricPurple,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                                letterSpacing: 0.5,
+                              )
+                            : GoogleFonts.inter(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                              ),
+                      ),
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(isLgbtMode ? 20 : 12),
+                          border: Border.all(
+                            color: isLgbtMode ? Colors.white : const Color(0xFFCBD5E1),
+                            width: isLgbtMode ? 2 : 1,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          isLgbtMode
+                              ? "Banking so fabulous, extra & over-the-top, it's illegal to be this stylish. 🌈🦄💖"
+                              : "Fictional parody banking application for entertainment & UI testing.",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.inter(
+                            color: isLgbtMode ? AppColors.ink : Colors.black,
+                            fontSize: 14.5,
+                            fontWeight: FontWeight.w500,
+                            height: 1.45,
+                          ),
+                        ),
+                      ),
+                      const Spacer(flex: 2),
+
+                      GradientButton(
+                        label: isLgbtMode ? 'Sign In Bestie 💅' : 'Sign In',
+                        icon: Icons.login_rounded,
+                        onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const LoginScreen()),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+
+                      SizedBox(
+                        width: double.infinity,
+                        height: 54,
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => const CreateAccountScreen()),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: isLgbtMode ? AppColors.hotPink : Colors.black,
+                            side: BorderSide(
+                              color: isLgbtMode ? AppColors.hotPink : Colors.black,
+                              width: isLgbtMode ? 2.5 : 1.5,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(isLgbtMode ? 20 : 12),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.person_add_rounded, size: 20),
+                              const SizedBox(width: 8),
+                              Text(
+                                isLgbtMode ? 'Create Account ✨' : 'Create Account',
+                                style: isLgbtMode
+                                    ? GoogleFonts.fredoka(fontSize: 17, fontWeight: FontWeight.w600)
+                                    : GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
                   ),
-                  const SizedBox(height: 24),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
