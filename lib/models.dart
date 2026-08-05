@@ -198,27 +198,68 @@ class CityWealth {
   final String city;
   final double avgSavings;
   final int accountCount;
-  final double mapX;
-  final double mapY;
+  final double latitude;
+  final double longitude;
   final String vibe;
 
   const CityWealth({
     required this.city,
     required this.avgSavings,
     required this.accountCount,
-    required this.mapX,
-    required this.mapY,
+    required this.latitude,
+    required this.longitude,
     required this.vibe,
   });
 }
-
 const mockCityWealth = [
-  CityWealth(city: 'BGC', avgSavings: 620000, accountCount: 184, mapX: 0.62, mapY: 0.55, vibe: 'Certified Rich Zone 💎'),
-  CityWealth(city: 'Makati', avgSavings: 480000, accountCount: 210, mapX: 0.56, mapY: 0.50, vibe: 'Old Money Energy 👑'),
-  CityWealth(city: 'Quezon City', avgSavings: 210000, accountCount: 340, mapX: 0.38, mapY: 0.46, vibe: 'Comfortably Bongga 💅'),
-  CityWealth(city: 'Cebu', avgSavings: 175000, accountCount: 260, mapX: 0.70, mapY: 0.30, vibe: 'Rising Icon Zone ✨'),
-  CityWealth(city: 'Davao', avgSavings: 140000, accountCount: 190, mapX: 0.84, mapY: 0.42, vibe: 'Grinding Bestie Zone 💪'),
-  CityWealth(city: 'Baguio', avgSavings: 95000, accountCount: 120, mapX: 0.22, mapY: 0.34, vibe: 'Struggling Bestie Zone 🥲'),
+  CityWealth(
+    city: 'BGC',
+    avgSavings: 620000,
+    accountCount: 184,
+    latitude: 14.5507,
+    longitude: 121.0509,
+    vibe: 'Certified Rich Zone 💎',
+  ),
+  CityWealth(
+    city: 'Makati',
+    avgSavings: 480000,
+    accountCount: 210,
+    latitude: 14.5547,
+    longitude: 121.0244,
+    vibe: 'Old Money Energy 👑',
+  ),
+  CityWealth(
+    city: 'Quezon City',
+    avgSavings: 210000,
+    accountCount: 340,
+    latitude: 14.6760,
+    longitude: 121.0437,
+    vibe: 'Comfortably Bongga 💅',
+  ),
+  CityWealth(
+    city: 'Cebu',
+    avgSavings: 175000,
+    accountCount: 260,
+    latitude: 10.3157,
+    longitude: 123.8854,
+    vibe: 'Rising Icon Zone ✨',
+  ),
+  CityWealth(
+    city: 'Davao',
+    avgSavings: 140000,
+    accountCount: 190,
+    latitude: 7.1907,
+    longitude: 125.4553,
+    vibe: 'Grinding Bestie Zone 💪',
+  ),
+  CityWealth(
+    city: 'Baguio',
+    avgSavings: 95000,
+    accountCount: 120,
+    latitude: 16.4023,
+    longitude: 120.5960,
+    vibe: 'Struggling Bestie Zone 🥲',
+  ),
 ];
 
 // ═══════════════════════════════════════════════════════════
