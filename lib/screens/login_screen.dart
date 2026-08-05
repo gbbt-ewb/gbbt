@@ -157,8 +157,147 @@ class _LoginScreenState extends State<LoginScreen> {
                             return null;
                           },
                         ),
-                        const SizedBox(height: 28),
-                        GradientButton(
+                      
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () {
+                            final forgotPassFormKey = GlobalKey<FormState>();
+                            final newPassController = TextEditingController();
+                            final confirmPassController = TextEditingController();
+
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                title: const Text('Forgot Password 🔐'),
+                                content: Form(
+                                  key: forgotPassFormKey,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      TextFormField(
+                                        controller: newPassController,
+                                        obscureText: true,
+                                        decoration: const InputDecoration(
+                                          labelText: 'New Password',
+                                          prefixIcon: Icon(Icons.lock_outline),
+                                        ),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Password is required';
+                                          }
+                                          if (value.length < 6) {
+                                            return 'Must be at least 6 characters';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                      const SizedBox(height: 12),
+                                      TextFormField(
+                                        controller: confirmPassController,
+                                        obscureText: true,
+                                        decoration: const InputDecoration(
+                                          labelText: 'Confirm New Password',
+                                          prefixIcon: Icon(Icons.verified_user_outlined),
+                                        ),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please confirm your password';
+                                          }
+                                          if (value != newPassController.text) {
+                                            return 'Passwords do not match';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      if (!forgotPassFormKey.currentState!.validate()) {
+                                        return;
+                                      }
+
+                                      Navigator.pop(context);
+
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                          title: const Text('Payment Required 💳'),
+                                          content: const Text(
+                                            'Password reset is a premium service.\n\n'
+                                            'Recovery Fee: ₱99.99\n\n'
+                                            'Please complete payment to continue.',
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.pop(context),
+                                              child: const Text('Maybe Later'),
+                                            ),
+                                            ElevatedButton.icon(
+                                              icon: const Icon(Icons.payments_outlined),
+                                              label: const Text('Pay Now'),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) => AlertDialog(
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(20),
+                                                    ),
+                                                    title: const Text('Payment Confirmed ✅'),
+                                                    content: const Text(
+                                                      '₱99.99 has been successfully deducted from your bank account.\n\n'
+                                                      'Your password reset request has been received and is being processed.',
+                                                    ),
+                                                    actions: [
+                                                      ElevatedButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(context);
+                                                        },
+                                                        child: const Text('OK'),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                    child: const Text('Submit'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Forgot Password?',
+                            style: GoogleFonts.fredoka(
+                              color: AppColors.hotPink,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 28),
+                    
+                      GradientButton(
                           label: 'Login to GBBT 👑',
                           icon: Icons.auto_awesome_rounded,
                           isLoading: _isLoading,
