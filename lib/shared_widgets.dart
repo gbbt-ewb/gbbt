@@ -1,7 +1,118 @@
+import 'dart:convert';
+import 'dart:html' as html;
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_theme.dart';
+
+// ═══════════════════════════════════════════════════════════
+// FUN AUDIO SYNTHESIZER — Zero-dependency HTML5 WAV PCM Audio 🎵✨
+// Generates funny, humorous sound effects for stickers & popups!
+// ═══════════════════════════════════════════════════════════
+class FunAudioPlayer {
+  static void _playPcmWav(List<int> samples, int sampleRate) {
+    try {
+      final wavHeader = <int>[
+        // RIFF header
+        0x52, 0x49, 0x46, 0x46,
+        (36 + samples.length) & 0xFF,
+        ((36 + samples.length) >> 8) & 0xFF,
+        ((36 + samples.length) >> 16) & 0xFF,
+        ((36 + samples.length) >> 24) & 0xFF,
+        0x57, 0x41, 0x56, 0x45,
+        // fmt chunk
+        0x66, 0x6D, 0x74, 0x20,
+        16, 0, 0, 0, // chunk length
+        1, 0, // PCM format
+        1, 0, // 1 channel
+        sampleRate & 0xFF,
+        (sampleRate >> 8) & 0xFF,
+        (sampleRate >> 16) & 0xFF,
+        (sampleRate >> 24) & 0xFF,
+        sampleRate & 0xFF,
+        (sampleRate >> 8) & 0xFF,
+        (sampleRate >> 16) & 0xFF,
+        (sampleRate >> 24) & 0xFF,
+        1, 0, // block align
+        8, 0, // 8 bits per sample
+        // data chunk
+        0x64, 0x61, 0x74, 0x61,
+        samples.length & 0xFF,
+        (samples.length >> 8) & 0xFF,
+        (samples.length >> 16) & 0xFF,
+        (samples.length >> 24) & 0xFF,
+      ];
+      final bytes = [...wavHeader, ...samples];
+      final b64 = base64Encode(bytes);
+      final audio = html.AudioElement('data:audio/wav;base64,$b64');
+      audio.play();
+    } catch (e) {
+      debugPrint('PCM Audio Play Error: $e');
+    }
+  }
+
+  /// Interactive Sticker Click / Boing sound! 💅
+  static void playStickerPop() {
+    const rate = 16000;
+    const numSamples = 2400; // 0.15s
+    final samples = List<int>.generate(numSamples, (i) {
+      final t = i / rate;
+      final freq = 300.0 + (t * 2800.0); // Bouncy pitch slide up!
+      final amplitude = (1.0 - (t / 0.15)).clamp(0.0, 1.0);
+      final val = (math.sin(t * freq * 2 * math.pi) * 127.0 * amplitude).toInt();
+      return (val + 128).clamp(0, 255);
+    });
+    _playPcmWav(samples, rate);
+  }
+
+  /// OA Fanfare / Popup Explosion sound! 🎉
+  static void playPopupFanfare() {
+    const rate = 16000;
+    const numSamples = 5600; // 0.35s
+    final samples = List<int>.generate(numSamples, (i) {
+      final t = i / rate;
+      double freq = 523.25; // C5
+      if (t > 0.08) freq = 659.25; // E5
+      if (t > 0.16) freq = 783.99; // G5
+      if (t > 0.24) freq = 1046.50; // C6 major chord flourish
+      final amplitude = (1.0 - (t / 0.35)).clamp(0.0, 1.0);
+      final val = (math.sin(t * freq * 2 * math.pi) * 127.0 * amplitude).toInt();
+      return (val + 128).clamp(0, 255);
+    });
+    _playPcmWav(samples, rate);
+  }
+
+  /// Love Match Buzz sound! 💖
+  static void playLoveMatchSound() {
+    const rate = 16000;
+    const numSamples = 4800; // 0.3s
+    final samples = List<int>.generate(numSamples, (i) {
+      final t = i / rate;
+      double freq = 440.0;
+      if (t > 0.07) freq = 554.37;
+      if (t > 0.14) freq = 659.25;
+      if (t > 0.21) freq = 880.0;
+      final amplitude = (1.0 - (t / 0.3)).clamp(0.0, 1.0);
+      final val = (math.sin(t * freq * 2 * math.pi) * 127.0 * amplitude).toInt();
+      return (val + 128).clamp(0, 255);
+    });
+    _playPcmWav(samples, rate);
+  }
+
+  /// Sassy Rejection Pass sound! 💅💔
+  static void playPassSound() {
+    const rate = 16000;
+    const numSamples = 4000; // 0.25s
+    final samples = List<int>.generate(numSamples, (i) {
+      final t = i / rate;
+      final freq = 550.0 - (t * 1400.0).clamp(0.0, 450.0); // Pitch slide down
+      final amplitude = (1.0 - (t / 0.25)).clamp(0.0, 1.0);
+      final val = (math.sin(t * freq * 2 * math.pi) * 127.0 * amplitude).toInt();
+      return (val + 128).clamp(0, 255);
+    });
+    _playPcmWav(samples, rate);
+  }
+}
 
 // ═══════════════════════════════════════════════════════════
 // ANIMATED "BONGGA" BACKGROUND — Floating & Drifting Stickers
@@ -294,6 +405,7 @@ class _InteractiveStickerState extends State<InteractiveSticker> {
   double _scale = 1.0;
 
   void _pop() {
+    FunAudioPlayer.playStickerPop();
     setState(() => _scale = 1.35);
     Future.delayed(const Duration(milliseconds: 180), () {
       if (mounted) setState(() => _scale = 1.0);
@@ -617,6 +729,7 @@ Future<void> showOaSuccessDialog(
   String? purpose,
   required double fee,
 }) async {
+  FunAudioPlayer.playPopupFanfare();
   return showDialog<void>(
     context: context,
     barrierDismissible: true,
@@ -715,6 +828,7 @@ Future<void> showOaLikeDialog(
   BuildContext context, {
   required String name,
 }) async {
+  FunAudioPlayer.playLoveMatchSound();
   return showDialog<void>(
     context: context,
     barrierDismissible: true,
@@ -780,6 +894,7 @@ Future<void> showOaPassDialog(
   BuildContext context, {
   required String name,
 }) async {
+  FunAudioPlayer.playPassSound();
   return showDialog<void>(
     context: context,
     barrierDismissible: true,
@@ -846,6 +961,7 @@ Future<void> showOaVibeDialog(
   required int score,
   required String result,
 }) async {
+  FunAudioPlayer.playPopupFanfare();
   return showDialog<void>(
     context: context,
     barrierDismissible: true,
@@ -922,7 +1038,7 @@ Future<void> showOaVibeDialog(
   );
 }
 
-// Dialog Animated Scale Wrapper
+// Dialog Animated Scale & Particle Wrapper
 class _OaDialogWrapper extends StatefulWidget {
   final Widget child;
   const _OaDialogWrapper({required this.child});
@@ -934,17 +1050,22 @@ class _OaDialogWrapper extends StatefulWidget {
 class _OaDialogWrapperState extends State<_OaDialogWrapper> with SingleTickerProviderStateMixin {
   late final AnimationController _animController;
   late final Animation<double> _scaleAnim;
+  late final Animation<double> _rotateAnim;
 
   @override
   void initState() {
     super.initState();
+    FunAudioPlayer.playPopupFanfare();
     _animController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 350),
+      duration: const Duration(milliseconds: 400),
     );
     _scaleAnim = CurvedAnimation(
       parent: _animController,
       curve: Curves.elasticOut,
+    );
+    _rotateAnim = Tween<double>(begin: -0.06, end: 0.0).animate(
+      CurvedAnimation(parent: _animController, curve: Curves.easeOutBack),
     );
     _animController.forward();
   }
@@ -959,12 +1080,47 @@ class _OaDialogWrapperState extends State<_OaDialogWrapper> with SingleTickerPro
   Widget build(BuildContext context) {
     return ScaleTransition(
       scale: _scaleAnim,
-      child: Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        backgroundColor: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: widget.child,
+      child: Transform.rotate(
+        angle: _rotateAnim.value,
+        child: Stack(
+          alignment: Alignment.center,
+          clipBehavior: Clip.none,
+          children: [
+            // Background Drifting Confetti Sparkles
+            Positioned(
+              top: -24,
+              left: 10,
+              child: Transform.rotate(angle: -0.2, child: const Text('✨', style: TextStyle(fontSize: 32))),
+            ),
+            Positioned(
+              top: -30,
+              right: 15,
+              child: Transform.rotate(angle: 0.3, child: const Text('🎉', style: TextStyle(fontSize: 36))),
+            ),
+            Positioned(
+              bottom: -20,
+              right: 25,
+              child: Transform.rotate(angle: -0.15, child: const Text('💸', style: TextStyle(fontSize: 32))),
+            ),
+            Positioned(
+              bottom: -15,
+              left: 20,
+              child: Transform.rotate(angle: 0.25, child: const Text('👑', style: TextStyle(fontSize: 30))),
+            ),
+
+            Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(32),
+                side: const BorderSide(color: AppColors.hotPink, width: 3),
+              ),
+              elevation: 20,
+              backgroundColor: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: widget.child,
+              ),
+            ),
+          ],
         ),
       ),
     );
