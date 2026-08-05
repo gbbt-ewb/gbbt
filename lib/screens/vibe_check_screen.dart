@@ -1,14 +1,13 @@
+import 'dart:html' as html;
 import 'dart:math';
+import 'dart:ui_web' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../app_theme.dart';
 import '../shared_widgets.dart';
 
-// Note: this screen intentionally does NOT use the device camera.
-// It's a silly, wholesome, purely-random vibe generator — no real
-// image analysis, and nothing here is wired to Aura Exchange, so
-// nobody's "worth" is ever tied to how they look.
 class VibeCheckScreen extends StatefulWidget {
   const VibeCheckScreen({super.key});
 
@@ -19,10 +18,14 @@ class VibeCheckScreen extends StatefulWidget {
 class _VibeCheckScreenState extends State<VibeCheckScreen> {
   final Random _random = Random();
 
+  bool _cameraReady = false;
   bool _scanning = false;
   String? _result;
+
   int _progress = 0;
   int _score = 0;
+
+  late html.VideoElement _videoElement;
 
   static const List<String> _results = [
     'Certified Icon 💅 — 100% Main Character Energy',
@@ -34,6 +37,42 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
     'Too Fabulous For This App 🔥 — Elite Aura Detected',
     'Over-The-Top Bongga Queen 💎 — 1000% Extra Fabulous',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeCamera();
+  }
+
+  Future<void> _initializeCamera() async {
+    try {
+      _videoElement = html.VideoElement()
+        ..autoplay = true
+        ..muted = true
+        ..style.objectFit = 'cover';
+
+      final stream = await html.window.navigator.mediaDevices!.getUserMedia({
+        'video': true,
+        'audio': false,
+      });
+
+      _videoElement.srcObject = stream;
+
+      // ignore: undefined_prefixed_name
+      ui.platformViewRegistry.registerViewFactory(
+        'webcam-view',
+        (int viewId) => _videoElement,
+      );
+
+      if (mounted) {
+        setState(() {
+          _cameraReady = true;
+        });
+      }
+    } catch (e) {
+      debugPrint('Camera Error: $e');
+    }
+  }
 
   Future<void> _scan() async {
     setState(() {
@@ -58,6 +97,7 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
       _scanning = false;
     });
 
+    // Trigger OA Vibe Scan Explosive Popup + Party Poppers + Funny Sound!
     showOaVibeDialog(context, score: score, result: resultText);
   }
 
@@ -89,7 +129,7 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                     children: [
                       const RainbowMark(size: 84),
                       const SizedBox(height: 18),
-                      const InteractiveSticker(text: '✨ 100% RANDOM, 0% SERIOUS', rotateAngle: -0.05),
+                      const InteractiveSticker(text: '✨ AI ENERGY WEBCAM SCANNER', rotateAngle: -0.05),
                       const SizedBox(height: 12),
                       Text(
                         'GBBT AI Vibe Check ✨',
@@ -98,55 +138,57 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        "Not a real scanner, no camera, no looks involved — just a silly vibe generator. 😎",
+                        'Live webcam preview + 100% scientific aura analysis 😎',
                         textAlign: TextAlign.center,
                         style: GoogleFonts.inter(color: AppColors.inkMuted, fontSize: 13.5),
                       ),
                       const SizedBox(height: 24),
 
-                      // Decorative animated orb (replaces the old camera preview)
-                      SizedBox(
-                        width: 220,
-                        height: 220,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Container(
-                              width: 220,
-                              height: 220,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: electricRainbowGradient,
-                                boxShadow: AppShadow.neonGlow,
-                              ),
-                            ),
-                            Container(
-                              width: 190,
-                              height: 190,
-                              decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-                            ),
-                            if (_scanning)
-                              TweenAnimationBuilder(
-                                tween: Tween<double>(begin: 0, end: 1),
-                                duration: const Duration(seconds: 1),
-                                onEnd: () {},
-                                builder: (_, value, child) {
-                                  return Transform.rotate(
-                                    angle: value * 6.28 * 3,
-                                    child: const Icon(Icons.auto_awesome_rounded, size: 64, color: AppColors.hotPink),
-                                  );
-                                },
-                              )
-                            else
-                              const Icon(Icons.auto_awesome_rounded, size: 64, color: AppColors.electricPurple),
-                          ],
+                      // LIVE WEBCAM VIEWFINDER
+                      Container(
+                        width: 250,
+                        height: 250,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(28),
+                          border: Border.all(color: AppColors.hotPink, width: 3.5),
+                          boxShadow: AppShadow.neonGlow,
                         ),
+                        child: _cameraReady
+                            ? const HtmlElementView(
+                                viewType: 'webcam-view',
+                              )
+                            : const Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CircularProgressIndicator(color: AppColors.hotPink),
+                                    SizedBox(height: 12),
+                                    Text(
+                                      'Starting Camera... 📸',
+                                      style: TextStyle(color: AppColors.inkMuted, fontSize: 13),
+                                    ),
+                                  ],
+                                ),
+                              ),
                       ),
                       const SizedBox(height: 24),
 
                       if (_scanning) ...[
+                        TweenAnimationBuilder(
+                          tween: Tween<double>(begin: 0, end: 1),
+                          duration: const Duration(seconds: 1),
+                          onEnd: () {},
+                          builder: (_, value, child) {
+                            return Transform.rotate(
+                              angle: value * 6.28 * 3,
+                              child: const Icon(Icons.auto_awesome_rounded, size: 48, color: AppColors.hotPink),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 12),
                         Text(
-                          'Scanning Aura...',
+                          'Scanning Camera Aura...',
                           style: GoogleFonts.fredoka(color: AppColors.ink, fontSize: 18, fontWeight: FontWeight.w700),
                         ),
                         const SizedBox(height: 12),
