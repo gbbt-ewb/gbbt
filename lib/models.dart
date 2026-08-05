@@ -71,16 +71,24 @@ class ChatMessage {
 class DatingProfile {
   final String name;
   final int age;
+  final String bio;
   final String taxBracket;
   final double savings;
-  final String bio;
+
+  final String? location;
+  final bool verified;
+  final List<String> interests;
 
   const DatingProfile({
     required this.name,
     required this.age,
+    required this.bio,
     required this.taxBracket,
     required this.savings,
-    required this.bio,
+
+    this.location,
+    this.verified = false,
+    this.interests = const [],
   });
 }
 
