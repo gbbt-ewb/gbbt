@@ -530,7 +530,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
           const SizedBox(height: 10),
 
           Text(
-            'Your account has been created, ${newUser.firstName}! ₱10,000 Starter Bonus added to your vault! 💸🌈',
+            'Your account has been created, ${newUser.firstName}! ₱1,000 Starter Bonus added to your vault! 💸🌈',
             textAlign: TextAlign.center,
             style: GoogleFonts.inter(
               color: AppColors.inkMuted,

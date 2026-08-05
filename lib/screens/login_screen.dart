@@ -49,26 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
       taxBracket: 'Bracket B · Rising Glamour 👑',
       savings: 76500,
     );
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.ink,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        content: Row(
-          children: [
-            const Text('🌈', style: TextStyle(fontSize: 20)),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                'Welcome back, ${user.firstName}! Ready to slay? 💅',
-                style: GoogleFonts.fredoka(color: Colors.white, fontSize: 14),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    
     await Future.delayed(const Duration(milliseconds: 400));
     if (!mounted) return;
 
