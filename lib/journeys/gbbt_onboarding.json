@@ -1,0 +1,197 @@
+{
+  "journeyId": "gbbt-onboarding-v1",
+  "journeyName": "GBBT Bank Customer Onboarding",
+  "version": "1.0.0",
+  "description": "Join the fam and create your fabulous GBBT Bank account.",
+  "themeColor": "#FF4081",
+  "totalSteps": 6,
+
+  "steps": [
+    {
+      "stepId": "personal-information",
+      "order": 1,
+      "screenType": "form",
+      "title": "Join the Fam",
+      "subtitle": "Let's start with your basic information",
+      "icon": "badge",
+
+      "fields": [
+        {
+          "fieldId": "fullName",
+          "type": "text",
+          "label": "Full Name",
+          "hint": "Juan Dela Cruz",
+          "required": true,
+
+          "validation": {
+            "minLength": 3
+          }
+        },
+
+        {
+          "fieldId": "dateOfBirth",
+          "type": "date",
+          "label": "Date of Birth",
+          "hint": "Must be 18 years old or above",
+          "required": true,
+
+          "validation": {
+            "minAge": 18
+          }
+        },
+
+        {
+          "fieldId": "gender",
+          "type": "dropdown",
+          "label": "Gender",
+          "required": true,
+
+          "options": [
+            "Male",
+            "Female",
+            "Non-Binary",
+            "Transgender",
+            "Genderfluid",
+            "Agender",
+            "Other"
+          ]
+        },
+
+        {
+          "fieldId": "customGender",
+          "type": "text",
+          "label": "Tell us how you identify",
+
+          "visibleWhen": {
+            "field": "gender",
+            "equals": "Other"
+          }
+        }
+      ]
+    },
+
+    {
+      "stepId": "contact-information",
+      "order": 2,
+      "screenType": "form",
+      "title": "Contact Information",
+      "subtitle": "How can we reach you?",
+      "icon": "phone",
+
+      "fields": [
+        {
+          "fieldId": "phoneNumber",
+          "type": "phone",
+          "label": "Phone Number",
+          "hint": "09171234567",
+          "required": true,
+
+          "validation": {
+            "length": 11,
+            "digitsOnly": true
+          }
+        },
+
+        {
+          "fieldId": "emailAddress",
+          "type": "email",
+          "label": "Email Address",
+          "hint": "you@email.com",
+          "required": true,
+
+          "validation": {
+            "format": "email"
+          }
+        }
+      ]
+    },
+
+    {
+      "stepId": "terms-and-conditions",
+      "order": 3,
+      "screenType": "terms",
+      "title": "Terms & Conditions 📜",
+      "subtitle": "Please pretend to read everything below",
+
+      "mustAccept": true,
+
+      "content": "Welcome to GBBT Bank! Before proceeding, please take a moment (or preferably several unnecessary moments) to carefully, thoroughly, and absolutely not skim the following Terms & Conditions.\n\n1. Ownership of Deposits\nBy creating an account, you acknowledge, understand, and dramatically pretend to understand that any funds deposited into GBBT Bank legally, morally, spiritually, emotionally, cosmically, and astrologically become the property of GBBT Bank.\n\nJust kidding.\n\nProbably.\n\n2. Nature of the Application\nGBBT Bank is a parody application created for entertainment, amusement, educational experimentation, and occasional mild confusion.\n\nThis application does not process real money, real loans, real investments, real banking services, or real financial advice.\n\n3. Account Responsibilities\nYou are responsible for maintaining your account credentials, passwords, enchanted artifacts, sacred relics, and any other magical objects used to access your account.\n\n4. Service Availability\nGBBT Bank makes no guarantees regarding uptime, downtime, lunchtime, snack breaks, emotional stability, or the alignment of Mercury.\n\n5. Free Transfers Policy\nFree transfers for our LGBTQIA+ family, always. 🌈\n\n6. Refund Policy\nThere are absolutely no refunds on sass.\n\n7. Accuracy of Information\nIf something appears suspicious, impossible, or unusually intelligent, please assume it is a feature until proven otherwise.\n\n8. Limitation of Liability\nGBBT Bank shall not be held liable for confusion, spontaneous laughter, existential crises, emotional damage caused by dad jokes, or excessive reading of terms and conditions.\n\n9. User Conduct\nUsers agree not to exploit bugs, start financial cults, claim ownership of the moon, or bribe support with cookies.\n\n10. Final Acknowledgment\nBy tapping I Agree, you confirm this is a parody application, understand that no real money is being handled, and possess a functioning sense of humor.\n\nIf you scrolled all the way down without reading, congratulations. You have successfully completed the traditional Terms & Conditions experience."
+    },
+
+    {
+      "stepId": "account-selection",
+      "order": 4,
+      "screenType": "account-selection",
+      "title": "Choose Your Account",
+      "subtitle": "Pick your fabulous starter account",
+      "icon": "account_balance",
+
+      "accounts": [
+        {
+          "value": "starter",
+          "label": "GBBT Starter",
+          "tagline": "Perfect for joining the fam",
+          "color": "#FF4081",
+
+          "features": [
+            "₱0 opening balance",
+            "Unlimited virtual vibes",
+            "Rainbow-certified experience 🌈",
+            "Instant bragging rights"
+          ]
+        },
+
+        {
+          "value": "premium",
+          "label": "GBBT Extra Fabulous",
+          "tagline": "For maximum sparkle",
+          "color": "#9C27B0",
+
+          "features": [
+            "All Starter features",
+            "Extra digital confetti",
+            "Priority sass support",
+            "Supreme fabulousness"
+          ]
+        }
+      ]
+    },
+
+    {
+      "stepId": "review",
+      "order": 5,
+      "screenType": "review",
+      "title": "Review Your Information",
+      "subtitle": "Make sure everything looks fabulous",
+      "icon": "fact_check",
+
+      "sections": [
+        {
+          "sectionTitle": "Personal Information",
+          "stepId": "personal-information"
+        },
+        {
+          "sectionTitle": "Contact Information",
+          "stepId": "contact-information"
+        },
+        {
+          "sectionTitle": "Selected Account",
+          "stepId": "account-selection"
+        }
+      ]
+    },
+
+    {
+      "stepId": "success",
+      "order": 6,
+      "screenType": "success",
+      "title": "Yasss, Welcome to GBBT Bank!",
+      "subtitle": "Your account has been created",
+      "icon": "celebration",
+
+      "message": "Your fabulous GBBT Bank account has been successfully created. No actual money was harmed during this process. 🌈",
+
+      "referencePrefix": "GBBT"
+    }
+  ]
+}
