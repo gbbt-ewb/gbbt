@@ -93,10 +93,93 @@ class DatingProfile {
 }
 
 const mockDatingProfiles = [
-  DatingProfile(name: 'Andi', age: 27, taxBracket: 'Bracket B · Rising', savings: 85000, bio: 'Loves oat milk lattes and long walks to the ATM.'),
-  DatingProfile(name: 'Jamie', age: 30, taxBracket: 'Bracket C · Established', savings: 210000, bio: 'Spreadsheet enthusiast. Will split the bill exactly 50/50.'),
-  DatingProfile(name: 'Reign', age: 24, taxBracket: 'Bracket A · Entry', savings: 12000, bio: 'Broke but the vibes are immaculate.'),
-  DatingProfile(name: 'Kai', age: 29, taxBracket: 'Bracket B · Rising', savings: 92000, bio: 'Budgets in one tab, dreams in another.'),
-  DatingProfile(name: 'Sam', age: 33, taxBracket: 'Bracket D · Elite', savings: 540000, bio: 'Will pay you back within the hour, no cap.'),
-  DatingProfile(name: 'Blue', age: 26, taxBracket: 'Bracket A · Entry', savings: 15000, bio: 'Coupon collector. Certified thrift queen.'),
+  DatingProfile(
+    name: 'Andi',
+    age: 27,
+    taxBracket: 'Bracket B · Rising',
+    savings: 85000,
+    bio: 'Loves oat milk lattes and long walks to the ATM.',
+    location: 'Manila',
+    verified: true,
+    interests: [
+      'Coffee',
+      'Travel',
+      'Investing',
+    ],
+  ),
+
+  DatingProfile(
+    name: 'Jamie',
+    age: 30,
+    taxBracket: 'Bracket C · Established',
+    savings: 210000,
+    bio: 'Spreadsheet enthusiast. Will split the bill exactly 50/50.',
+    location: 'Quezon City',
+    verified: true,
+    interests: [
+      'Stocks',
+      'Fitness',
+      'Food',
+    ],
+  ),
+
+  DatingProfile(
+    name: 'Reign',
+    age: 24,
+    taxBracket: 'Bracket A · Entry',
+    savings: 12000,
+    bio: 'Broke but the vibes are immaculate.',
+    location: 'Cebu',
+    verified: false,
+    interests: [
+      'Music',
+      'Gaming',
+      'Coffee',
+    ],
+  ),
+
+  DatingProfile(
+    name: 'Kai',
+    age: 29,
+    taxBracket: 'Bracket B · Rising',
+    savings: 92000,
+    bio: 'Budgets in one tab, dreams in another.',
+    location: 'Makati',
+    verified: true,
+    interests: [
+      'Business',
+      'Travel',
+      'Investing',
+    ],
+  ),
+
+  DatingProfile(
+    name: 'Sam',
+    age: 33,
+    taxBracket: 'Bracket D · Elite',
+    savings: 540000,
+    bio: 'Will pay you back within the hour, no cap.',
+    location: 'BGC',
+    verified: true,
+    interests: [
+      'Luxury',
+      'Finance',
+      'Food',
+    ],
+  ),
+
+  DatingProfile(
+    name: 'Blue',
+    age: 26,
+    taxBracket: 'Bracket A · Entry',
+    savings: 15000,
+    bio: 'Coupon collector. Certified thrift queen.',
+    location: 'Davao',
+    verified: false,
+    interests: [
+      'Shopping',
+      'Coffee',
+      'Movies',
+    ],
+  ),
 ];
