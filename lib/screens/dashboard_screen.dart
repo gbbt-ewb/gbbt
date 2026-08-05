@@ -7,17 +7,25 @@ import 'welcome_screen.dart';
 import 'transfer_screen.dart';
 import 'chatbot_screen.dart';
 import 'dating_screen.dart';
+import 'transfer_screen.dart';
 import 'vibe_check_screen.dart';
+import 'welcome_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final UserModel user;
-  const DashboardScreen({super.key, required this.user});
+
+  const DashboardScreen({
+    super.key,
+    required this.user,
+  });
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  State<DashboardScreen> createState() =>
+      _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class _DashboardScreenState
+    extends State<DashboardScreen> {
   bool _balanceVisible = true;
 
   String get _greeting {
@@ -37,6 +45,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final user = widget.user;
+
     return Scaffold(
       body: BonggaBackground(
         child: SafeArea(
@@ -293,6 +302,79 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _QuickAction extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final Color color;
+
+  const _QuickAction({
+    required this.icon,
+    required this.title,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            color: color.withOpacity(.12),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            icon,
+            color: color,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ActivityTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String amount;
+
+  const _ActivityTile({
+    required this.icon,
+    required this.title,
+    required this.amount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundColor:
+            AppColors.lavender.withOpacity(.25),
+        child: Icon(
+          icon,
+          color: AppColors.primary,
+        ),
+      ),
+      title: Text(title),
+      trailing: Text(
+        amount,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
         ),
       ),
     );

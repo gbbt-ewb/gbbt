@@ -1,4 +1,7 @@
+import 'dart:html' as html;
 import 'dart:math';
+import 'dart:ui_web' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../app_theme.dart';
@@ -12,6 +15,9 @@ class VibeCheckScreen extends StatefulWidget {
 }
 
 class _VibeCheckScreenState extends State<VibeCheckScreen> {
+  final Random _random = Random();
+
+  bool _cameraReady = false;
   bool _scanning = false;
   String? _result;
   final _random = Random();
@@ -26,16 +32,63 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
     'Over-The-Top Bongga Queen 💎 — 1000% Extra Fabulous',
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _initializeCamera();
+  }
+
+  Future<void> _initializeCamera() async {
+    try {
+      _videoElement = html.VideoElement()
+        ..autoplay = true
+        ..muted = true
+        ..style.objectFit = 'cover';
+
+      final stream =
+          await html.window.navigator.mediaDevices!.getUserMedia({
+        'video': true,
+        'audio': false,
+      });
+
+      _videoElement.srcObject = stream;
+
+      ui.platformViewRegistry.registerViewFactory(
+        'webcam-view',
+        (int viewId) => _videoElement,
+      );
+
+      setState(() {
+        _cameraReady = true;
+      });
+    } catch (e) {
+      debugPrint('Camera Error: $e');
+    }
+  }
+
   Future<void> _scan() async {
     setState(() {
       _scanning = true;
       _result = null;
+      _progress = 60;
     });
-    await Future.delayed(const Duration(seconds: 2));
+
+    while (_progress < 100) {
+      await Future.delayed(const Duration(milliseconds: 60));
+
+      if (!mounted) return;
+
+      setState(() {
+        _progress++;
+      });
+    }
+
     if (!mounted) return;
+
     setState(() {
-      _scanning = false;
+      _score = 60 + _random.nextInt(41);
       _result = _results[_random.nextInt(_results.length)];
+      _scanning = false;
     });
   }
 
