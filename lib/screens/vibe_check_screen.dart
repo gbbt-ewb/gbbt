@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:ui_web' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../app_theme.dart';
 import '../shared_widgets.dart';
@@ -27,16 +28,14 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
   late html.VideoElement _videoElement;
 
   static const List<String> _results = [
-    'Certified Icon 💅',
-    'Unbothered Royalty 👑',
-    '110% Unicorn Energy 🦄',
-    'Chaotic Good Rainbow 🌈',
-    'Soft Launch Legend ✨',
-    'Certified Bestie Material 💖',
-    'Main Character Energy 🎬',
-    'Too Fabulous For This App 🔥',
-    'Legendary Aura Detected ⭐',
-    'Elite Vibes Unlocked 🚀',
+    'Certified Icon 💅 — 100% Main Character Energy',
+    'Unbothered Royalty 👑 — Serving looks and interest rates',
+    '110% Unicorn Energy 🦄 — Immaculate vibes detected',
+    'Chaotic Good Rainbow 🌈 — Unpredictable but iconic',
+    'Soft Launch Legend ✨ — Quietly excellent & extra',
+    'Certified Bestie Material 💖 — Loyalty stat: MAXED OUT!',
+    'Too Fabulous For This App 🔥 — Elite Aura Detected',
+    'Over-The-Top Bongga Queen 💎 — 1000% Extra Fabulous',
   ];
 
   @override
@@ -52,8 +51,7 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
         ..muted = true
         ..style.objectFit = 'cover';
 
-      final stream =
-          await html.window.navigator.mediaDevices!.getUserMedia({
+      final stream = await html.window.navigator.mediaDevices!.getUserMedia({
         'video': true,
         'audio': false,
       });
@@ -92,172 +90,187 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
 
     if (!mounted) return;
 
+    final score = 60 + _random.nextInt(41);
+    final resultText = _results[_random.nextInt(_results.length)];
+
     setState(() {
-      _score = 60 + _random.nextInt(41);
-      _result = _results[_random.nextInt(_results.length)];
+      _score = score;
+      _result = resultText;
       _scanning = false;
     });
+
+    // Trigger OA Vibe Scan Explosive Popup!
+    showOaVibeDialog(context, score: score, result: resultText);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.cream,
-      appBar: AppBar(
-        title: const Text('Vibe Check'),
-        backgroundColor: AppColors.cream,
-        foregroundColor: AppColors.ink,
-        elevation: 0,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-
-              const RainbowMark(size: 96),
-
-              const SizedBox(height: 24),
-
-              Text(
-                'GBBT AI Vibe Check ✨',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-
-              const SizedBox(height: 12),
-
-              Text(
-                'Live webcam + totally scientific vibe analysis 😎',
-                textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(color: AppColors.inkMuted),
-              ),
-
-              const SizedBox(height: 30),
-
-              Container(
-                width: 260,
-                height: 260,
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: _cameraReady
-                    ? const HtmlElementView(
-                        viewType: 'webcam-view',
-                      )
-                    : const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-              ),
-
-              const SizedBox(height: 30),
-
-              if (_scanning)
-                Column(
+      body: BonggaBackground(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+            child: Column(
+              children: [
+                Row(
                   children: [
-                    TweenAnimationBuilder(
-                      tween: Tween<double>(begin: 0, end: 1),
-                      duration: const Duration(seconds: 1),
-                      builder: (_, value, child) {
-                        return Transform.rotate(
-                          angle: value * 6.28,
-                          child: const Icon(
-                            Icons.auto_awesome,
-                            size: 70,
-                            color: AppColors.primary,
-                          ),
-                        );
-                      },
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: AppColors.ink),
+                      style: IconButton.styleFrom(backgroundColor: Colors.white, elevation: 2),
                     ),
-
-                    const SizedBox(height: 20),
-
-                    Text(
-                      'AI Scanning...',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: LinearProgressIndicator(
-                        value: _progress / 100,
-                        minHeight: 12,
-                      ),
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    Text(
-                      '$_progress%',
-                      style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    const SizedBox(width: 12),
+                    const RainbowShimmerText(text: 'Vibe Check ✨', fontSize: 24),
                   ],
                 ),
+                const SizedBox(height: 20),
 
-              if (_result != null)
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    gradient: rainbowGradient,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+                BonggaCard(
+                  padding: const EdgeInsets.all(22),
                   child: Column(
                     children: [
-                      Text(
-                        '$_score%',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 40,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
+                      const RainbowMark(size: 84),
+                      const SizedBox(height: 18),
 
-                      const SizedBox(height: 10),
-
-                      const Text(
-                        'VIBE SCORE',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          letterSpacing: 2,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
+                      const InteractiveSticker(text: '✨ AI ENERGY SCANNER', rotateAngle: -0.05),
+                      const SizedBox(height: 12),
 
                       Text(
-                        _result!,
+                        'GBBT AI Vibe Check ✨',
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                        ),
+                        style: GoogleFonts.fredoka(color: AppColors.ink, fontSize: 24, fontWeight: FontWeight.w700),
                       ),
+                      const SizedBox(height: 8),
+
+                      Text(
+                        'Live webcam + totally scientific vibe analysis 😎',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.inter(color: AppColors.inkMuted, fontSize: 13.5),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // CAMERA CONTAINER
+                      Container(
+                        width: 250,
+                        height: 250,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(28),
+                          border: Border.all(color: AppColors.hotPink, width: 3),
+                          boxShadow: AppShadow.neonGlow,
+                        ),
+                        child: _cameraReady
+                            ? const HtmlElementView(
+                                viewType: 'webcam-view',
+                              )
+                            : const Center(
+                                child: CircularProgressIndicator(color: AppColors.hotPink),
+                              ),
+                      ),
+                      const SizedBox(height: 28),
+
+                      if (_scanning)
+                        Column(
+                          children: [
+                            TweenAnimationBuilder(
+                              tween: Tween<double>(begin: 0, end: 1),
+                              duration: const Duration(seconds: 1),
+                              builder: (_, value, child) {
+                                return Transform.rotate(
+                                  angle: value * 6.28,
+                                  child: const Icon(
+                                    Icons.auto_awesome_rounded,
+                                    size: 60,
+                                    color: AppColors.hotPink,
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 16),
+
+                            Text(
+                              'AI Scanning Aura...',
+                              style: GoogleFonts.fredoka(color: AppColors.ink, fontSize: 18, fontWeight: FontWeight.w700),
+                            ),
+                            const SizedBox(height: 12),
+
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: LinearProgressIndicator(
+                                value: _progress / 100,
+                                minHeight: 12,
+                                backgroundColor: AppColors.line,
+                                valueColor: const AlwaysStoppedAnimation(AppColors.hotPink),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+
+                            Text(
+                              '$_progress%',
+                              style: GoogleFonts.fredoka(
+                                fontSize: 28,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.hotPink,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                      if (_result != null)
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(22),
+                          decoration: BoxDecoration(
+                            gradient: electricRainbowGradient,
+                            borderRadius: BorderRadius.circular(22),
+                            boxShadow: AppShadow.lifted,
+                          ),
+                          child: Column(
+                            children: [
+                              Text(
+                                '$_score%',
+                                style: GoogleFonts.fredoka(
+                                  color: Colors.white,
+                                  fontSize: 44,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'VIBE SCORE',
+                                style: GoogleFonts.fredoka(
+                                  color: Colors.white.withOpacity(0.85),
+                                  letterSpacing: 2,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                _result!,
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.fredoka(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                     ],
                   ),
                 ),
+                const SizedBox(height: 24),
 
-              const SizedBox(height: 30),
-
-              GradientButton(
-                label: _scanning ? 'Scanning...' : 'Scan My Vibe',
-                isLoading: _scanning,
-                onPressed: _scanning ? null : _scan,
-              ),
-            ],
+                GradientButton(
+                  label: _scanning ? 'Scanning Vibes...' : 'Scan My Vibe ✨',
+                  icon: Icons.auto_awesome_rounded,
+                  isLoading: _scanning,
+                  onPressed: _scanning ? null : _scan,
+                ),
+              ],
+            ),
           ),
         ),
       ),
