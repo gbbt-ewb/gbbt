@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../app_theme.dart';
 import '../models.dart';
+import '../shared_widgets.dart';
 import 'chatbot_screen.dart';
 import 'dating_screen.dart';
 import 'transfer_screen.dart';
@@ -11,34 +13,25 @@ import 'welcome_screen.dart';
 class DashboardScreen extends StatefulWidget {
   final UserModel user;
 
-  const DashboardScreen({
-    super.key,
-    required this.user,
-  });
+  const DashboardScreen({super.key, required this.user});
 
   @override
-  State<DashboardScreen> createState() =>
-      _DashboardScreenState();
+  State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState
-    extends State<DashboardScreen> {
+class _DashboardScreenState extends State<DashboardScreen> {
   bool _balanceVisible = true;
 
   String get _greeting {
     final hour = DateTime.now().hour;
-
-    if (hour < 12) return 'Good morning';
-    if (hour < 18) return 'Good afternoon';
-
-    return 'Good evening';
+    if (hour < 12) return 'Good morning, queen';
+    if (hour < 18) return 'Good afternoon, iconic';
+    return 'Good evening, bestie';
   }
 
   void _logout() {
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (_) => const WelcomeScreen(),
-      ),
+      MaterialPageRoute(builder: (_) => const WelcomeScreen()),
       (route) => false,
     );
   }
@@ -48,443 +41,505 @@ class _DashboardScreenState
     final user = widget.user;
 
     return Scaffold(
-      backgroundColor: AppColors.cream,
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(
-            20,
-            12,
-            20,
-            24,
-          ),
-          children: [
-            /// HEADER
-            Row(
-              children: [
-                Container(
-                  width: 52,
-                  height: 52,
-                  decoration: const BoxDecoration(
-                    gradient: rainbowGradient,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(
-                      user.initials,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 16,
+      body: BonggaBackground(
+        child: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+            children: [
+              // 1. HEADER
+              Row(
+                children: [
+                  Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      gradient: electricRainbowGradient,
+                      shape: BoxShape.circle,
+                      boxShadow: AppShadow.lifted,
+                      border: Border.all(color: Colors.white, width: 2.5),
+                    ),
+                    child: Center(
+                      child: Text(
+                        user.initials,
+                        style: GoogleFonts.fredoka(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 20,
+                        ),
                       ),
                     ),
                   ),
-                ),
-
-                const SizedBox(width: 12),
-
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "$_greeting,",
-                        style:
-                            Theme.of(context)
-                                .textTheme
-                                .bodySmall,
-                      ),
-                      Text(
-                        user.firstName,
-                        style:
-                            Theme.of(context)
-                                .textTheme
-                                .headlineSmall,
-                      ),
-                    ],
-                  ),
-                ),
-
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius:
-                        BorderRadius.circular(14),
-                  ),
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.notifications_none,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(width: 8),
-
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius:
-                        BorderRadius.circular(14),
-                  ),
-                  child: IconButton(
-                    onPressed: _logout,
-                    icon: const Icon(
-                      Icons.logout_rounded,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-
-            /// BALANCE CARD
-            ClipRRect(
-              borderRadius:
-                  BorderRadius.circular(28),
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                decoration: const BoxDecoration(
-                  gradient: rainbowGradient,
-                ),
-                child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment:
-                          MainAxisAlignment
-                              .spaceBetween,
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Available Balance',
-                          style: TextStyle(
-                            color: Colors.white
-                                .withOpacity(.85),
+                          '$_greeting ✨',
+                          style: GoogleFonts.inter(
                             fontSize: 13,
+                            color: AppColors.inkMuted,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              _balanceVisible =
-                                  !_balanceVisible;
-                            });
-                          },
-                          child: Icon(
-                            _balanceVisible
-                                ? Icons
-                                    .visibility_outlined
-                                : Icons
-                                    .visibility_off_outlined,
-                            color: Colors.white,
+                        Text(
+                          user.firstName,
+                          style: GoogleFonts.fredoka(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.ink,
                           ),
                         ),
                       ],
                     ),
-
-                    const SizedBox(height: 12),
-
-                    Text(
-                      _balanceVisible
-                          ? '₱${user.savings.toStringAsFixed(2)}'
-                          : '₱ • • • • • •',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    Container(
-                      padding:
-                          const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
+                  ),
+                  InteractiveSticker(
+                    text: '👑 VIP',
+                    backgroundColor: AppColors.neonGold,
+                    textColor: AppColors.ink,
+                    rotateAngle: 0.05,
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          backgroundColor: AppColors.ink,
+                          content: Text(
+                            '🔔 No new alerts! You are 100% fabulous! ✨',
+                            style: GoogleFonts.fredoka(),
                           ),
-                      decoration: BoxDecoration(
-                        color: Colors.white
-                            .withOpacity(.20),
-                        borderRadius:
-                            BorderRadius.circular(
-                              20,
+                        ),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.notifications_none_rounded,
+                      size: 22,
+                    ),
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: AppColors.electricPurple,
+                      elevation: 2,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  IconButton(
+                    onPressed: _logout,
+                    icon: const Icon(Icons.logout_rounded, size: 20),
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: AppColors.hotPink,
+                      elevation: 2,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+
+              // 2. HOLOGRAPHIC VIP BALANCE CARD
+              BonggaCard(
+                padding: EdgeInsets.zero,
+                hasRainbowGlow: true,
+                child: Container(
+                  padding: const EdgeInsets.all(22),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFF2B0045),
+                        Color(0xFF800080),
+                        Color(0xFFFF007F),
+                      ],
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              const Text('💳', style: TextStyle(fontSize: 20)),
+                              const SizedBox(width: 8),
+                              Text(
+                                'GBBT DIAMOND VIP VAULT',
+                                style: GoogleFonts.fredoka(
+                                  color: AppColors.neonGold,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
+                            ],
+                          ),
+                          InkWell(
+                            onTap: () => setState(
+                              () => _balanceVisible = !_balanceVisible,
                             ),
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    _balanceVisible
+                                        ? Icons.visibility_outlined
+                                        : Icons.visibility_off_outlined,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    _balanceVisible ? 'Hide' : 'Reveal',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      child: const Text(
-                        '🌟 Gold Member',
+                      const SizedBox(height: 16),
+
+                      Text(
+                        'Available Balance',
                         style: TextStyle(
+                          color: Colors.white.withOpacity(0.8),
+                          fontSize: 13,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+
+                      Text(
+                        _balanceVisible
+                            ? '₱${user.savings.toStringAsFixed(2)}'
+                            : '₱ • • • • • • •',
+                        style: GoogleFonts.fredoka(
                           color: Colors.white,
-                          fontWeight:
-                              FontWeight.bold,
+                          fontSize: 36,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.25),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.4),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                const Text(
+                                  '🌟 ',
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                                Text(
+                                  'Gold Member · ${user.taxBracket}',
+                                  style: GoogleFonts.fredoka(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            '4269 •••• •••• 1337',
+                            style: GoogleFonts.fredoka(
+                              color: AppColors.cyanSparkle,
+                              fontSize: 13,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // 3. FINANCIAL HEALTH SECTION
+              BonggaCard(
+                hasRainbowGlow: false,
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Financial Health 💪",
+                          style: GoogleFonts.fredoka(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                            color: AppColors.ink,
+                          ),
+                        ),
+                        Text(
+                          user.savings > 100000 ? "92%" : "67%",
+                          style: GoogleFonts.fredoka(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                            color: AppColors.hotPink,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: LinearProgressIndicator(
+                        value: user.savings > 100000 ? 0.92 : 0.67,
+                        minHeight: 12,
+                        backgroundColor: AppColors.line,
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                          AppColors.hotPink,
                         ),
                       ),
                     ),
-
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 8),
 
                     Text(
-                      user.taxBracket,
-                      style: TextStyle(
-                        color: Colors.white
-                            .withOpacity(.90),
+                      user.savings > 100000
+                          ? "Excellent savings habits! VIP Status Secured 🎉✨"
+                          : "Keep building your savings, bestie! Almost to Elite Status 💪💖",
+                      style: GoogleFonts.inter(
+                        color: AppColors.inkMuted,
+                        fontSize: 13,
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
+              const SizedBox(height: 20),
 
-            const SizedBox(height: 24),
-
-            /// FINANCIAL HEALTH
-            Container(
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius:
-                    BorderRadius.circular(20),
-                boxShadow: AppShadow.soft,
+              // 4. QUICK ACTIONS
+              Text(
+                "Quick Actions",
+                style: GoogleFonts.fredoka(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.ink,
+                ),
               ),
-              child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+              const SizedBox(height: 12),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  const Text(
-                    "Financial Health",
-                    style: TextStyle(
-                      fontWeight:
-                          FontWeight.bold,
-                      fontSize: 16,
+                  _QuickAction(
+                    icon: Icons.send_rounded,
+                    title: 'Transfer',
+                    color: AppColors.hotPink,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => TransferScreen(user: user),
+                      ),
                     ),
                   ),
-
-                  const SizedBox(height: 12),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius:
-                              BorderRadius.circular(
-                                20,
-                              ),
-                          child:
-                              LinearProgressIndicator(
-                                value:
-                                    user.savings >
-                                            100000
-                                        ? .92
-                                        : .67,
-                                minHeight: 12,
-                              ),
-                        ),
-                      ),
-
-                      const SizedBox(width: 10),
-
-                      Text(
-                        user.savings > 100000
-                            ? "92%"
-                            : "67%",
-                        style: const TextStyle(
-                          fontWeight:
-                              FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                  _QuickAction(
+                    icon: Icons.savings_rounded,
+                    title: 'Save',
+                    color: AppColors.limeGreen,
+                    onTap: () {
+                      showOaSuccessDialog(
+                        context,
+                        title: 'SAVED TO VAULT! 💰✨',
+                        subtitle: '₱500.00 added to your GBBT Piggy Bank! Money moves only! 💅',
+                        amount: 500.0,
+                        recipient: 'GBBT Vault',
+                        purpose: 'Piggy Bank Savings',
+                        fee: 0.0,
+                      );
+                    },
                   ),
-
-                  const SizedBox(height: 10),
-
-                  Text(
-                    user.savings > 100000
-                        ? "Excellent savings habits 🎉"
-                        : "Keep building your savings 💪",
+                  _QuickAction(
+                    icon: Icons.bar_chart_rounded,
+                    title: 'Invest',
+                    color: AppColors.electricPurple,
+                    onTap: () {
+                      showOaSuccessDialog(
+                        context,
+                        title: 'INVESTMENT BOOM! 📈🔥',
+                        subtitle: 'GBBT Rainbow Index is soaring +15.4%! Stonks are looking fabulous! 🚀',
+                        amount: 1000.0,
+                        recipient: 'GBBT Rainbow Fund',
+                        purpose: 'Portfolio Growth',
+                        fee: 0.0,
+                      );
+                    },
+                  ),
+                  _QuickAction(
+                    icon: Icons.receipt_long_rounded,
+                    title: 'Bills',
+                    color: AppColors.neonGold,
+                    onTap: () {
+                      showOaSuccessDialog(
+                        context,
+                        title: 'BILLS PAID IN FULL! 🧾💅',
+                        subtitle: 'Zero debt, 100% Sass! You are an unbothered queen! 👑',
+                        amount: 1250.0,
+                        recipient: 'Glamour Utilities',
+                        purpose: 'Bills Settlement',
+                        fee: 0.0,
+                      );
+                    },
                   ),
                 ],
               ),
-            ),
+              const SizedBox(height: 24),
 
-            const SizedBox(height: 24),
-
-            /// QUICK ACTIONS
-            Text(
-              "Quick Actions",
-              style:
-                  Theme.of(context)
-                      .textTheme
-                      .titleMedium,
-            ),
-
-            const SizedBox(height: 12),
-
-            Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.spaceAround,
-              children: const [
-                _QuickAction(
-                  icon: Icons.send,
-                  title: 'Transfer',
-                  color: Colors.blue,
-                ),
-                _QuickAction(
-                  icon: Icons.savings,
-                  title: 'Save',
-                  color: Colors.green,
-                ),
-                _QuickAction(
-                  icon: Icons.bar_chart,
-                  title: 'Invest',
-                  color: Colors.purple,
-                ),
-                _QuickAction(
-                  icon: Icons.receipt_long,
-                  title: 'Bills',
-                  color: Colors.orange,
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 28),
-
-            /// FEATURES
-            Text(
-              'Features',
-              style:
-                  Theme.of(context)
-                      .textTheme
-                      .titleMedium,
-            ),
-
-            const SizedBox(height: 12),
-
-            GridView.count(
-              shrinkWrap: true,
-              physics:
-                  const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              mainAxisSpacing: 14,
-              crossAxisSpacing: 14,
-              childAspectRatio: 1.25,
-              children: [
-                _FeatureCard(
-                  icon: Icons.send_rounded,
-                  label: 'Bank Transfer',
-                  subtitle:
-                      'Free for LGBTQIA+',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            TransferScreen(
-                              user: user,
-                            ),
-                      ),
-                    );
-                  },
-                ),
-                _FeatureCard(
-                  icon:
-                      Icons
-                          .chat_bubble_outline_rounded,
-                  label: 'Chatbot',
-                  subtitle:
-                      'Ask GBBT anything',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            const ChatbotScreen(),
-                      ),
-                    );
-                  },
-                ),
-                _FeatureCard(
-                  icon:
-                      Icons.favorite_border_rounded,
-                  label: 'Money Match',
-                  subtitle:
-                      'Date by tax bracket',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            DatingScreen(
-                              user: user,
-                            ),
-                      ),
-                    );
-                  },
-                ),
-                _FeatureCard(
-                  icon:
-                      Icons.auto_awesome_outlined,
-                  label: 'Vibe Check',
-                  subtitle:
-                      'Certified fabulous?',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            const VibeCheckScreen(),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-
-            /// RECENT ACTIVITY
-            Text(
-              'Recent Activity',
-              style:
-                  Theme.of(context)
-                      .textTheme
-                      .titleMedium,
-            ),
-
-            const SizedBox(height: 12),
-
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius:
-                    BorderRadius.circular(20),
-                boxShadow: AppShadow.soft,
-              ),
-              child: const Column(
+              // 5. FEATURES GRID
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _ActivityTile(
-                    icon: Icons.send,
-                    title: 'Transfer to Jamie',
-                    amount: '- ₱2,500',
+                  const RainbowShimmerText(
+                    text: 'Fabulous Features ✨',
+                    fontSize: 22,
                   ),
-                  Divider(height: 1),
-                  _ActivityTile(
-                    icon: Icons.savings,
-                    title: 'Savings Deposit',
-                    amount: '+ ₱10,000',
-                  ),
-                  Divider(height: 1),
-                  _ActivityTile(
-                    icon: Icons.favorite,
-                    title:
-                        'Money Match Premium',
-                    amount: '- ₱99',
+                  const InteractiveSticker(
+                    text: '💅 BONGGA',
+                    rotateAngle: -0.04,
                   ),
                 ],
               ),
-            ),
-          ],
+              const SizedBox(height: 14),
+
+              GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: 2,
+                mainAxisSpacing: 14,
+                crossAxisSpacing: 14,
+                childAspectRatio: 1.15,
+                children: [
+                  _FeatureCard(
+                    icon: Icons.send_rounded,
+                    label: 'Bank Transfer',
+                    subtitle: 'Free for LGBTQIA+ 🌈',
+                    badgeText: '⚡ FREE',
+                    accentColor: AppColors.hotPink,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => TransferScreen(user: user),
+                      ),
+                    ),
+                  ),
+                  _FeatureCard(
+                    icon: Icons.chat_bubble_outline_rounded,
+                    label: 'Chatbot',
+                    subtitle: 'Ask GBBT anything 🤖',
+                    badgeText: '🤖 SASS',
+                    accentColor: AppColors.electricPurple,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const ChatbotScreen(),
+                      ),
+                    ),
+                  ),
+                  _FeatureCard(
+                    icon: Icons.favorite_rounded,
+                    label: 'Money Match',
+                    subtitle: 'Date by tax bracket 💖',
+                    badgeText: '🔥 HOT',
+                    accentColor: AppColors.magenta,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => DatingScreen(user: user),
+                      ),
+                    ),
+                  ),
+                  _FeatureCard(
+                    icon: Icons.auto_awesome_rounded,
+                    label: 'Vibe Check',
+                    subtitle: 'Certified fabulous? ✨',
+                    badgeText: '✨ 100%',
+                    accentColor: AppColors.cyanSparkle,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const VibeCheckScreen(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // 6. RECENT ACTIVITY
+              Text(
+                'Recent Activity 📜',
+                style: GoogleFonts.fredoka(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.ink,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              BonggaCard(
+                hasRainbowGlow: false,
+                padding: EdgeInsets.zero,
+                child: Column(
+                  children: const [
+                    _ActivityTile(
+                      icon: Icons.send_rounded,
+                      title: 'Transfer to Jamie',
+                      subtitle: 'Personal Transfer · Fee Waived 🌈',
+                      amount: '- ₱2,500',
+                      isNegative: true,
+                    ),
+                    Divider(height: 1, color: AppColors.line),
+                    _ActivityTile(
+                      icon: Icons.savings_rounded,
+                      title: 'Savings Deposit',
+                      subtitle: 'GBBT Starter Bonus 💸',
+                      amount: '+ ₱10,000',
+                      isNegative: false,
+                    ),
+                    Divider(height: 1, color: AppColors.line),
+                    _ActivityTile(
+                      icon: Icons.favorite_rounded,
+                      title: 'Money Match Premium',
+                      subtitle: 'Tax Bracket Match Pass ✨',
+                      amount: '- ₱99',
+                      isNegative: true,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -495,38 +550,49 @@ class _QuickAction extends StatelessWidget {
   final IconData icon;
   final String title;
   final Color color;
+  final VoidCallback onTap;
 
   const _QuickAction({
     required this.icon,
     required this.title,
     required this.color,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            color: color.withOpacity(.12),
-            shape: BoxShape.circle,
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            width: 58,
+            height: 58,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.18),
+              shape: BoxShape.circle,
+              border: Border.all(color: color.withOpacity(0.4), width: 1.5),
+              boxShadow: [
+                BoxShadow(
+                  color: color.withOpacity(0.2),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Icon(icon, color: color, size: 26),
           ),
-          child: Icon(
-            icon,
-            color: color,
+          const SizedBox(height: 6),
+          Text(
+            title,
+            style: GoogleFonts.fredoka(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+              color: AppColors.ink,
+            ),
           ),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -534,30 +600,50 @@ class _QuickAction extends StatelessWidget {
 class _ActivityTile extends StatelessWidget {
   final IconData icon;
   final String title;
+  final String subtitle;
   final String amount;
+  final bool isNegative;
 
   const _ActivityTile({
     required this.icon,
     required this.title,
+    required this.subtitle,
     required this.amount,
+    required this.isNegative,
   });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: CircleAvatar(
-        backgroundColor:
-            AppColors.lavender.withOpacity(.25),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
+      leading: Container(
+        width: 42,
+        height: 42,
+        decoration: BoxDecoration(
+          color: (isNegative ? AppColors.hotPink : AppColors.limeGreen)
+              .withOpacity(0.15),
+          shape: BoxShape.circle,
+        ),
         child: Icon(
           icon,
-          color: AppColors.primary,
+          color: isNegative ? AppColors.hotPink : AppColors.limeGreen,
+          size: 20,
         ),
       ),
-      title: Text(title),
+      title: Text(
+        title,
+        style: GoogleFonts.fredoka(fontSize: 14.5, fontWeight: FontWeight.w600),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: GoogleFonts.inter(fontSize: 11.5, color: AppColors.inkMuted),
+      ),
       trailing: Text(
         amount,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
+        style: GoogleFonts.fredoka(
+          fontWeight: FontWeight.w700,
+          fontSize: 15,
+          color: isNegative ? AppColors.ink : AppColors.limeGreen,
         ),
       ),
     );
@@ -568,69 +654,71 @@ class _FeatureCard extends StatelessWidget {
   final IconData icon;
   final String label;
   final String subtitle;
+  final String badgeText;
+  final Color accentColor;
   final VoidCallback onTap;
 
   const _FeatureCard({
     required this.icon,
     required this.label,
     required this.subtitle,
+    required this.badgeText,
+    required this.accentColor,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return BonggaCard(
       onTap: onTap,
-      borderRadius:
-          BorderRadius.circular(20),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius:
-              BorderRadius.circular(20),
-          boxShadow: AppShadow.soft,
-        ),
-        child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: AppColors
-                    .lavender
-                    .withOpacity(.35),
-                borderRadius:
-                    BorderRadius.circular(
-                      14,
-                    ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: accentColor.withOpacity(0.18),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Icon(icon, color: accentColor, size: 24),
               ),
-              child: Icon(
-                icon,
-                color: AppColors.primary,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: accentColor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  badgeText,
+                  style: GoogleFonts.fredoka(
+                    color: Colors.white,
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
+            ],
+          ),
+          const Spacer(),
+          Text(
+            label,
+            style: GoogleFonts.fredoka(
+              fontWeight: FontWeight.w600,
+              fontSize: 15,
+              color: AppColors.ink,
             ),
-            const Spacer(),
-            Text(
-              label,
-              style: const TextStyle(
-                fontWeight:
-                    FontWeight.w700,
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              subtitle,
-              style: TextStyle(
-                fontSize: 11.5,
-                color: AppColors.inkMuted,
-              ),
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            subtitle,
+            style: GoogleFonts.inter(fontSize: 11.5, color: AppColors.inkMuted),
+          ),
+        ],
       ),
     );
   }
