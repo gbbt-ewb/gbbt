@@ -19,6 +19,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
 
   bool _isTyping = false;
   String? _userName;
+  double _todaySpend = 0;
 
   final List<String> _suggestions = [
     "Check Balance ✨",
@@ -80,6 +81,46 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       return "😊 Any time, queen! Stay fabulous & keep saving! 💖✨";
     }
 
+    if (msg.startsWith("save ")) {
+  final amount = double.tryParse(
+    msg.replaceAll("save", "").trim(),
+  );
+
+  if (amount != null) {
+    final yearly = amount * 12;
+
+    return "📈 If you save ₱${amount.toStringAsFixed(0)} every month, you'll have about ₱${yearly.toStringAsFixed(0)} after 1 year bestie! 💎";
+  }
+}
+  if (msg.startsWith("spent ")) {
+  final amount = double.tryParse(
+    msg.replaceAll("spent", "").trim(),
+  );
+
+  if (amount != null) {
+    _todaySpend += amount;
+
+    return "💸 Expense added!\nToday's spending: ₱${_todaySpend.toStringAsFixed(2)}";
+  }
+}
+
+if (msg.contains("score")) {
+  final score = 75 + DateTime.now().second % 25;
+
+  return "👑 Glitter Score: $score/100\n✨ Fabulous\n💰 Financial Discipline: Strong\n🌈 Aura Status: Legendary";
+}
+
+if (msg.startsWith("loan ")) {
+  final amount = double.tryParse(
+    msg.replaceAll("loan", "").trim(),
+  );
+
+  if (amount != null) {
+    final monthly = amount / 12;
+
+    return "🏦 Estimated monthly payment:\n₱${monthly.toStringAsFixed(2)} for 12 months 💅";
+  }
+}
     return "🤖 Honey, I hear you loud and clear! For custom VIP requests, GBBT concierge is at your service 24/7 ✨";
   }
 
@@ -97,6 +138,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       );
       _isTyping = true;
     });
+    FunAudioPlayer.playStickerPop();
 
     _controller.clear();
     _scrollToBottom();
@@ -114,6 +156,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       );
       _isTyping = false;
     });
+    FunAudioPlayer.playPopupFanfare();
 
     _scrollToBottom();
   }
