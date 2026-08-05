@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../app_theme.dart';
 import '../models.dart';
 import '../shared_widgets.dart';
+import 'aura_exchange_screen.dart';
+import 'broke_finder_screen.dart';
 import 'chatbot_screen.dart';
 import 'dating_screen.dart';
 import 'transfer_screen.dart';
@@ -489,6 +491,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (_) => const VibeCheckScreen(),
+                      ),
+                    ),
+                  ),
+                  _FeatureCard(
+                    icon: Icons.map_rounded,
+                    label: 'BrokeFinder',
+                    subtitle: 'City wealth map 🗺️',
+                    badgeText: '📊 CITY AVG',
+                    accentColor: AppColors.limeGreen,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const BrokeFinderScreen(),
+                      ),
+                    ),
+                  ),
+                  _FeatureCard(
+                    icon: Icons.show_chart_rounded,
+                    label: 'Aura Exchange',
+                    subtitle: 'Invest in vibes 📈',
+                    badgeText: '🚀 TRENDING',
+                    accentColor: AppColors.neonGold,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const AuraExchangeScreen(),
                       ),
                     ),
                   ),

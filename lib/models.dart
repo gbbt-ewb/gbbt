@@ -183,3 +183,72 @@ const mockDatingProfiles = [
     ],
   ),
 ];
+
+// ═══════════════════════════════════════════════════════════
+// BROKEFINDER — city-level AGGREGATE wealth data only.
+// Deliberately no per-user pins or coordinates: showing exactly
+// which individual has how much money, tied to a location, is a
+// real safety risk (it's the same combination used for targeting
+// wealthy people), so this stays at the city-aggregate level.
+// lat/lng below are normalized 0–1 positions for a stylized map
+// illustration, not real-world geographic coordinates.
+// ═══════════════════════════════════════════════════════════
+@immutable
+class CityWealth {
+  final String city;
+  final double avgSavings;
+  final int accountCount;
+  final double mapX;
+  final double mapY;
+  final String vibe;
+
+  const CityWealth({
+    required this.city,
+    required this.avgSavings,
+    required this.accountCount,
+    required this.mapX,
+    required this.mapY,
+    required this.vibe,
+  });
+}
+
+const mockCityWealth = [
+  CityWealth(city: 'BGC', avgSavings: 620000, accountCount: 184, mapX: 0.62, mapY: 0.55, vibe: 'Certified Rich Zone 💎'),
+  CityWealth(city: 'Makati', avgSavings: 480000, accountCount: 210, mapX: 0.56, mapY: 0.50, vibe: 'Old Money Energy 👑'),
+  CityWealth(city: 'Quezon City', avgSavings: 210000, accountCount: 340, mapX: 0.38, mapY: 0.46, vibe: 'Comfortably Bongga 💅'),
+  CityWealth(city: 'Cebu', avgSavings: 175000, accountCount: 260, mapX: 0.70, mapY: 0.30, vibe: 'Rising Icon Zone ✨'),
+  CityWealth(city: 'Davao', avgSavings: 140000, accountCount: 190, mapX: 0.84, mapY: 0.42, vibe: 'Grinding Bestie Zone 💪'),
+  CityWealth(city: 'Baguio', avgSavings: 95000, accountCount: 120, mapX: 0.22, mapY: 0.34, vibe: 'Struggling Bestie Zone 🥲'),
+];
+
+// ═══════════════════════════════════════════════════════════
+// AURA EXCHANGE — a meme-stock market for personality, not
+// appearance. Deliberately NOT connected to Vibe Check or any
+// camera/photo — the "Aura Score" is derived from playful app
+// engagement stats (streaks, chat sass, transactions) so nobody's
+// worth is tied to how they look.
+// ═══════════════════════════════════════════════════════════
+@immutable
+class AuraStock {
+  final String name;
+  final String tagline;
+  final int auraScore;
+  final double pricePerShare;
+  final double changePercent;
+
+  const AuraStock({
+    required this.name,
+    required this.tagline,
+    required this.auraScore,
+    required this.pricePerShare,
+    required this.changePercent,
+  });
+}
+
+const mockAuraStocks = [
+  AuraStock(name: 'Divine C.', tagline: 'Comeback queen energy · 47-day login streak 🔥', auraScore: 88, pricePerShare: 42.50, changePercent: 5.2),
+  AuraStock(name: 'Andi S.', tagline: 'Chaotic good vibes · Top chatbot roaster 🌈', auraScore: 76, pricePerShare: 31.10, changePercent: -1.4),
+  AuraStock(name: 'Jamie C.', tagline: 'Spreadsheet royalty · Never missed a bill 👑', auraScore: 91, pricePerShare: 58.00, changePercent: 8.9),
+  AuraStock(name: 'Kai R.', tagline: 'Soft launch legend · Quietly maxing savings ✨', auraScore: 82, pricePerShare: 39.75, changePercent: 2.1),
+  AuraStock(name: 'Reign T.', tagline: 'Certified bestie material · Referred 12 friends 💖', auraScore: 70, pricePerShare: 24.30, changePercent: -3.0),
+];
