@@ -44,7 +44,7 @@ class _AuraExchangeScreenState extends State<AuraExchangeScreen> {
         behavior: SnackBarBehavior.floating,
         backgroundColor: AppColors.ink,
         content: Text(
-          '🎁 Daily reward claimed! +250 GBBT Coins ✨',
+          '🎁 Daily reward claimed (+250 GBBT Coins)!',
           style: GoogleFonts.fredoka(),
         ),
       ),
@@ -121,269 +121,341 @@ class _AuraExchangeScreenState extends State<AuraExchangeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BonggaBackground(
-        child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
-            children: [
-              // Top Bar Header
-              Row(
+    return ValueListenableBuilder<bool>(
+      valueListenable: AppModeController.instance,
+      builder: (context, isLgbtMode, _) {
+        return Scaffold(
+          body: BonggaBackground(
+            child: SafeArea(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.arrow_back_ios_new, size: 18, color: AppColors.ink),
-                    style: IconButton.styleFrom(backgroundColor: Colors.white, elevation: 2),
+                  // Top Bar Header
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.arrow_back_ios_new, size: 18, color: AppColors.ink),
+                        style: IconButton.styleFrom(backgroundColor: Colors.white, elevation: 2),
+                      ),
+                      const SizedBox(width: 10),
+                      const Expanded(
+                        child: RainbowShimmerText(
+                          text: 'Aura Exchange 📈',
+                          fontSize: 22,
+                        ),
+                      ),
+                      InteractiveSticker(
+                        text: isLgbtMode ? '🚀 BULLISH' : 'MARKET',
+                        backgroundColor: isLgbtMode ? AppColors.limeGreen : const Color(0xFFF3F4F6),
+                        textColor: isLgbtMode ? AppColors.ink : Colors.black,
+                        rotateAngle: 0.04,
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 10),
-                  const Expanded(
-                    child: RainbowShimmerText(
-                      text: 'Aura Exchange 📈',
-                      fontSize: 22,
+                  const SizedBox(height: 18),
+
+                  // Available Balance Card
+                  BonggaCard(
+                    padding: EdgeInsets.zero,
+                    hasRainbowGlow: true,
+                    child: Container(
+                      padding: const EdgeInsets.all(22),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(isLgbtMode ? 24 : 14),
+                        gradient: isLgbtMode
+                            ? electricRainbowGradient
+                            : const LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [Color(0xFF111111), Color(0xFF222222)],
+                              ),
+                      ),
+                      child: Column(
+                        children: [
+                          const Text('💰', style: TextStyle(fontSize: 48)),
+                          const SizedBox(height: 8),
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              '${_coins.toStringAsFixed(0)} GBBT Coins',
+                              style: isLgbtMode
+                                  ? GoogleFonts.fredoka(
+                                      color: Colors.white,
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.w700,
+                                    )
+                                  : GoogleFonts.inter(
+                                      color: Colors.white,
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            isLgbtMode ? 'Available Balance ✨' : 'Available Balance',
+                            style: GoogleFonts.inter(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const InteractiveSticker(
-                    text: '🚀 BULLISH',
-                    backgroundColor: AppColors.limeGreen,
-                    textColor: AppColors.ink,
-                    rotateAngle: 0.04,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 18),
+                  const SizedBox(height: 16),
 
-              // Available Balance Card
-              BonggaCard(
-                padding: EdgeInsets.zero,
-                hasRainbowGlow: true,
-                child: Container(
-                  padding: const EdgeInsets.all(22),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24),
-                    gradient: electricRainbowGradient,
+                  // Daily Reward Button
+                  GradientButton(
+                    label: _claimedReward ? 'Reward Claimed ✅' : 'Claim Daily Reward (+250) 🎁',
+                    icon: Icons.card_giftcard_rounded,
+                    onPressed: _claimedReward ? null : _claimReward,
                   ),
-                  child: Column(
+                  const SizedBox(height: 20),
+
+                  // Aura Index & Top Auras Row
+                  Row(
                     children: [
-                      const Text('💰', style: TextStyle(fontSize: 48)),
-                      const SizedBox(height: 8),
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          '${_coins.toStringAsFixed(0)} GBBT Coins',
-                          style: GoogleFonts.fredoka(
-                            color: Colors.white,
-                            fontSize: 32,
-                            fontWeight: FontWeight.w700,
+                      Expanded(
+                        child: BonggaCard(
+                          hasRainbowGlow: false,
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            children: [
+                              Text(
+                                '📊 Aura Index',
+                                style: isLgbtMode
+                                    ? GoogleFonts.fredoka(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 15,
+                                        color: AppColors.ink,
+                                      )
+                                    : GoogleFonts.inter(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 15,
+                                        color: Colors.black,
+                                      ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                _auraIndex.toStringAsFixed(1),
+                                style: isLgbtMode
+                                    ? GoogleFonts.fredoka(
+                                        fontSize: 36,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.hotPink,
+                                      )
+                                    : GoogleFonts.inter(
+                                        fontSize: 36,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.black,
+                                      ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                isLgbtMode ? 'Bullish Vibes ✨' : 'Market Index',
+                                style: GoogleFonts.inter(
+                                  fontSize: 11.5,
+                                  color: isLgbtMode ? AppColors.inkMuted : const Color(0xFF6B7280),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Available Balance ✨',
-                        style: GoogleFonts.inter(
-                          color: Colors.white.withOpacity(0.9),
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w500,
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: BonggaCard(
+                          hasRainbowGlow: false,
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '🏆 Top Auras',
+                                style: isLgbtMode
+                                    ? GoogleFonts.fredoka(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 15,
+                                        color: AppColors.ink,
+                                      )
+                                    : GoogleFonts.inter(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 15,
+                                        color: Colors.black,
+                                      ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                '🥇 Sam · 98.4%',
+                                style: isLgbtMode
+                                    ? GoogleFonts.fredoka(fontSize: 13, color: AppColors.ink)
+                                    : GoogleFonts.inter(fontSize: 13, color: Colors.black),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '🥈 Andi · 94.2%',
+                                style: isLgbtMode
+                                    ? GoogleFonts.fredoka(fontSize: 13, color: AppColors.ink)
+                                    : GoogleFonts.inter(fontSize: 13, color: Colors.black),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '🥉 Jamie · 91.0%',
+                                style: isLgbtMode
+                                    ? GoogleFonts.fredoka(fontSize: 13, color: AppColors.ink)
+                                    : GoogleFonts.inter(fontSize: 13, color: Colors.black),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ),
-              const SizedBox(height: 16),
+                  const SizedBox(height: 20),
 
-              // Daily Reward Button
-              GradientButton(
-                label: _claimedReward ? 'Reward Claimed ✅' : 'Claim Daily Reward (+250) 🎁',
-                icon: Icons.card_giftcard_rounded,
-                onPressed: _claimedReward ? null : _claimReward,
-              ),
-              const SizedBox(height: 20),
-
-              // Aura Index & Top Auras Row
-              Row(
-                children: [
-                  Expanded(
-                    child: BonggaCard(
-                      hasRainbowGlow: false,
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        children: [
-                          Text(
-                            '📊 Aura Index',
-                            style: GoogleFonts.fredoka(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
-                              color: AppColors.ink,
+                  // Portfolio Summary Card
+                  BonggaCard(
+                    hasRainbowGlow: false,
+                    padding: const EdgeInsets.all(18),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '💼 Portfolio Holdings',
+                              style: isLgbtMode
+                                  ? GoogleFonts.fredoka(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 16,
+                                      color: AppColors.ink,
+                                    )
+                                  : GoogleFonts.inter(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                    ),
+                            ),
+                            Text(
+                              '${_portfolioValue.toStringAsFixed(0)} Coins',
+                              style: isLgbtMode
+                                  ? GoogleFonts.fredoka(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 15,
+                                      color: AppColors.hotPink,
+                                    )
+                                  : GoogleFonts.inter(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 15,
+                                      color: Colors.black,
+                                    ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        if (_portfolio.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Text(
+                              'No investments yet. Buy some auras below!',
+                              style: GoogleFonts.inter(
+                                color: isLgbtMode ? AppColors.inkMuted : const Color(0xFF6B7280),
+                                fontSize: 13,
+                              ),
+                            ),
+                          )
+                        else
+                          Material(
+                            color: Colors.transparent,
+                            child: Column(
+                              children: _portfolio.entries.map((entry) {
+                                if (entry.value <= 0) return const SizedBox();
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 6),
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: isLgbtMode ? AppColors.cream : const Color(0xFFF3F4F6),
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        entry.key,
+                                        style: isLgbtMode
+                                            ? GoogleFonts.fredoka(
+                                                fontWeight: FontWeight.w600,
+                                                color: AppColors.ink,
+                                                fontSize: 14,
+                                              )
+                                            : GoogleFonts.inter(
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.black,
+                                                fontSize: 14,
+                                              ),
+                                      ),
+                                      Text(
+                                        '${entry.value.toStringAsFixed(0)} Coins',
+                                        style: isLgbtMode
+                                            ? GoogleFonts.fredoka(
+                                                fontWeight: FontWeight.w700,
+                                                color: AppColors.electricPurple,
+                                                fontSize: 14,
+                                              )
+                                            : GoogleFonts.inter(
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.black,
+                                                fontSize: 14,
+                                              ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            _auraIndex.toStringAsFixed(1),
-                            style: GoogleFonts.fredoka(
-                              fontSize: 36,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.hotPink,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Bullish Vibes ✨',
-                            style: GoogleFonts.inter(
-                              fontSize: 11.5,
-                              color: AppColors.inkMuted,
-                            ),
-                          ),
-                        ],
-                      ),
+                      ],
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: BonggaCard(
-                      hasRainbowGlow: false,
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '🏆 Top Auras',
-                            style: GoogleFonts.fredoka(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
-                              color: AppColors.ink,
-                            ),
+                  const SizedBox(height: 24),
+
+                  // Trending Auras Section Title
+                  Text(
+                    'Trending Auras 🔥',
+                    style: isLgbtMode
+                        ? GoogleFonts.fredoka(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.ink,
+                          )
+                        : GoogleFonts.inter(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            '🥇 Sam · 98.4%',
-                            style: GoogleFonts.fredoka(fontSize: 13, color: AppColors.ink),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '🥈 Andi · 94.2%',
-                            style: GoogleFonts.fredoka(fontSize: 13, color: AppColors.ink),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '🥉 Jamie · 91.0%',
-                            style: GoogleFonts.fredoka(fontSize: 13, color: AppColors.ink),
-                          ),
-                        ],
-                      ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Aura Stock Cards List
+                  ...mockAuraStocks.map(
+                    (stock) => _AuraStockCard(
+                      stock: stock,
+                      investedAmount: _portfolio[stock.name] ?? 0,
+                      onInvest: (amount) => _handleInvest(stock, amount),
+                      onSell: (amount) => _sell(stock, amount),
+                      isLgbtMode: isLgbtMode,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
-
-              // Portfolio Summary Card
-              BonggaCard(
-                hasRainbowGlow: false,
-                padding: const EdgeInsets.all(18),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '💼 Portfolio Holdings',
-                          style: GoogleFonts.fredoka(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16,
-                            color: AppColors.ink,
-                          ),
-                        ),
-                        Text(
-                          '${_portfolioValue.toStringAsFixed(0)} Coins',
-                          style: GoogleFonts.fredoka(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 15,
-                            color: AppColors.hotPink,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    if (_portfolio.isEmpty)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Text(
-                          'No investments yet. Buy some auras below! 🚀',
-                          style: GoogleFonts.inter(
-                            color: AppColors.inkMuted,
-                            fontSize: 13,
-                          ),
-                        ),
-                      )
-                    else
-                      Material(
-                        color: Colors.transparent,
-                        child: Column(
-                          children: _portfolio.entries.map((entry) {
-                            if (entry.value <= 0) return const SizedBox();
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 6),
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: AppColors.cream,
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    entry.key,
-                                    style: GoogleFonts.fredoka(
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.ink,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  Text(
-                                    '${entry.value.toStringAsFixed(0)} Coins',
-                                    style: GoogleFonts.fredoka(
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.electricPurple,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Trending Auras Section Title
-              Text(
-                'Trending Auras 🔥',
-                style: GoogleFonts.fredoka(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.ink,
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              // Aura Stock Cards List
-              ...mockAuraStocks.map(
-                (stock) => _AuraStockCard(
-                  stock: stock,
-                  investedAmount: _portfolio[stock.name] ?? 0,
-                  onInvest: (amount) => _handleInvest(stock, amount),
-                  onSell: (amount) => _sell(stock, amount),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -393,12 +465,14 @@ class _AuraStockCard extends StatelessWidget {
   final double investedAmount;
   final Function(double) onInvest;
   final Function(double) onSell;
+  final bool isLgbtMode;
 
   const _AuraStockCard({
     required this.stock,
     required this.investedAmount,
     required this.onInvest,
     required this.onSell,
+    required this.isLgbtMode,
   });
 
   @override
@@ -417,9 +491,10 @@ class _AuraStockCard extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    gradient: electricRainbowGradient,
+                    gradient: isLgbtMode ? electricRainbowGradient : null,
+                    color: isLgbtMode ? null : const Color(0xFF111111),
                     shape: BoxShape.circle,
-                    boxShadow: AppShadow.soft,
+                    boxShadow: isLgbtMode ? AppShadow.soft : null,
                   ),
                   child: Center(
                     child: Text(
@@ -439,17 +514,23 @@ class _AuraStockCard extends StatelessWidget {
                     children: [
                       Text(
                         stock.name,
-                        style: GoogleFonts.fredoka(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                          color: AppColors.ink,
-                        ),
+                        style: isLgbtMode
+                            ? GoogleFonts.fredoka(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16,
+                                color: AppColors.ink,
+                              )
+                            : GoogleFonts.inter(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
                       ),
                       Text(
                         stock.tagline,
                         style: GoogleFonts.inter(
                           fontSize: 12,
-                          color: AppColors.inkMuted,
+                          color: isLgbtMode ? AppColors.inkMuted : const Color(0xFF6B7280),
                         ),
                       ),
                     ],
@@ -460,25 +541,39 @@ class _AuraStockCard extends StatelessWidget {
                   children: [
                     Text(
                       '₱${stock.pricePerShare}',
-                      style: GoogleFonts.fredoka(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        color: AppColors.ink,
-                      ),
+                      style: isLgbtMode
+                          ? GoogleFonts.fredoka(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                              color: AppColors.ink,
+                            )
+                          : GoogleFonts.inter(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                              color: Colors.black,
+                            ),
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: (isUp ? AppColors.limeGreen : AppColors.hotPink).withOpacity(0.15),
+                        color: isLgbtMode
+                            ? (isUp ? AppColors.limeGreen : AppColors.hotPink).withOpacity(0.15)
+                            : const Color(0xFFF3F4F6),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         '${isUp ? "▲ +" : "▼ "}${stock.changePercent.toStringAsFixed(1)}%',
-                        style: GoogleFonts.fredoka(
-                          color: isUp ? AppColors.limeGreen : AppColors.hotPink,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 12,
-                        ),
+                        style: isLgbtMode
+                            ? GoogleFonts.fredoka(
+                                color: isUp ? AppColors.limeGreen : AppColors.hotPink,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                              )
+                            : GoogleFonts.inter(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                              ),
                       ),
                     ),
                   ],
@@ -493,15 +588,24 @@ class _AuraStockCard extends StatelessWidget {
               children: [
                 Text(
                   'Aura Score',
-                  style: GoogleFonts.inter(fontSize: 12, color: AppColors.inkMuted),
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: isLgbtMode ? AppColors.inkMuted : const Color(0xFF6B7280),
+                  ),
                 ),
                 Text(
-                  '${stock.auraScore.toStringAsFixed(0)}/100 ✨',
-                  style: GoogleFonts.fredoka(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 13,
-                    color: AppColors.electricPurple,
-                  ),
+                  '${stock.auraScore.toStringAsFixed(0)}/100',
+                  style: isLgbtMode
+                      ? GoogleFonts.fredoka(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                          color: AppColors.electricPurple,
+                        )
+                      : GoogleFonts.inter(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                          color: Colors.black,
+                        ),
                 ),
               ],
             ),
@@ -511,34 +615,14 @@ class _AuraStockCard extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: stock.auraScore / 100,
                 minHeight: 8,
-                backgroundColor: AppColors.line,
+                backgroundColor: isLgbtMode ? AppColors.line : const Color(0xFFE5E7EB),
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  isUp ? AppColors.limeGreen : AppColors.hotPink,
+                  isLgbtMode
+                      ? (isUp ? AppColors.limeGreen : AppColors.hotPink)
+                      : Colors.black,
                 ),
               ),
             ),
-
-            if (investedAmount > 0) ...[
-              const SizedBox(height: 12),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: AppColors.hotPink.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.hotPink.withOpacity(0.3)),
-                ),
-                child: Text(
-                  'Holding: ${investedAmount.toStringAsFixed(0)} Coins 💼',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.fredoka(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 13,
-                    color: AppColors.hotPink,
-                  ),
-                ),
-              ),
-            ],
             const SizedBox(height: 14),
 
             // Action Buttons
@@ -546,47 +630,41 @@ class _AuraStockCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () => onInvest(100),
+                    onPressed: () => onSell(100),
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: AppColors.hotPink, width: 1.5),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      side: BorderSide(
+                        color: isLgbtMode ? AppColors.hotPink : Colors.black,
+                        width: 1.5,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(isLgbtMode ? 14 : 8),
+                      ),
                     ),
                     child: Text(
-                      '+100 💸',
-                      style: GoogleFonts.fredoka(color: AppColors.hotPink, fontWeight: FontWeight.w600, fontSize: 13),
+                      'Sell 100',
+                      style: isLgbtMode
+                          ? GoogleFonts.fredoka(color: AppColors.hotPink, fontWeight: FontWeight.w600)
+                          : GoogleFonts.inter(color: Colors.black, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => onInvest(500),
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: AppColors.electricPurple, width: 1.5),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                    ),
-                    child: Text(
-                      '+500 🚀',
-                      style: GoogleFonts.fredoka(color: AppColors.electricPurple, fontWeight: FontWeight.w600, fontSize: 13),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 10),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () => onSell(100),
+                    onPressed: () => onInvest(100),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.hotPink,
+                      backgroundColor: isLgbtMode ? AppColors.electricPurple : Colors.black,
                       foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      elevation: 2,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(isLgbtMode ? 14 : 8),
+                      ),
                     ),
                     child: Text(
-                      'Sell 100 💰',
-                      style: GoogleFonts.fredoka(fontWeight: FontWeight.w600, fontSize: 13),
+                      'Buy 100 🚀',
+                      style: isLgbtMode
+                          ? GoogleFonts.fredoka(fontWeight: FontWeight.w600)
+                          : GoogleFonts.inter(fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
