@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../app_theme.dart';
 import '../models.dart';
 import '../shared_widgets.dart';
@@ -36,8 +37,22 @@ class _TransferScreenState extends State<TransferScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        content: Text(_fee == 0 ? 'Sent! Fee waived — being fabulous has its perks. 🌈' : 'Sent! ₱${_fee.toStringAsFixed(2)} fee applied.'),
+        backgroundColor: AppColors.ink,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        content: Row(
+          children: [
+            const Text('💸', style: TextStyle(fontSize: 22)),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                _fee == 0
+                    ? 'Sent! ₱0 Fee Waived — LGBTQIA+ privilege activated! 🌈✨'
+                    : 'Sent! ₱${_fee.toStringAsFixed(2)} fee applied. Stay fabulous!',
+                style: GoogleFonts.fredoka(color: Colors.white, fontSize: 13.5),
+              ),
+            ),
+          ],
+        ),
       ),
     );
     _recipientController.clear();
@@ -47,57 +62,108 @@ class _TransferScreenState extends State<TransferScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.cream,
-      appBar: AppBar(backgroundColor: AppColors.cream, elevation: 0, title: const Text('Bank Transfer'), foregroundColor: AppColors.ink),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(color: AppColors.lavender.withOpacity(0.25), borderRadius: BorderRadius.circular(16)),
-                  child: Row(
+      body: BonggaBackground(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
-                      const Icon(Icons.favorite, color: AppColors.primary, size: 20),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          widget.user.isLgbtqia ? "You're getting free transfers, always. 🌈" : 'Standard transfer fee: ₱15.00',
-                          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-                        ),
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: AppColors.ink),
+                        style: IconButton.styleFrom(backgroundColor: Colors.white, elevation: 2),
                       ),
+                      const SizedBox(width: 12),
+                      const RainbowShimmerText(text: 'Bank Transfer 💸', fontSize: 24),
                     ],
                   ),
-                ),
-                const SizedBox(height: 24),
-                Text('Recipient Account / Username', style: Theme.of(context).textTheme.labelLarge),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: _recipientController,
-                  decoration: const InputDecoration(hintText: '@username or account number', prefixIcon: Icon(Icons.person_search_outlined, size: 20)),
-                  validator: (value) => (value == null || value.trim().isEmpty) ? 'Recipient is required' : null,
-                ),
-                const SizedBox(height: 20),
-                Text('Amount', style: Theme.of(context).textTheme.labelLarge),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: _amountController,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(hintText: '0.00', prefixIcon: Icon(Icons.attach_money_rounded, size: 20)),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) return 'Amount is required';
-                    final parsed = double.tryParse(value);
-                    if (parsed == null || parsed <= 0) return 'Enter a valid amount';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 28),
-                GradientButton(label: 'Send Money', isLoading: _isLoading, onPressed: _handleTransfer),
-              ],
+                  const SizedBox(height: 20),
+
+                  // Perk Banner
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      gradient: electricRainbowGradient,
+                      borderRadius: BorderRadius.circular(22),
+                      boxShadow: AppShadow.soft,
+                    ),
+                    child: Row(
+                      children: [
+                        const Text('👑', style: TextStyle(fontSize: 26)),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            widget.user.isLgbtqia
+                                ? "LGBTQIA+ Privilege: Free ₱0 Transfers Forever! 🌈"
+                                : 'Standard transfer fee: ₱15.00 (Upgrade to Gay for free transfers 👀)',
+                            style: GoogleFonts.fredoka(
+                              color: Colors.white,
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  BonggaCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Recipient Account', style: Theme.of(context).textTheme.labelLarge),
+                            const InteractiveSticker(text: '💅 PAK!', rotateAngle: 0.05),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _recipientController,
+                          decoration: const InputDecoration(
+                            hintText: '@username or GBBT Vault ID',
+                            prefixIcon: Icon(Icons.person_search_rounded, color: AppColors.hotPink, size: 22),
+                          ),
+                          validator: (value) => (value == null || value.trim().isEmpty) ? 'Recipient handle required!' : null,
+                        ),
+                        const SizedBox(height: 20),
+
+                        Text('Amount (PHP)', style: Theme.of(context).textTheme.labelLarge),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _amountController,
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          decoration: const InputDecoration(
+                            hintText: '₱0.00',
+                            prefixIcon: Icon(Icons.payments_rounded, color: AppColors.electricPurple, size: 22),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) return 'Enter an amount, bestie!';
+                            final parsed = double.tryParse(value);
+                            if (parsed == null || parsed <= 0) return 'Enter a valid amount';
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 28),
+
+                        GradientButton(
+                          label: 'Send Cash Now 💖',
+                          icon: Icons.send_rounded,
+                          isLoading: _isLoading,
+                          onPressed: _handleTransfer,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

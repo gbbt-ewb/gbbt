@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../app_theme.dart';
 import '../models.dart';
+import '../shared_widgets.dart';
 import 'welcome_screen.dart';
 import 'transfer_screen.dart';
 import 'chatbot_screen.dart';
@@ -20,123 +22,277 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   String get _greeting {
     final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good morning';
-    if (hour < 18) return 'Good afternoon';
-    return 'Good evening';
+    if (hour < 12) return 'Good morning, queen';
+    if (hour < 18) return 'Good afternoon, iconic';
+    return 'Good evening, bestie';
   }
 
   void _logout() {
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const WelcomeScreen()), (route) => false);
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const WelcomeScreen()),
+      (route) => false,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final user = widget.user;
     return Scaffold(
-      backgroundColor: AppColors.cream,
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: const BoxDecoration(gradient: rainbowGradient, shape: BoxShape.circle),
-                  child: Center(child: Text(user.initials, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800))),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('$_greeting,', style: Theme.of(context).textTheme.bodySmall),
-                      Text(user.firstName, style: Theme.of(context).textTheme.headlineSmall),
-                    ],
+      body: BonggaBackground(
+        child: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+            children: [
+              // Top Bar Header
+              Row(
+                children: [
+                  Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      gradient: electricRainbowGradient,
+                      shape: BoxShape.circle,
+                      boxShadow: AppShadow.lifted,
+                      border: Border.all(color: Colors.white, width: 2.5),
+                    ),
+                    child: Center(
+                      child: Text(
+                        user.initials,
+                        style: GoogleFonts.fredoka(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-                IconButton(
-                  onPressed: _logout,
-                  icon: const Icon(Icons.logout_rounded),
-                  style: IconButton.styleFrom(backgroundColor: Colors.white, foregroundColor: AppColors.ink),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-
-            ClipRRect(
-              borderRadius: BorderRadius.circular(28),
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                decoration: const BoxDecoration(gradient: rainbowGradient),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Available Balance', style: TextStyle(color: Colors.white.withOpacity(0.85), fontSize: 13)),
-                        InkWell(
-                          onTap: () => setState(() => _balanceVisible = !_balanceVisible),
-                          child: Icon(
-                            _balanceVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                            color: Colors.white,
-                            size: 20,
+                        Text(
+                          '$_greeting ✨',
+                          style: GoogleFonts.inter(
+                            fontSize: 13,
+                            color: AppColors.inkMuted,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          user.firstName,
+                          style: GoogleFonts.fredoka(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.ink,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      _balanceVisible ? '₱${user.savings.toStringAsFixed(2)}' : '₱ • • • • • •',
-                      style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w800),
+                  ),
+                  InteractiveSticker(
+                    text: '👑 VIP',
+                    backgroundColor: AppColors.neonGold,
+                    textColor: AppColors.ink,
+                    rotateAngle: 0.05,
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    onPressed: _logout,
+                    icon: const Icon(Icons.logout_rounded, size: 20),
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: AppColors.hotPink,
+                      elevation: 3,
                     ),
-                    const SizedBox(height: 6),
-                    Text(user.taxBracket, style: TextStyle(color: Colors.white.withOpacity(0.85), fontSize: 12.5, fontWeight: FontWeight.w600)),
-                  ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+
+              // GBBT Holographic VIP Balance Card
+              BonggaCard(
+                padding: EdgeInsets.zero,
+                hasRainbowGlow: true,
+                child: Container(
+                  padding: const EdgeInsets.all(22),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFF2B0045),
+                        Color(0xFF800080),
+                        Color(0xFFFF007F),
+                      ],
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              const Text('💳', style: TextStyle(fontSize: 20)),
+                              const SizedBox(width: 8),
+                              Text(
+                                'GBBT DIAMOND VIP VAULT',
+                                style: GoogleFonts.fredoka(
+                                  color: AppColors.neonGold,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
+                            ],
+                          ),
+                          InkWell(
+                            onTap: () => setState(() => _balanceVisible = !_balanceVisible),
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    _balanceVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    _balanceVisible ? 'Hide' : 'Reveal',
+                                    style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 18),
+
+                      Text(
+                        'Available Balance',
+                        style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 13),
+                      ),
+                      const SizedBox(height: 6),
+
+                      Text(
+                        _balanceVisible ? '₱${user.savings.toStringAsFixed(2)}' : '₱ • • • • • • •',
+                        style: GoogleFonts.fredoka(
+                          color: Colors.white,
+                          fontSize: 36,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: Colors.white.withOpacity(0.4)),
+                            ),
+                            child: Text(
+                              user.taxBracket,
+                              style: GoogleFonts.fredoka(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            '4269 •••• •••• 1337',
+                            style: GoogleFonts.fredoka(
+                              color: AppColors.cyanSparkle,
+                              fontSize: 13,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 28),
+              const SizedBox(height: 24),
 
-            Text('Features', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 12),
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              mainAxisSpacing: 14,
-              crossAxisSpacing: 14,
-              childAspectRatio: 1.25,
-              children: [
-                _FeatureCard(
-                  icon: Icons.send_rounded,
-                  label: 'Bank Transfer',
-                  subtitle: 'Free for LGBTQIA+',
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => TransferScreen(user: user))),
-                ),
-                _FeatureCard(
-                  icon: Icons.chat_bubble_outline_rounded,
-                  label: 'Chatbot',
-                  subtitle: 'Ask GBBT anything',
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChatbotScreen())),
-                ),
-                _FeatureCard(
-                  icon: Icons.favorite_border_rounded,
-                  label: 'Money Match',
-                  subtitle: 'Date by tax bracket',
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => DatingScreen(user: user))),
-                ),
-                _FeatureCard(
-                  icon: Icons.auto_awesome_outlined,
-                  label: 'Vibe Check',
-                  subtitle: 'Certified fabulous?',
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const VibeCheckScreen())),
-                ),
-              ],
-            ),
-          ],
+              // Features Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const RainbowShimmerText(text: 'Fabulous Features ✨', fontSize: 22),
+                  const InteractiveSticker(text: '💅 BONGGA', rotateAngle: -0.04),
+                ],
+              ),
+              const SizedBox(height: 14),
+
+              // Feature Cards Grid
+              GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: 2,
+                mainAxisSpacing: 14,
+                crossAxisSpacing: 14,
+                childAspectRatio: 1.15,
+                children: [
+                  _FeatureCard(
+                    icon: Icons.send_rounded,
+                    label: 'Bank Transfer',
+                    subtitle: 'Free for LGBTQIA+ 🌈',
+                    badgeText: '⚡ FREE',
+                    accentColor: AppColors.hotPink,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => TransferScreen(user: user)),
+                    ),
+                  ),
+                  _FeatureCard(
+                    icon: Icons.chat_bubble_outline_rounded,
+                    label: 'Chatbot',
+                    subtitle: 'Ask GBBT anything 🤖',
+                    badgeText: '🤖 SASS',
+                    accentColor: AppColors.electricPurple,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const ChatbotScreen()),
+                    ),
+                  ),
+                  _FeatureCard(
+                    icon: Icons.favorite_rounded,
+                    label: 'Money Match',
+                    subtitle: 'Date by tax bracket 💖',
+                    badgeText: '🔥 HOT',
+                    accentColor: AppColors.magenta,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => DatingScreen(user: user)),
+                    ),
+                  ),
+                  _FeatureCard(
+                    icon: Icons.auto_awesome_rounded,
+                    label: 'Vibe Check',
+                    subtitle: 'Certified fabulous? ✨',
+                    badgeText: '✨ 100%',
+                    accentColor: AppColors.cyanSparkle,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const VibeCheckScreen()),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -147,32 +303,74 @@ class _FeatureCard extends StatelessWidget {
   final IconData icon;
   final String label;
   final String subtitle;
+  final String badgeText;
+  final Color accentColor;
   final VoidCallback onTap;
-  const _FeatureCard({required this.icon, required this.label, required this.subtitle, required this.onTap});
+
+  const _FeatureCard({
+    required this.icon,
+    required this.label,
+    required this.subtitle,
+    required this.badgeText,
+    required this.accentColor,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return BonggaCard(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20), boxShadow: AppShadow.soft),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(color: AppColors.lavender.withOpacity(0.35), borderRadius: BorderRadius.circular(14)),
-              child: Icon(icon, color: AppColors.primary),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: accentColor.withOpacity(0.18),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Icon(icon, color: accentColor, size: 24),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: accentColor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  badgeText,
+                  style: GoogleFonts.fredoka(
+                    color: Colors.white,
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const Spacer(),
+          Text(
+            label,
+            style: GoogleFonts.fredoka(
+              fontWeight: FontWeight.w600,
+              fontSize: 15,
+              color: AppColors.ink,
             ),
-            const Spacer(),
-            Text(label, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-            const SizedBox(height: 2),
-            Text(subtitle, style: TextStyle(fontSize: 11.5, color: AppColors.inkMuted)),
-          ],
-        ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            subtitle,
+            style: GoogleFonts.inter(
+              fontSize: 11.5,
+              color: AppColors.inkMuted,
+            ),
+          ),
+        ],
       ),
     );
   }
