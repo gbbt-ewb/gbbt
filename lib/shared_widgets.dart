@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'app_theme.dart';
 
 // ═══════════════════════════════════════════════════════════
-// FUN AUDIO SYNTHESIZER — Zero-dependency HTML5 WAV PCM Audio 🎵✨
+// FUNNY CARTOON AUDIO SYNTHESIZER 🎵🤪
 // Generates funny, humorous sound effects for stickers & popups!
 // ═══════════════════════════════════════════════════════════
 class FunAudioPlayer {
@@ -51,47 +51,46 @@ class FunAudioPlayer {
     }
   }
 
-  /// Interactive Sticker Click / Boing sound! 💅
+  /// Interactive Sticker Click: Funny Cartoon Boing-Wobble! 🤪 spring sound
   static void playStickerPop() {
     const rate = 16000;
-    const numSamples = 2400; // 0.15s
+    const numSamples = 3200; // 0.2s
     final samples = List<int>.generate(numSamples, (i) {
       final t = i / rate;
-      final freq = 300.0 + (t * 2800.0); // Bouncy pitch slide up!
-      final amplitude = (1.0 - (t / 0.15)).clamp(0.0, 1.0);
+      // Funny spring wobble pitch + slide
+      final wobble = math.sin(t * 85.0) * 180.0;
+      final freq = 260.0 + wobble + (t * 2200.0);
+      final amplitude = (1.0 - (t / 0.2)).clamp(0.0, 1.0);
       final val = (math.sin(t * freq * 2 * math.pi) * 127.0 * amplitude).toInt();
       return (val + 128).clamp(0, 255);
     });
     _playPcmWav(samples, rate);
   }
 
-  /// OA Fanfare / Popup Explosion sound! 🎉
+  /// OA Fanfare / Popup Explosion: Funny Ka-Ching + Celebration Chime! 💸🎉
   static void playPopupFanfare() {
     const rate = 16000;
-    const numSamples = 5600; // 0.35s
+    const numSamples = 6400; // 0.4s
     final samples = List<int>.generate(numSamples, (i) {
       final t = i / rate;
       double freq = 523.25; // C5
       if (t > 0.08) freq = 659.25; // E5
       if (t > 0.16) freq = 783.99; // G5
-      if (t > 0.24) freq = 1046.50; // C6 major chord flourish
-      final amplitude = (1.0 - (t / 0.35)).clamp(0.0, 1.0);
-      final val = (math.sin(t * freq * 2 * math.pi) * 127.0 * amplitude).toInt();
+      if (t > 0.24) freq = 1046.50 + math.sin(t * 60) * 100; // C6 with funny vibrato
+      final amplitude = (1.0 - (t / 0.4)).clamp(0.0, 1.0);
+      final val = ((math.sin(t * freq * 2 * math.pi) + math.sin(t * 2400 * 2 * math.pi) * 0.4) * 90.0 * amplitude).toInt();
       return (val + 128).clamp(0, 255);
     });
     _playPcmWav(samples, rate);
   }
 
-  /// Love Match Buzz sound! 💖
+  /// Love Match Buzz: Funny Kiss-Squeak Vibrato! 💋💖
   static void playLoveMatchSound() {
     const rate = 16000;
     const numSamples = 4800; // 0.3s
     final samples = List<int>.generate(numSamples, (i) {
       final t = i / rate;
-      double freq = 440.0;
-      if (t > 0.07) freq = 554.37;
-      if (t > 0.14) freq = 659.25;
-      if (t > 0.21) freq = 880.0;
+      final freq = 500.0 + math.sin(t * 140.0) * 320.0; // Fast squeaky heart vibrato
       final amplitude = (1.0 - (t / 0.3)).clamp(0.0, 1.0);
       final val = (math.sin(t * freq * 2 * math.pi) * 127.0 * amplitude).toInt();
       return (val + 128).clamp(0, 255);
@@ -99,15 +98,20 @@ class FunAudioPlayer {
     _playPcmWav(samples, rate);
   }
 
-  /// Sassy Rejection Pass sound! 💅💔
+  /// Sassy Rejection Pass: Funny Comedy Fail "Wha-wha-whaa-wump!" 🎺💔
   static void playPassSound() {
     const rate = 16000;
-    const numSamples = 4000; // 0.25s
+    const numSamples = 6400; // 0.4s
     final samples = List<int>.generate(numSamples, (i) {
       final t = i / rate;
-      final freq = 550.0 - (t * 1400.0).clamp(0.0, 450.0); // Pitch slide down
-      final amplitude = (1.0 - (t / 0.25)).clamp(0.0, 1.0);
-      final val = (math.sin(t * freq * 2 * math.pi) * 127.0 * amplitude).toInt();
+      double freq = 340.0;
+      if (t > 0.1) freq = 300.0;
+      if (t > 0.2) freq = 260.0;
+      if (t > 0.3) freq = 180.0 - (t * 200.0); // Wha-wha-whaa slide down
+      final amplitude = (1.0 - (t / 0.4)).clamp(0.0, 1.0);
+      // Sawtooth waveform for classic cartoon trombone sound
+      final phase = (t * freq) % 1.0;
+      final val = ((phase - 0.5) * 200.0 * amplitude).toInt();
       return (val + 128).clamp(0, 255);
     });
     _playPcmWav(samples, rate);
@@ -1038,7 +1042,146 @@ Future<void> showOaVibeDialog(
   );
 }
 
-// Dialog Animated Scale & Particle Wrapper
+// ═══════════════════════════════════════════════════════════
+// ANIMATED EXPLOSIVE PARTY POPPER CONFETTI OVERLAY 🥳🎉💥
+// ═══════════════════════════════════════════════════════════
+class PartyPopperOverlay extends StatefulWidget {
+  final Widget child;
+  const PartyPopperOverlay({super.key, required this.child});
+
+  @override
+  State<PartyPopperOverlay> createState() => _PartyPopperOverlayState();
+}
+
+class _PartyPopperOverlayState extends State<PartyPopperOverlay> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  final List<_ConfettiParticle> _particles = [];
+  final math.Random _rng = math.Random();
+
+  static const List<Color> _particleColors = [
+    AppColors.hotPink,
+    AppColors.electricPurple,
+    AppColors.cyanSparkle,
+    AppColors.limeGreen,
+    AppColors.neonGold,
+    AppColors.magenta,
+    Colors.orange,
+    Colors.amber,
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1600),
+    );
+
+    // Blast 50 explosive particles from top-center of dialog!
+    for (int i = 0; i < 50; i++) {
+      final angle = -math.pi * 0.95 + _rng.nextDouble() * (math.pi * 0.9); // upward arc
+      final speed = 150.0 + _rng.nextDouble() * 350.0;
+      _particles.add(_ConfettiParticle(
+        color: _particleColors[i % _particleColors.length],
+        vx: math.cos(angle) * speed,
+        vy: math.sin(angle) * speed,
+        size: 7.0 + _rng.nextDouble() * 9.0,
+        rotationSpeed: (_rng.nextDouble() - 0.5) * 14.0,
+        isCircle: i % 2 == 0,
+      ));
+    }
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, _) {
+        return CustomPaint(
+          foregroundPainter: _ConfettiPainter(
+            particles: _particles,
+            progress: _controller.value,
+          ),
+          child: widget.child,
+        );
+      },
+    );
+  }
+}
+
+class _ConfettiParticle {
+  final Color color;
+  final double vx;
+  final double vy;
+  final double size;
+  final double rotationSpeed;
+  final bool isCircle;
+
+  _ConfettiParticle({
+    required this.color,
+    required this.vx,
+    required this.vy,
+    required this.size,
+    required this.rotationSpeed,
+    required this.isCircle,
+  });
+}
+
+class _ConfettiPainter extends CustomPainter {
+  final List<_ConfettiParticle> particles;
+  final double progress;
+
+  _ConfettiPainter({required this.particles, required this.progress});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (progress >= 1.0) return;
+
+    final originX = size.width / 2;
+    final originY = size.height * 0.15; // Explosive blast location
+
+    final gravity = 500.0 * progress * progress;
+    final opacity = (1.0 - progress * 1.05).clamp(0.0, 1.0);
+
+    for (final p in particles) {
+      final x = originX + p.vx * progress;
+      final y = originY + p.vy * progress + gravity;
+      final rot = p.rotationSpeed * progress;
+
+      final paint = Paint()
+        ..color = p.color.withOpacity(opacity)
+        ..style = PaintingStyle.fill;
+
+      canvas.save();
+      canvas.translate(x, y);
+      canvas.rotate(rot);
+
+      if (p.isCircle) {
+        canvas.drawCircle(Offset.zero, p.size / 2, paint);
+      } else {
+        canvas.drawRect(
+          Rect.fromCenter(center: Offset.zero, width: p.size * 1.5, height: p.size * 0.7),
+          paint,
+        );
+      }
+
+      canvas.restore();
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _ConfettiPainter oldDelegate) => true;
+}
+
+// Dialog Animated Scale & Explosive Particle Wrapper
 class _OaDialogWrapper extends StatefulWidget {
   final Widget child;
   const _OaDialogWrapper({required this.child});
@@ -1082,45 +1225,47 @@ class _OaDialogWrapperState extends State<_OaDialogWrapper> with SingleTickerPro
       scale: _scaleAnim,
       child: Transform.rotate(
         angle: _rotateAnim.value,
-        child: Stack(
-          alignment: Alignment.center,
-          clipBehavior: Clip.none,
-          children: [
-            // Background Drifting Confetti Sparkles
-            Positioned(
-              top: -24,
-              left: 10,
-              child: Transform.rotate(angle: -0.2, child: const Text('✨', style: TextStyle(fontSize: 32))),
-            ),
-            Positioned(
-              top: -30,
-              right: 15,
-              child: Transform.rotate(angle: 0.3, child: const Text('🎉', style: TextStyle(fontSize: 36))),
-            ),
-            Positioned(
-              bottom: -20,
-              right: 25,
-              child: Transform.rotate(angle: -0.15, child: const Text('💸', style: TextStyle(fontSize: 32))),
-            ),
-            Positioned(
-              bottom: -15,
-              left: 20,
-              child: Transform.rotate(angle: 0.25, child: const Text('👑', style: TextStyle(fontSize: 30))),
-            ),
+        child: PartyPopperOverlay(
+          child: Stack(
+            alignment: Alignment.center,
+            clipBehavior: Clip.none,
+            children: [
+              // Background Drifting Confetti Emojis
+              Positioned(
+                top: -24,
+                left: 10,
+                child: Transform.rotate(angle: -0.2, child: const Text('✨', style: TextStyle(fontSize: 32))),
+              ),
+              Positioned(
+                top: -30,
+                right: 15,
+                child: Transform.rotate(angle: 0.3, child: const Text('🎉', style: TextStyle(fontSize: 36))),
+              ),
+              Positioned(
+                bottom: -20,
+                right: 25,
+                child: Transform.rotate(angle: -0.15, child: const Text('💸', style: TextStyle(fontSize: 32))),
+              ),
+              Positioned(
+                bottom: -15,
+                left: 20,
+                child: Transform.rotate(angle: 0.25, child: const Text('👑', style: TextStyle(fontSize: 30))),
+              ),
 
-            Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(32),
-                side: const BorderSide(color: AppColors.hotPink, width: 3),
+              Dialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(32),
+                  side: const BorderSide(color: AppColors.hotPink, width: 3),
+                ),
+                elevation: 20,
+                backgroundColor: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: widget.child,
+                ),
               ),
-              elevation: 20,
-              backgroundColor: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: widget.child,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
