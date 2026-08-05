@@ -250,14 +250,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: BonggaBackground(
         child: SafeArea(
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
             children: [
               // 1. HEADER
               Row(
                 children: [
                   Container(
-                    width: 52,
-                    height: 52,
+                    width: 48,
+                    height: 48,
                     decoration: BoxDecoration(
                       gradient: electricRainbowGradient,
                       shape: BoxShape.circle,
@@ -270,28 +270,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         style: GoogleFonts.fredoka(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
-                          fontSize: 20,
+                          fontSize: 18,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 14),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           '$_greeting ✨',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.inter(
-                            fontSize: 13,
+                            fontSize: 12,
                             color: AppColors.inkMuted,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
                           user.firstName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.fredoka(
-                            fontSize: 24,
+                            fontSize: 20,
                             fontWeight: FontWeight.w700,
                             color: AppColors.ink,
                           ),
@@ -299,14 +303,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ],
                     ),
                   ),
-                  InteractiveSticker(
+                  const SizedBox(width: 6),
+                  const InteractiveSticker(
                     text: '👑 VIP',
                     backgroundColor: AppColors.neonGold,
                     textColor: AppColors.ink,
-                    rotateAngle: 0.05,
+                    rotateAngle: 0.04,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 4),
                   IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 38, minHeight: 38),
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -321,7 +328,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     },
                     icon: const Icon(
                       Icons.notifications_none_rounded,
-                      size: 22,
+                      size: 20,
                     ),
                     style: IconButton.styleFrom(
                       backgroundColor: Colors.white,
@@ -329,10 +336,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       elevation: 2,
                     ),
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 4),
                   IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 38, minHeight: 38),
                     onPressed: _logout,
-                    icon: const Icon(Icons.logout_rounded, size: 20),
+                    icon: const Icon(Icons.logout_rounded, size: 18),
                     style: IconButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: AppColors.hotPink,
@@ -348,7 +357,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 padding: EdgeInsets.zero,
                 hasRainbowGlow: true,
                 child: Container(
-                  padding: const EdgeInsets.all(22),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(24),
                     gradient: const LinearGradient(
@@ -367,21 +376,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            children: [
-                              const Text('💳', style: TextStyle(fontSize: 20)),
-                              const SizedBox(width: 8),
-                              Text(
-                                'GBBT DIAMOND VIP VAULT',
-                                style: GoogleFonts.fredoka(
-                                  color: AppColors.neonGold,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 1.0,
+                          Flexible(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text('💳', style: TextStyle(fontSize: 18)),
+                                const SizedBox(width: 6),
+                                Flexible(
+                                  child: Text(
+                                    'GBBT DIAMOND VIP VAULT',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.fredoka(
+                                      color: AppColors.neonGold,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.8,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
+                          const SizedBox(width: 8),
                           InkWell(
                             onTap: () => setState(
                               () => _balanceVisible = !_balanceVisible,
@@ -397,13 +414,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Row(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(
                                     _balanceVisible
                                         ? Icons.visibility_outlined
                                         : Icons.visibility_off_outlined,
                                     color: Colors.white,
-                                    size: 16,
+                                    size: 15,
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
@@ -431,15 +449,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                       const SizedBox(height: 6),
 
-                      Text(
-                        _balanceVisible
-                            ? '₱${user.savings.toStringAsFixed(2)}'
-                            : '₱ • • • • • • •',
-                        style: GoogleFonts.fredoka(
-                          color: Colors.white,
-                          fontSize: 36,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.5,
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          _balanceVisible
+                              ? '₱${user.savings.toStringAsFixed(2)}'
+                              : '₱ • • • • • • •',
+                          style: GoogleFonts.fredoka(
+                            color: Colors.white,
+                            fontSize: 36,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -447,41 +469,49 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.25),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.4),
+                          Flexible(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.25),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.4),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text(
+                                    '🌟 ',
+                                    style: TextStyle(fontSize: 11),
+                                  ),
+                                  Flexible(
+                                    child: Text(
+                                      'Gold Member · ${user.taxBracket}',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.fredoka(
+                                        color: Colors.white,
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            child: Row(
-                              children: [
-                                const Text(
-                                  '🌟 ',
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                                Text(
-                                  'Gold Member · ${user.taxBracket}',
-                                  style: GoogleFonts.fredoka(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
                           ),
+                          const SizedBox(width: 8),
                           Text(
                             '4269 •••• •••• 1337',
                             style: GoogleFonts.fredoka(
                               color: AppColors.cyanSparkle,
-                              fontSize: 13,
-                              letterSpacing: 1.5,
+                              fontSize: 12,
+                              letterSpacing: 1.2,
                             ),
                           ),
                         ],
@@ -630,10 +660,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const RainbowShimmerText(
-                    text: 'Fabulous Features ✨',
-                    fontSize: 22,
+                  const Flexible(
+                    child: RainbowShimmerText(
+                      text: 'Fabulous Features ✨',
+                      fontSize: 22,
+                    ),
                   ),
+                  const SizedBox(width: 8),
                   const InteractiveSticker(
                     text: '💅 BONGGA',
                     rotateAngle: -0.04,
@@ -740,32 +773,35 @@ class _DashboardScreenState extends State<DashboardScreen> {
               BonggaCard(
                 hasRainbowGlow: false,
                 padding: EdgeInsets.zero,
-                child: Column(
-                  children: const [
-                    _ActivityTile(
-                      icon: Icons.send_rounded,
-                      title: 'Transfer to Jamie',
-                      subtitle: 'Personal Transfer · Fee Waived 🌈',
-                      amount: '- ₱2,500',
-                      isNegative: true,
-                    ),
-                    Divider(height: 1, color: AppColors.line),
-                    _ActivityTile(
-                      icon: Icons.savings_rounded,
-                      title: 'Savings Deposit',
-                      subtitle: 'GBBT Starter Bonus 💸',
-                      amount: '+ ₱10,000',
-                      isNegative: false,
-                    ),
-                    Divider(height: 1, color: AppColors.line),
-                    _ActivityTile(
-                      icon: Icons.favorite_rounded,
-                      title: 'Money Match Premium',
-                      subtitle: 'Tax Bracket Match Pass ✨',
-                      amount: '- ₱99',
-                      isNegative: true,
-                    ),
-                  ],
+                child: Material(
+                  color: Colors.transparent,
+                  child: Column(
+                    children: const [
+                      _ActivityTile(
+                        icon: Icons.send_rounded,
+                        title: 'Transfer to Jamie',
+                        subtitle: 'Personal Transfer · Fee Waived 🌈',
+                        amount: '- ₱2,500',
+                        isNegative: true,
+                      ),
+                      Divider(height: 1, color: AppColors.line),
+                      _ActivityTile(
+                        icon: Icons.savings_rounded,
+                        title: 'Savings Deposit',
+                        subtitle: 'GBBT Starter Bonus 💸',
+                        amount: '+ ₱10,000',
+                        isNegative: false,
+                      ),
+                      Divider(height: 1, color: AppColors.line),
+                      _ActivityTile(
+                        icon: Icons.favorite_rounded,
+                        title: 'Money Match Premium',
+                        subtitle: 'Tax Bracket Match Pass ✨',
+                        amount: '- ₱99',
+                        isNegative: true,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -824,8 +860,8 @@ class _QuickAction extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            width: 58,
-            height: 58,
+            width: 54,
+            height: 54,
             decoration: BoxDecoration(
               color: color.withOpacity(0.18),
               shape: BoxShape.circle,
@@ -838,13 +874,13 @@ class _QuickAction extends StatelessWidget {
                 ),
               ],
             ),
-            child: Icon(icon, color: color, size: 26),
+            child: Icon(icon, color: color, size: 24),
           ),
           const SizedBox(height: 6),
           Text(
             title,
             style: GoogleFonts.fredoka(
-              fontSize: 12.5,
+              fontSize: 12,
               fontWeight: FontWeight.w600,
               color: AppColors.ink,
             ),
@@ -929,7 +965,7 @@ class _FeatureCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return BonggaCard(
       onTap: onTap,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -937,26 +973,30 @@ class _FeatureCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                width: 44,
-                height: 44,
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
                   color: accentColor.withOpacity(0.18),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(icon, color: accentColor, size: 24),
+                child: Icon(icon, color: accentColor, size: 22),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: accentColor,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  badgeText,
-                  style: GoogleFonts.fredoka(
-                    color: Colors.white,
-                    fontSize: 10.5,
-                    fontWeight: FontWeight.w600,
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3.5),
+                  decoration: BoxDecoration(
+                    color: accentColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    badgeText,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.fredoka(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
@@ -965,16 +1005,20 @@ class _FeatureCard extends StatelessWidget {
           const Spacer(),
           Text(
             label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: GoogleFonts.fredoka(
               fontWeight: FontWeight.w600,
-              fontSize: 15,
+              fontSize: 14.5,
               color: AppColors.ink,
             ),
           ),
           const SizedBox(height: 2),
           Text(
             subtitle,
-            style: GoogleFonts.inter(fontSize: 11.5, color: AppColors.inkMuted),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.inter(fontSize: 11, color: AppColors.inkMuted),
           ),
         ],
       ),
