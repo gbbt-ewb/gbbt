@@ -18,9 +18,9 @@ class AppModeController extends ValueNotifier<bool> {
   void toggleMode() {
     value = !value;
     if (value) {
-      FunAudioPlayer.playStickerPop();
+      FunAudioPlayer.playLgbtModeSound();
     } else {
-      FunAudioPlayer.playPassSound();
+      FunAudioPlayer.playStraightModeSound();
     }
   }
 }
@@ -97,6 +97,23 @@ class AppModeToggleSwitch extends StatelessWidget {
 // Generates funny, humorous sound effects for stickers & popups!
 // ═══════════════════════════════════════════════════════════
 class FunAudioPlayer {
+  static void _playAudioAsset(String path) {
+    try {
+      final encodedPath = Uri.encodeFull(path);
+      final audio = html.AudioElement(encodedPath);
+      audio.onError.listen((_) {
+        try {
+          final fallbackPath = Uri.encodeFull('assets/$path');
+          final fallback = html.AudioElement(fallbackPath);
+          fallback.play();
+        } catch (_) {}
+      });
+      audio.play();
+    } catch (e) {
+      debugPrint('Audio Play Error: $e');
+    }
+  }
+
   static void _playPcmWav(List<int> samples, int sampleRate) {
     try {
       final wavHeader = <int>[
@@ -138,19 +155,19 @@ class FunAudioPlayer {
     }
   }
 
-  /// Interactive Sticker Click: Funny Cartoon Boing-Wobble! 🤪 spring sound
+  /// Interactive Sticker Click: Plays custom audio asset "6 Aug, 9.20 am_.m4a"
   static void playStickerPop() {
-    const rate = 16000;
-    const numSamples = 3200; // 0.2s
-    final samples = List<int>.generate(numSamples, (i) {
-      final t = i / rate;
-      final wobble = math.sin(t * 85.0) * 180.0;
-      final freq = 260.0 + wobble + (t * 2200.0);
-      final amplitude = (1.0 - (t / 0.2)).clamp(0.0, 1.0);
-      final val = (math.sin(t * freq * 2 * math.pi) * 127.0 * amplitude).toInt();
-      return (val + 128).clamp(0, 255);
-    });
-    _playPcmWav(samples, rate);
+    _playAudioAsset('assets/audio/6 Aug, 9.20 am_.m4a');
+  }
+
+  /// Toggled to LGBT+ Mode: Plays custom audio asset "lgbt.m4a"
+  static void playLgbtModeSound() {
+    _playAudioAsset('assets/audio/lgbt.m4a');
+  }
+
+  /// Toggled to Straight Mode: Plays custom audio asset "straight.m4a"
+  static void playStraightModeSound() {
+    _playAudioAsset('assets/audio/straight.m4a');
   }
 
   /// OA Fanfare / Popup Explosion: Funny Ka-Ching + Celebration Chime! 💸🎉
