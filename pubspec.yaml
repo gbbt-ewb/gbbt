@@ -31,3 +31,4 @@ flutter:
   assets:
     - lib/journeys/
     - assets/dating/
+    - assets/audio/
