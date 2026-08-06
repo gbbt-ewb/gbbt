@@ -24,6 +24,30 @@ class _BrokeFinderScreenState extends State<BrokeFinderScreen> {
 
   double _zoom = 5.3;
 
+  Color _pinColor(double savings) {
+    if (savings >= 800000) {
+      return const Color(0xFF006D32);
+    } else if (savings >= 500000) {
+      return Colors.green;
+    } else if (savings >= 300000) {
+      return Colors.lime;
+    } else if (savings >= 200000) {
+      return Colors.orange;
+    } else if (savings >= 100000) {
+      return Colors.deepOrange;
+    }
+    return Colors.red;
+  }
+
+  double _pinSize(double savings) {
+    if (savings >= 800000) return 58;
+    if (savings >= 500000) return 52;
+    if (savings >= 300000) return 46;
+    if (savings >= 200000) return 42;
+    if (savings >= 100000) return 38;
+    return 34;
+  }
+
   @override
   Widget build(BuildContext context) {
     final sorted = [...mockCityWealth]
@@ -102,20 +126,50 @@ class _BrokeFinderScreenState extends State<BrokeFinderScreen> {
                             ),
                             MarkerLayer(
                               markers: mockCityWealth.map((city) {
+                                final pinColor = _pinColor(city.avgSavings);
+                                final pinSize = _pinSize(city.avgSavings);
+
                                 return Marker(
                                   point: LatLng(city.latitude, city.longitude),
-                                  width: 50,
-                                  height: 50,
+                                  width: 100,
+                                  height: 85,
                                   child: GestureDetector(
                                     onTap: () => _showCityDetail(context, city),
-                                    child: Icon(
-                                      Icons.location_on,
-                                      color: city.avgSavings >= 500000
-                                          ? Colors.green
-                                          : city.avgSavings >= 200000
-                                          ? Colors.orange
-                                          : Colors.red,
-                                      size: 40,
+                                    child: Tooltip(
+                                      message:
+                                          '${city.city}\n₱${city.avgSavings.toStringAsFixed(0)} Avg Savings',
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.location_on,
+                                            color: pinColor,
+                                            size: pinSize,
+                                          ),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 6,
+                                              vertical: 2,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white.withOpacity(
+                                                .95,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            child: Text(
+                                              city.city,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.inter(
+                                                fontSize: 9,
+                                                fontWeight: FontWeight.w700,
+                                                color: pinColor,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 );
@@ -123,44 +177,41 @@ class _BrokeFinderScreenState extends State<BrokeFinderScreen> {
                             ),
                           ],
                         ),
-
                         Positioned(
-                          top: 12,
-                          right: 12,
-                          child: Column(
-                            children: [
-                              FloatingActionButton.small(
-                                heroTag: 'zoomIn',
-                                backgroundColor: Colors.white,
-                                onPressed: () {
-                                  setState(() {
-                                    _zoom++;
-                                  });
+                          bottom: 12,
+                          left: 12,
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(.96),
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: AppShadow.soft,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Savings Legend',
+                                  style: GoogleFonts.fredoka(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
 
-                                  _mapController.move(
-                                    _mapController.camera.center,
-                                    _zoom,
-                                  );
-                                },
-                                child: const Icon(Icons.add),
-                              ),
-                              const SizedBox(height: 8),
-                              FloatingActionButton.small(
-                                heroTag: 'zoomOut',
-                                backgroundColor: Colors.white,
-                                onPressed: () {
-                                  setState(() {
-                                    _zoom--;
-                                  });
+                                _legendRow(const Color(0xFF006D32), '₱800k+'),
 
-                                  _mapController.move(
-                                    _mapController.camera.center,
-                                    _zoom,
-                                  );
-                                },
-                                child: const Icon(Icons.remove),
-                              ),
-                            ],
+                                _legendRow(Colors.green, '₱500k - ₱799k'),
+
+                                _legendRow(Colors.lime, '₱300k - ₱499k'),
+
+                                _legendRow(Colors.orange, '₱200k - ₱299k'),
+
+                                _legendRow(Colors.deepOrange, '₱100k - ₱199k'),
+
+                                _legendRow(Colors.red, '< ₱100k'),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -254,15 +305,49 @@ class _BrokeFinderScreenState extends State<BrokeFinderScreen> {
       ),
     );
   }
+
+  Widget _legendRow(Color color, String label) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.location_on, color: color, size: 18),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: GoogleFonts.inter(fontSize: 11, color: AppColors.ink),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _CityRow extends StatelessWidget {
   final int rank;
   final CityWealth city;
+  Color _getPinColor(double savings) {
+    if (savings >= 800000) {
+      return const Color(0xFF006D32);
+    } else if (savings >= 500000) {
+      return Colors.green;
+    } else if (savings >= 300000) {
+      return Colors.lime;
+    } else if (savings >= 200000) {
+      return Colors.orange;
+    } else if (savings >= 100000) {
+      return Colors.deepOrange;
+    }
+    return Colors.red;
+  }
+
   const _CityRow({required this.rank, required this.city});
 
   @override
   Widget build(BuildContext context) {
+    final pinColor = _getPinColor(city.avgSavings);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
@@ -278,15 +363,16 @@ class _CityRow extends StatelessWidget {
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: AppColors.electricPurple.withOpacity(0.12),
+              color: pinColor.withOpacity(0.15),
               borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: pinColor, width: 1.5),
             ),
             child: Center(
               child: Text(
                 '#$rank',
                 style: GoogleFonts.fredoka(
                   fontWeight: FontWeight.w700,
-                  color: AppColors.electricPurple,
+                  color: pinColor,
                   fontSize: 13,
                 ),
               ),
@@ -302,7 +388,7 @@ class _CityRow extends StatelessWidget {
                   style: GoogleFonts.fredoka(
                     fontWeight: FontWeight.w700,
                     fontSize: 14.5,
-                    color: AppColors.ink,
+                    color: pinColor,
                   ),
                 ),
                 Text(
@@ -320,7 +406,7 @@ class _CityRow extends StatelessWidget {
             style: GoogleFonts.fredoka(
               fontWeight: FontWeight.w700,
               fontSize: 14,
-              color: AppColors.hotPink,
+              color: pinColor,
             ),
           ),
         ],
