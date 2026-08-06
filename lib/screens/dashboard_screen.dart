@@ -904,9 +904,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             index: _selectedIndex,
             children: [
               _buildHomeDashboard(isLgbtMode, user),
-              TransferScreen(user: user),
-              DatingScreen(user: user),
-              const ChatbotScreen(),
+              TransferScreen(user: user, onBack: () => setState(() => _selectedIndex = 0)),
+              DatingScreen(user: user, onBack: () => setState(() => _selectedIndex = 0)),
+              ChatbotScreen(onBack: () => setState(() => _selectedIndex = 0)),
               AuraExchangeScreen(onBack: () => setState(() => _selectedIndex = 0)),
             ],
           ),

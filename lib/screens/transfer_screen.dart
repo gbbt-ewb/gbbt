@@ -7,8 +7,9 @@ import '../shared_widgets.dart';
 
 class TransferScreen extends StatefulWidget {
   final UserModel user;
+  final VoidCallback? onBack;
 
-  const TransferScreen({super.key, required this.user});
+  const TransferScreen({super.key, required this.user, this.onBack});
 
   @override
   State<TransferScreen> createState() => _TransferScreenState();
@@ -110,7 +111,13 @@ class _TransferScreenState extends State<TransferScreen> {
                       Row(
                         children: [
                           IconButton(
-                            onPressed: () => Navigator.of(context).pop(),
+                            onPressed: () {
+                              if (widget.onBack != null) {
+                                widget.onBack!();
+                              } else if (Navigator.canPop(context)) {
+                                Navigator.of(context).pop();
+                              }
+                            },
                             icon: Icon(Icons.arrow_back_ios_new, size: 20, color: isLgbtMode ? AppColors.ink : Colors.black),
                             style: IconButton.styleFrom(backgroundColor: Colors.white, elevation: 2),
                           ),
