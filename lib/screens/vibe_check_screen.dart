@@ -81,6 +81,7 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
   }
 
   Future<void> _scan() async {
+    await _audioPlayer.stop();
     await _audioPlayer.play(
       AssetSource('audio1/lb.mp3'),
     );
@@ -100,7 +101,7 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
     if (!mounted) return;
     final score = 60 + _random.nextInt(41);
     final resultText = _results[_random.nextInt(_results.length)];
-await _audioPlayer.stop();
+
     setState(() {
       _score = score;
       _result = resultText;
