@@ -127,222 +127,228 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BonggaBackground(
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-            child: Column(
-              children: [
-                Row(
+    return ValueListenableBuilder<bool>(
+      valueListenable: AppModeController.instance,
+      builder: (context, isLgbtMode, _) {
+        return Scaffold(
+          body: BonggaBackground(
+            child: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                child: Column(
                   children: [
-                    IconButton(
-                      onPressed: () {
-                        try {
-                          final stream = _videoElement.srcObject;
-
-                          if (stream is html.MediaStream) {
-                            for (final track in stream.getTracks()) {
-                              track.stop();
-                            }
-                          }
-
-                          _videoElement.srcObject = null;
-                          _cameraReady = false;
-                        } catch (_) {}
-
-                        Navigator.of(context).pop();
-                      },
-                      icon: const Icon(
-                        Icons.arrow_back_ios_new,
-                        size: 20,
-                        color: AppColors.ink,
-                      ),
-                      style: IconButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        elevation: 2,
-                      ),
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: Icon(Icons.arrow_back_ios_new, size: 20, color: isLgbtMode ? AppColors.ink : Colors.black),
+                          style: IconButton.styleFrom(backgroundColor: Colors.white, elevation: 2),
+                        ),
+                        const SizedBox(width: 12),
+                        const RainbowShimmerText(text: 'Vibe Check ✨', fontSize: 24),
+                      ],
                     ),
-                    const SizedBox(width: 12),
-                    const RainbowShimmerText(
-                      text: 'Vibe Check ✨',
-                      fontSize: 24,
-                    ),
-                  ],
-                ),
-                BonggaCard(
-                  padding: const EdgeInsets.all(22),
-                  child: Column(
-                    children: [
-                      const RainbowMark(size: 84),
-                      const SizedBox(height: 18),
-                      const InteractiveSticker(
-                        text: '✨ AI ENERGY WEBCAM SCANNER',
-                        rotateAngle: -0.05,
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'GBBT AI Vibe Check ✨',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.fredoka(
-                          color: AppColors.ink,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Live webcam preview + 100% scientific aura analysis 😎',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.inter(
-                          color: AppColors.inkMuted,
-                          fontSize: 13.5,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
+                    const SizedBox(height: 20),
 
-                      // LIVE WEBCAM VIEWFINDER
-                      Container(
-                        width: 250,
-                        height: 250,
-                        clipBehavior: Clip.antiAlias,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(28),
-                          border: Border.all(
-                            color: AppColors.hotPink,
-                            width: 3.5,
+                    BonggaCard(
+                      padding: const EdgeInsets.all(22),
+                      child: Column(
+                        children: [
+                          const RainbowMark(size: 84),
+                          const SizedBox(height: 18),
+                          InteractiveSticker(
+                            text: isLgbtMode ? '✨ AI ENERGY WEBCAM SCANNER' : 'WEBCAM SCANNER',
+                            rotateAngle: isLgbtMode ? -0.05 : 0.0,
                           ),
-                          boxShadow: AppShadow.neonGlow,
-                        ),
-                        child: _cameraReady
-                            ? HtmlElementView(viewType: _viewType)
-                            : const Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    CircularProgressIndicator(
-                                      color: AppColors.hotPink,
-                                    ),
-                                    SizedBox(height: 12),
-                                    Text(
-                                      'Starting Camera... 📸',
-                                      style: TextStyle(
-                                        color: AppColors.inkMuted,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                      ),
-                      const SizedBox(height: 24),
-
-                      if (_scanning) ...[
-                        TweenAnimationBuilder(
-                          tween: Tween<double>(begin: 0, end: 1),
-                          duration: const Duration(seconds: 1),
-                          onEnd: () {},
-                          builder: (_, value, child) {
-                            return Transform.rotate(
-                              angle: value * 6.28 * 3,
-                              child: const Icon(
-                                Icons.auto_awesome_rounded,
-                                size: 48,
-                                color: AppColors.hotPink,
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'Scanning Camera Aura...',
-                          style: GoogleFonts.fredoka(
-                            color: AppColors.ink,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
+                          const SizedBox(height: 12),
+                          Text(
+                            isLgbtMode ? 'GBBT AI Vibe Check ✨' : 'GBBT Vibe Check',
+                            textAlign: TextAlign.center,
+                            style: isLgbtMode
+                                ? GoogleFonts.fredoka(color: AppColors.ink, fontSize: 24, fontWeight: FontWeight.w700)
+                                : GoogleFonts.inter(color: Colors.black, fontSize: 22, fontWeight: FontWeight.w700),
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: LinearProgressIndicator(
-                            value: _progress / 100,
-                            minHeight: 12,
-                            backgroundColor: AppColors.line,
-                            valueColor: const AlwaysStoppedAnimation(
-                              AppColors.hotPink,
+                          const SizedBox(height: 8),
+                          Text(
+                            isLgbtMode
+                                ? 'Live webcam preview + 100% scientific aura analysis 😎'
+                                : 'Live webcam preview & vibe score analysis',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.inter(
+                              color: isLgbtMode ? AppColors.inkMuted : Colors.grey[700],
+                              fontSize: 13.5,
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          '$_progress%',
-                          style: GoogleFonts.fredoka(
+                          const SizedBox(height: 24),
+
+                          // LIVE WEBCAM VIEWFINDER
+                          Container(
+                            width: 250,
+                            height: 250,
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(isLgbtMode ? 28 : 16),
+                              border: Border.all(
+                                color: isLgbtMode ? AppColors.hotPink : Colors.black,
+                                width: isLgbtMode ? 3.5 : 2.0,
+                              ),
+                              boxShadow: isLgbtMode ? AppShadow.neonGlow : null,
+                            ),
+                            child: _cameraReady
+                                ? const HtmlElementView(
+                                    viewType: 'webcam-view',
+                                  )
+                                : Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        CircularProgressIndicator(
+                                          color: isLgbtMode ? AppColors.hotPink : Colors.black,
+                                        ),
+                                        const SizedBox(height: 12),
+                                        Text(
+                                          'Starting Camera... 📸',
+                                          style: TextStyle(
+                                            color: isLgbtMode ? AppColors.inkMuted : Colors.grey[700],
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                          ),
+                          const SizedBox(height: 24),
+
+                          if (_scanning) ...[
+                            TweenAnimationBuilder(
+                              tween: Tween<double>(begin: 0, end: 1),
+                              duration: const Duration(seconds: 1),
+                              onEnd: () {},
+                              builder: (_, value, child) {
+                                return Transform.rotate(
+                                  angle: value * 6.28 * 3,
+                                  child: Icon(
+                                    
+                                Icons.auto_awesome_rounded,
+                                   
+                                size: 48,
+                                   
+                                color: isLgbtMode ? AppColors.hotPink : Colors.black,
+                                  
+                              ),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'Scanning Camera Aura...',
+                              style: isLgbtMode
+                                  ? GoogleFonts.fredoka(
+                            color: AppColors.ink,
+                            fontSize: 18, fontWeight: FontWeight.w700)
+                                  : GoogleFonts.inter(color: Colors.black, fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                            ),
+                            const SizedBox(height: 12),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: LinearProgressIndicator(
+                                value: _progress / 100,
+                                minHeight: 12,
+                                backgroundColor: isLgbtMode ? AppColors.line : const Color(0xFFE5E7EB),
+                                valueColor: AlwaysStoppedAnimation(
+                                  isLgbtMode ? 
+                              AppColors.hotPink : Colors.black,
+                                
+                            ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              '$_progress%',
+                              style: isLgbtMode
+                                  ? GoogleFonts.fredoka(
                             fontSize: 28,
                             fontWeight: FontWeight.w700,
                             color: AppColors.hotPink,
-                          ),
-                        ),
-                      ],
+                          )
+                                  : GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.w700, color: Colors.black),
+                            ),
+                          ],
 
-                      if (_result != null)
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(22),
-                          decoration: BoxDecoration(
-                            gradient: electricRainbowGradient,
-                            borderRadius: BorderRadius.circular(22),
-                            boxShadow: AppShadow.lifted,
-                          ),
-                          child: Column(
-                            children: [
-                              Text(
+                          if (_result != null)
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(22),
+                              decoration: BoxDecoration(
+                                gradient: isLgbtMode ? electricRainbowGradient : monoDarkGradient,
+                                borderRadius: BorderRadius.circular(isLgbtMode ? 22 : 12),
+                                boxShadow: isLgbtMode ? AppShadow.lifted : null,
+                              ),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    
                                 '$_score%',
-                                style: GoogleFonts.fredoka(
+                                   
+                                style: isLgbtMode
+                                        ? GoogleFonts.fredoka(
                                   color: Colors.white,
                                   fontSize: 44,
                                   fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'VIBE SCORE',
-                                style: GoogleFonts.fredoka(
+                                )
+                              
+                                        : GoogleFonts.inter(color: Colors.white, fontSize: 40, fontWeight: FontWeight.w700),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'VIBE SCORE',
+                                    style: GoogleFonts.inter(
+                                      
                                   color: Colors.white.withOpacity(0.85),
+                                     
                                   letterSpacing: 2,
+                                     
                                   fontWeight: FontWeight.w700,
+                                     
                                   fontSize: 13,
+                                    
                                 ),
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                _result!,
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.fredoka(
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    _result!,
+                                    textAlign: TextAlign.center,
+                                    style: isLgbtMode
+                                        ? GoogleFonts.fredoka(
                                   color: Colors.white,
                                   fontSize: 20,
                                   fontWeight: FontWeight.w700,
-                                ),
+                                )
+                                        : GoogleFonts.inter(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w600),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
 
-                GradientButton(
-                  label: _scanning ? 'Scanning Vibes...' : 'Scan My Vibe ✨',
-                  icon: Icons.auto_awesome_rounded,
-                  isLoading: _scanning,
-                  onPressed: _scanning ? null : _scan,
+                    GradientButton(
+                      label: _scanning ? 'Scanning Vibes...' : 'Scan My Vibe ✨',
+                      icon: Icons.auto_awesome_rounded,
+                      isLoading: _scanning,
+                      onPressed: _scanning ? null : _scan,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

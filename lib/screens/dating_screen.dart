@@ -7,10 +7,12 @@ import '../shared_widgets.dart';
 
 class DatingScreen extends StatelessWidget {
   final UserModel user;
+  final VoidCallback? onBack;
 
   const DatingScreen({
     super.key,
     required this.user,
+    this.onBack,
   });
 
   @override
@@ -23,85 +25,111 @@ class DatingScreen extends StatelessWidget {
         .where((p) => p.taxBracket != user.taxBracket)
         .toList();
 
-    return Scaffold(
-      body: BonggaBackground(
-        child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-            children: [
-              Row(
+    return ValueListenableBuilder<bool>(
+      valueListenable: AppModeController.instance,
+      builder: (context, isLgbtMode, _) {
+        return Scaffold(
+          body: BonggaBackground(
+            child: SafeArea(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: AppColors.ink),
-                    style: IconButton.styleFrom(backgroundColor: Colors.white, elevation: 2),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          if (onBack != null) {
+                            onBack!();
+                          } else if (Navigator.canPop(context)) {
+                            Navigator.of(context).pop();
+                          }
+                        },
+                        icon: Icon(Icons.arrow_back_ios_new, size: 20, color: isLgbtMode ? AppColors.ink : Colors.black),
+                        style: IconButton.styleFrom(backgroundColor: Colors.white, elevation: 2),
+                      ),
+                      const SizedBox(width: 12),
+                      const RainbowShimmerText(text: 'Money Match 💘', fontSize: 24),
+                    ],
                   ),
-                  const SizedBox(width: 12),
-                  const RainbowShimmerText(text: 'Money Match 💘', fontSize: 24),
+                  const SizedBox(height: 18),
+
+                  // Header Card
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      gradient: isLgbtMode ? electricRainbowGradient : monoDarkGradient,
+                      borderRadius: BorderRadius.circular(isLgbtMode ? 24 : 14),
+                      boxShadow: isLgbtMode ? AppShadow.lifted : null,
+                    ),
+                    child: Column(
+                      children: [
+                        const Text("💖", style: TextStyle(fontSize: 40)),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Money Match ✨",
+                          style: isLgbtMode
+                              ? GoogleFonts.fredoka(
+                                  color: Colors.white,
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.w700,
+                                )
+                              : GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          isLgbtMode
+                              ? "Matched by tax bracket and savings because finance is sexy. 💅"
+                              : "Match candidates based on tax bracket and savings alignment.",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.inter(
+                            color: Colors.white.withOpacity(0.92),
+                            fontSize: 13.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  if (matches.isNotEmpty) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Your Matches (${user.taxBracket})",
+                          style: isLgbtMode
+                              ? GoogleFonts.fredoka(color: AppColors.ink, fontSize: 17, fontWeight: FontWeight.w600)
+                              : GoogleFonts.inter(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700),
+                        ),
+                        InteractiveSticker(
+                          text: isLgbtMode ? '🔥 95% MATCH' : '95% MATCH',
+                          rotateAngle: isLgbtMode ? 0.04 : 0.0,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    ...matches.map((profile) => _ProfileCard(profile: profile, isMatch: true, isLgbtMode: isLgbtMode)),
+                    const SizedBox(height: 24),
+                  ],
+
+                  Text(
+                    isLgbtMode ? "Other Fabulous Singles ✨" : "Other Profiles",
+                    style: isLgbtMode
+                        ? GoogleFonts.fredoka(color: AppColors.ink, fontSize: 18, fontWeight: FontWeight.w600)
+                        : GoogleFonts.inter(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 12),
+                  ...others.map((profile) => _ProfileCard(profile: profile, isMatch: false, isLgbtMode: isLgbtMode)),
                 ],
               ),
-              const SizedBox(height: 18),
-
-              // Header Card
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: electricRainbowGradient,
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: AppShadow.lifted,
-                ),
-                child: Column(
-                  children: [
-                    const Text("💖", style: TextStyle(fontSize: 40)),
-                    const SizedBox(height: 8),
-                    Text(
-                      "Money Match ✨",
-                      style: GoogleFonts.fredoka(
-                        color: Colors.white,
-                        fontSize: 26,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      "Matched by tax bracket and savings because finance is sexy. 💅",
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.inter(
-                        color: Colors.white.withOpacity(0.92),
-                        fontSize: 13.5,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              if (matches.isNotEmpty) ...[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Your Matches (${user.taxBracket})",
-                      style: GoogleFonts.fredoka(color: AppColors.ink, fontSize: 17, fontWeight: FontWeight.w600),
-                    ),
-                    const InteractiveSticker(text: '🔥 95% MATCH', rotateAngle: 0.04),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                ...matches.map((profile) => _ProfileCard(profile: profile, isMatch: true)),
-                const SizedBox(height: 24),
-              ],
-
-              Text(
-                "Other Fabulous Singles ✨",
-                style: GoogleFonts.fredoka(color: AppColors.ink, fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 12),
-              ...others.map((profile) => _ProfileCard(profile: profile, isMatch: false)),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -109,10 +137,12 @@ class DatingScreen extends StatelessWidget {
 class _ProfileCard extends StatelessWidget {
   final DatingProfile profile;
   final bool isMatch;
+  final bool isLgbtMode;
 
   const _ProfileCard({
     required this.profile,
     required this.isMatch,
+    required this.isLgbtMode,
   });
 
   int get compatibility => isMatch ? 95 : 68;
@@ -122,53 +152,61 @@ class _ProfileCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 18),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
-        borderRadius: BorderRadius.circular(26),
-        boxShadow: isMatch ? AppShadow.lifted : AppShadow.soft,
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(isLgbtMode ? 26 : 16),
+        boxShadow: isLgbtMode
+            ? (isMatch ? AppShadow.lifted : AppShadow.soft)
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
         border: Border.all(
-          color: isMatch ? AppColors.hotPink : AppColors.line,
-          width: isMatch ? 2.5 : 1.5,
+          color: isLgbtMode
+              ? (isMatch ? AppColors.hotPink : AppColors.line)
+              : const Color(0xFFE2E8F0),
+          width: isLgbtMode ? (isMatch ? 2.5 : 1.5) : 1.0,
         ),
       ),
       child: Column(
         children: [
-         Stack(
-  clipBehavior: Clip.none,
-  children: [
-    Container(
-      height: 180,
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(24),
-        ),
-        image: DecorationImage(
-          image: AssetImage(profile.coverPhoto),
-          fit: BoxFit.cover,
-        ),
-      ),
-    ),
-
-    Positioned(
-      bottom: -36,
-      left: 20,
-      child: Container(
-        padding: const EdgeInsets.all(4),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.circle,
-        ),
-        child: CircleAvatar(
-          radius: 38,
-          backgroundImage: AssetImage(
-            profile.photo,
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                height: 180,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(isLgbtMode ? 24 : 14),
+                  ),
+                  image: DecorationImage(
+                    image: AssetImage(profile.coverPhoto),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: -36,
+                left: 20,
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: CircleAvatar(
+                    radius: 38,
+                    backgroundImage: AssetImage(
+                      profile.photo,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ),
-      ),
-    ),
-  ],
-),
-
-const SizedBox(height: 40),
+          const SizedBox(height: 40),
           Padding(
             padding: const EdgeInsets.all(18),
             child: Column(
@@ -179,25 +217,35 @@ const SizedBox(height: 40),
                     Expanded(
                       child: Text(
                         "${profile.name}, ${profile.age}",
-                        style: GoogleFonts.fredoka(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.ink,
-                        ),
+                        style: isLgbtMode
+                            ? GoogleFonts.fredoka(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.ink,
+                              )
+                            : GoogleFonts.inter(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black,
+                              ),
                       ),
                     ),
                     if (isMatch)
-                      const InteractiveSticker(
-                        text: '💘 MATCH',
-                        backgroundColor: AppColors.hotPink,
-                        rotateAngle: -0.04,
+                      InteractiveSticker(
+                        text: isLgbtMode ? '💘 MATCH' : 'MATCH',
+                        backgroundColor: isLgbtMode ? AppColors.hotPink : const Color(0xFFF1F5F9),
+                        rotateAngle: isLgbtMode ? -0.04 : 0.0,
                       ),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Text(
                   profile.bio,
-                  style: GoogleFonts.inter(color: AppColors.inkMuted, fontSize: 13.5, height: 1.4),
+                  style: GoogleFonts.inter(
+                    color: isLgbtMode ? AppColors.inkMuted : Colors.grey[700],
+                    fontSize: 13.5,
+                    height: 1.4,
+                  ),
                 ),
                 const SizedBox(height: 14),
 
@@ -205,13 +253,13 @@ const SizedBox(height: 40),
                   spacing: 8,
                   runSpacing: 8,
                   children: [
-                    _chip(profile.taxBracket, color: AppColors.electricPurple),
-                    _chip("₱${profile.savings.toStringAsFixed(0)} Saved 💸", color: AppColors.hotPink),
+                    _chip(profile.taxBracket, color: isLgbtMode ? AppColors.electricPurple : Colors.black),
+                    _chip("₱${profile.savings.toStringAsFixed(0)} Saved 💸", color: isLgbtMode ? AppColors.hotPink : Colors.black),
                     if (profile.interests.isNotEmpty)
-                      ...profile.interests.map((interest) => _chip(interest, color: AppColors.skyBlue))
+                      ...profile.interests.map((interest) => _chip(interest, color: isLgbtMode ? AppColors.skyBlue : Colors.black))
                     else ...[
-                      _chip("Coffee ☕", color: AppColors.skyBlue),
-                      _chip("Travel ✈️", color: AppColors.limeGreen),
+                      _chip("Coffee ☕", color: isLgbtMode ? AppColors.skyBlue : Colors.black),
+                      _chip("Travel ✈️", color: isLgbtMode ? AppColors.limeGreen : Colors.black),
                     ],
                   ],
                 ),
@@ -220,14 +268,25 @@ const SizedBox(height: 40),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Finance Compatibility", style: GoogleFonts.fredoka(fontSize: 14, color: AppColors.ink)),
+                    Text(
+                      "Finance Compatibility",
+                      style: isLgbtMode
+                          ? GoogleFonts.fredoka(fontSize: 14, color: AppColors.ink)
+                          : GoogleFonts.inter(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w600),
+                    ),
                     Text(
                       "$compatibility%",
-                      style: GoogleFonts.fredoka(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        color: isMatch ? AppColors.hotPink : AppColors.electricPurple,
-                      ),
+                      style: isLgbtMode
+                          ? GoogleFonts.fredoka(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                              color: isMatch ? AppColors.hotPink : AppColors.electricPurple,
+                            )
+                          : GoogleFonts.inter(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                              color: Colors.black,
+                            ),
                     ),
                   ],
                 ),
@@ -238,9 +297,11 @@ const SizedBox(height: 40),
                   child: LinearProgressIndicator(
                     value: compatibility / 100,
                     minHeight: 12,
-                    backgroundColor: Colors.grey.shade200,
+                    backgroundColor: isLgbtMode ? Colors.grey.shade200 : const Color(0xFFE5E7EB),
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      isMatch ? AppColors.hotPink : AppColors.electricPurple,
+                      isLgbtMode
+                          ? (isMatch ? AppColors.hotPink : AppColors.electricPurple)
+                          : Colors.black,
                     ),
                   ),
                 ),
@@ -251,12 +312,17 @@ const SizedBox(height: 40),
                     Expanded(
                       child: OutlinedButton.icon(
                         icon: const Icon(Icons.close_rounded, size: 20),
-                        label: Text("Pass 💅", style: GoogleFonts.fredoka(fontWeight: FontWeight.w600)),
+                        label: Text(
+                          isLgbtMode ? "Pass 💅" : "Pass",
+                          style: isLgbtMode
+                              ? GoogleFonts.fredoka(fontWeight: FontWeight.w600)
+                              : GoogleFonts.inter(fontWeight: FontWeight.w600),
+                        ),
                         style: OutlinedButton.styleFrom(
                           minimumSize: const Size.fromHeight(48),
-                          foregroundColor: AppColors.inkMuted,
-                          side: const BorderSide(color: AppColors.line, width: 2),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          foregroundColor: isLgbtMode ? AppColors.inkMuted : Colors.black,
+                          side: BorderSide(color: isLgbtMode ? AppColors.line : const Color(0xFFCBD5E1), width: 1.5),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(isLgbtMode ? 16 : 8)),
                         ),
                         onPressed: () {
                           // Trigger OA Pass Rejection Popup!
@@ -268,13 +334,18 @@ const SizedBox(height: 40),
                     Expanded(
                       child: ElevatedButton.icon(
                         icon: const Icon(Icons.favorite_rounded, size: 20),
-                        label: Text("Like 💖", style: GoogleFonts.fredoka(fontWeight: FontWeight.w700)),
+                        label: Text(
+                          isLgbtMode ? "Like 💖" : "Like",
+                          style: isLgbtMode
+                              ? GoogleFonts.fredoka(fontWeight: FontWeight.w700)
+                              : GoogleFonts.inter(fontWeight: FontWeight.w600),
+                        ),
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size.fromHeight(48),
-                          backgroundColor: AppColors.hotPink,
+                          backgroundColor: isLgbtMode ? AppColors.hotPink : Colors.black,
                           foregroundColor: Colors.white,
-                          elevation: 3,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(isLgbtMode ? 16 : 8)),
                         ),
                         onPressed: () {
                           // Trigger OA Like Heart Buzzing Match Popup!
@@ -296,17 +367,23 @@ const SizedBox(height: 40),
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.3)),
+        color: isLgbtMode ? color.withOpacity(0.12) : const Color(0xFFF1F5F9),
+        borderRadius: BorderRadius.circular(isLgbtMode ? 20 : 6),
+        border: Border.all(color: isLgbtMode ? color.withOpacity(0.3) : const Color(0xFFCBD5E1)),
       ),
       child: Text(
         text,
-        style: GoogleFonts.fredoka(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: color,
-        ),
+        style: isLgbtMode
+            ? GoogleFonts.fredoka(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: color,
+              )
+            : GoogleFonts.inter(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
       ),
     );
   }

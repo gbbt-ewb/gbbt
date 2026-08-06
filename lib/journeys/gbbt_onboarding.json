@@ -49,10 +49,14 @@
           "options": [
             "Male",
             "Female",
+            "Bakla",
+            "Tomboy",
             "Non-Binary",
             "Transgender",
+            "Genderqueer",
             "Genderfluid",
             "Agender",
+            "Prefer not to say",
             "Other"
           ]
         },
