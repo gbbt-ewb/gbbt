@@ -35,7 +35,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 opacity: _visible ? 1 : 0,
                 duration: const Duration(milliseconds: 700),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                   child: Column(
                     children: [
                       const Align(
@@ -44,10 +45,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ),
                       const Spacer(flex: 1),
                       FunBadge(
-                        text: isLgbtMode ? '👑 100% FICTIONAL & EXTRA BONGGA 💅' : 'GBBT PARODY BANKING 🏦',
+                        text: isLgbtMode
+                            ? '👑 MAKE YOUR BANKING EXTRA BONGGA 💅'
+                            : 'GBBT BANKING 🏦',
                       ),
                       const SizedBox(height: 20),
-                      
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -58,24 +60,26 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           const SizedBox(width: 8),
                           InteractiveSticker(
                             text: isLgbtMode ? '💅 PAK!' : 'FINANCE',
-                            backgroundColor: isLgbtMode ? AppColors.electricPurple : const Color(0xFFF1F5F9),
+                            backgroundColor: isLgbtMode
+                                ? AppColors.electricPurple
+                                : const Color(0xFFF1F5F9),
                             textColor: isLgbtMode ? Colors.white : Colors.black,
                             rotateAngle: isLgbtMode ? 0.08 : 0.0,
                           ),
                           const SizedBox(width: 8),
                           InteractiveSticker(
-                            text: isLgbtMode ? '💸 KACHING' : 'PARODY',
-                            backgroundColor: isLgbtMode ? AppColors.neonGold : const Color(0xFFF1F5F9),
+                            text: isLgbtMode ? '💸 KACHING' : 'FAST',
+                            backgroundColor: isLgbtMode
+                                ? AppColors.neonGold
+                                : const Color(0xFFF1F5F9),
                             textColor: Colors.black,
                             rotateAngle: isLgbtMode ? -0.05 : 0.0,
                           ),
                         ],
                       ),
                       const SizedBox(height: 24),
-
                       const RainbowMark(size: 100),
                       const SizedBox(height: 28),
-
                       const RainbowShimmerText(
                         text: 'GBBT Bank',
                         fontSize: 46,
@@ -99,12 +103,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ),
                       const SizedBox(height: 16),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 12),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(isLgbtMode ? 20 : 12),
+                          borderRadius:
+                              BorderRadius.circular(isLgbtMode ? 20 : 12),
                           border: Border.all(
-                            color: isLgbtMode ? Colors.white : const Color(0xFFCBD5E1),
+                            color: isLgbtMode
+                                ? Colors.white
+                                : const Color(0xFFCBD5E1),
                             width: isLgbtMode ? 2 : 1,
                           ),
                           boxShadow: [
@@ -117,8 +125,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         ),
                         child: Text(
                           isLgbtMode
-                              ? "Banking so fabulous, extra & over-the-top, it's illegal to be this stylish. 🌈🦄💖"
-                              : "Fictional parody banking application for entertainment & UI testing.",
+                              ? "Saving Cash with Sass 🌈🦄💖"
+                              : "Saving Cash with Class",
                           textAlign: TextAlign.center,
                           style: GoogleFonts.inter(
                             color: isLgbtMode ? AppColors.ink : Colors.black,
@@ -129,32 +137,35 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         ),
                       ),
                       const Spacer(flex: 2),
-
                       GradientButton(
                         label: isLgbtMode ? 'Sign In Bestie 💅' : 'Sign In',
                         icon: Icons.login_rounded,
                         onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const LoginScreen()),
+                          MaterialPageRoute(
+                              builder: (_) => const LoginScreen()),
                         ),
                       ),
                       const SizedBox(height: 14),
-
                       SizedBox(
                         width: double.infinity,
                         height: 54,
                         child: OutlinedButton(
                           onPressed: () => Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const CreateAccountScreen()),
+                            MaterialPageRoute(
+                                builder: (_) => const CreateAccountScreen()),
                           ),
                           style: OutlinedButton.styleFrom(
                             backgroundColor: Colors.white,
-                            foregroundColor: isLgbtMode ? AppColors.hotPink : Colors.black,
+                            foregroundColor:
+                                isLgbtMode ? AppColors.hotPink : Colors.black,
                             side: BorderSide(
-                              color: isLgbtMode ? AppColors.hotPink : Colors.black,
+                              color:
+                                  isLgbtMode ? AppColors.hotPink : Colors.black,
                               width: isLgbtMode ? 2.5 : 1.5,
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(isLgbtMode ? 20 : 12),
+                              borderRadius:
+                                  BorderRadius.circular(isLgbtMode ? 20 : 12),
                             ),
                           ),
                           child: Row(
@@ -163,10 +174,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                               const Icon(Icons.person_add_rounded, size: 20),
                               const SizedBox(width: 8),
                               Text(
-                                isLgbtMode ? 'Create Account ✨' : 'Create Account',
+                                isLgbtMode
+                                    ? 'Create Account ✨'
+                                    : 'Create Account',
                                 style: isLgbtMode
-                                    ? GoogleFonts.fredoka(fontSize: 17, fontWeight: FontWeight.w600)
-                                    : GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
+                                    ? GoogleFonts.fredoka(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w600)
+                                    : GoogleFonts.inter(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600),
                               ),
                             ],
                           ),

@@ -6,7 +6,9 @@ import '../models.dart';
 import '../shared_widgets.dart';
 
 class AuraExchangeScreen extends StatefulWidget {
-  const AuraExchangeScreen({super.key});
+  final VoidCallback? onBack;
+
+  const AuraExchangeScreen({super.key, this.onBack});
 
   @override
   State<AuraExchangeScreen> createState() => _AuraExchangeScreenState();
@@ -134,7 +136,13 @@ class _AuraExchangeScreenState extends State<AuraExchangeScreen> {
                   Row(
                     children: [
                       IconButton(
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () {
+                          if (widget.onBack != null) {
+                            widget.onBack!();
+                          } else if (Navigator.canPop(context)) {
+                            Navigator.pop(context);
+                          }
+                        },
                         icon: Icon(Icons.arrow_back_ios_new, size: 18, color: isLgbtMode ? AppColors.ink : Colors.black),
                         style: IconButton.styleFrom(backgroundColor: Colors.white, elevation: 2),
                       ),
