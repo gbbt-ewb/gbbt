@@ -17,6 +17,7 @@ class VibeCheckScreen extends StatefulWidget {
 
 class _VibeCheckScreenState extends State<VibeCheckScreen> {
   final Random _random = Random();
+  late final String _viewType;
 
   bool _cameraReady = false;
   bool _scanning = false;
@@ -41,6 +42,9 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
   @override
   void initState() {
     super.initState();
+
+    _viewType = 'webcam-view-${DateTime.now().millisecondsSinceEpoch}';
+
     _initializeCamera();
   }
 
@@ -60,7 +64,7 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
 
       // ignore: undefined_prefixed_name
       ui.platformViewRegistry.registerViewFactory(
-        'webcam-view',
+        _viewType,
         (int viewId) => _videoElement,
       );
 
@@ -102,6 +106,26 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
   }
 
   @override
+  void dispose() {
+    try {
+      final stream = _videoElement.srcObject;
+
+      if (stream is html.MediaStream) {
+        for (final track in stream.getTracks()) {
+          track.stop();
+        }
+      }
+
+      _videoElement.srcObject = null;
+      _cameraReady = false;
+    } catch (e) {
+      debugPrint('Error stopping camera: $e');
+    }
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BonggaBackground(
@@ -113,34 +137,67 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                 Row(
                   children: [
                     IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: AppColors.ink),
-                      style: IconButton.styleFrom(backgroundColor: Colors.white, elevation: 2),
+                      onPressed: () {
+                        try {
+                          final stream = _videoElement.srcObject;
+
+                          if (stream is html.MediaStream) {
+                            for (final track in stream.getTracks()) {
+                              track.stop();
+                            }
+                          }
+
+                          _videoElement.srcObject = null;
+                          _cameraReady = false;
+                        } catch (_) {}
+
+                        Navigator.of(context).pop();
+                      },
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new,
+                        size: 20,
+                        color: AppColors.ink,
+                      ),
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        elevation: 2,
+                      ),
                     ),
                     const SizedBox(width: 12),
-                    const RainbowShimmerText(text: 'Vibe Check ✨', fontSize: 24),
+                    const RainbowShimmerText(
+                      text: 'Vibe Check ✨',
+                      fontSize: 24,
+                    ),
                   ],
                 ),
-                const SizedBox(height: 20),
-
                 BonggaCard(
                   padding: const EdgeInsets.all(22),
                   child: Column(
                     children: [
                       const RainbowMark(size: 84),
                       const SizedBox(height: 18),
-                      const InteractiveSticker(text: '✨ AI ENERGY WEBCAM SCANNER', rotateAngle: -0.05),
+                      const InteractiveSticker(
+                        text: '✨ AI ENERGY WEBCAM SCANNER',
+                        rotateAngle: -0.05,
+                      ),
                       const SizedBox(height: 12),
                       Text(
                         'GBBT AI Vibe Check ✨',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.fredoka(color: AppColors.ink, fontSize: 24, fontWeight: FontWeight.w700),
+                        style: GoogleFonts.fredoka(
+                          color: AppColors.ink,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         'Live webcam preview + 100% scientific aura analysis 😎',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.inter(color: AppColors.inkMuted, fontSize: 13.5),
+                        style: GoogleFonts.inter(
+                          color: AppColors.inkMuted,
+                          fontSize: 13.5,
+                        ),
                       ),
                       const SizedBox(height: 24),
 
@@ -151,22 +208,28 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                         clipBehavior: Clip.antiAlias,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(28),
-                          border: Border.all(color: AppColors.hotPink, width: 3.5),
+                          border: Border.all(
+                            color: AppColors.hotPink,
+                            width: 3.5,
+                          ),
                           boxShadow: AppShadow.neonGlow,
                         ),
                         child: _cameraReady
-                            ? const HtmlElementView(
-                                viewType: 'webcam-view',
-                              )
+                            ? HtmlElementView(viewType: _viewType)
                             : const Center(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    CircularProgressIndicator(color: AppColors.hotPink),
+                                    CircularProgressIndicator(
+                                      color: AppColors.hotPink,
+                                    ),
                                     SizedBox(height: 12),
                                     Text(
                                       'Starting Camera... 📸',
-                                      style: TextStyle(color: AppColors.inkMuted, fontSize: 13),
+                                      style: TextStyle(
+                                        color: AppColors.inkMuted,
+                                        fontSize: 13,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -182,14 +245,22 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                           builder: (_, value, child) {
                             return Transform.rotate(
                               angle: value * 6.28 * 3,
-                              child: const Icon(Icons.auto_awesome_rounded, size: 48, color: AppColors.hotPink),
+                              child: const Icon(
+                                Icons.auto_awesome_rounded,
+                                size: 48,
+                                color: AppColors.hotPink,
+                              ),
                             );
                           },
                         ),
                         const SizedBox(height: 12),
                         Text(
                           'Scanning Camera Aura...',
-                          style: GoogleFonts.fredoka(color: AppColors.ink, fontSize: 18, fontWeight: FontWeight.w700),
+                          style: GoogleFonts.fredoka(
+                            color: AppColors.ink,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                         const SizedBox(height: 12),
                         ClipRRect(
@@ -198,13 +269,19 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                             value: _progress / 100,
                             minHeight: 12,
                             backgroundColor: AppColors.line,
-                            valueColor: const AlwaysStoppedAnimation(AppColors.hotPink),
+                            valueColor: const AlwaysStoppedAnimation(
+                              AppColors.hotPink,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 10),
                         Text(
                           '$_progress%',
-                          style: GoogleFonts.fredoka(fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.hotPink),
+                          style: GoogleFonts.fredoka(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.hotPink,
+                          ),
                         ),
                       ],
 
@@ -219,17 +296,33 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                           ),
                           child: Column(
                             children: [
-                              Text('$_score%', style: GoogleFonts.fredoka(color: Colors.white, fontSize: 44, fontWeight: FontWeight.w700)),
+                              Text(
+                                '$_score%',
+                                style: GoogleFonts.fredoka(
+                                  color: Colors.white,
+                                  fontSize: 44,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
                               const SizedBox(height: 4),
                               Text(
                                 'VIBE SCORE',
-                                style: GoogleFonts.fredoka(color: Colors.white.withOpacity(0.85), letterSpacing: 2, fontWeight: FontWeight.w700, fontSize: 13),
+                                style: GoogleFonts.fredoka(
+                                  color: Colors.white.withOpacity(0.85),
+                                  letterSpacing: 2,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 13,
+                                ),
                               ),
                               const SizedBox(height: 16),
                               Text(
                                 _result!,
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.fredoka(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700),
+                                style: GoogleFonts.fredoka(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ],
                           ),
