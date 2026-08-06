@@ -7,7 +7,9 @@ import '../models.dart';
 import '../shared_widgets.dart';
 
 class ChatbotScreen extends StatefulWidget {
-  const ChatbotScreen({super.key});
+  final VoidCallback? onBack;
+
+  const ChatbotScreen({super.key, this.onBack});
 
   @override
   State<ChatbotScreen> createState() => _ChatbotScreenState();
@@ -300,7 +302,13 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                     child: Row(
                       children: [
                         IconButton(
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () {
+                            if (widget.onBack != null) {
+                              widget.onBack!();
+                            } else if (Navigator.canPop(context)) {
+                              Navigator.of(context).pop();
+                            }
+                          },
                           icon: Icon(Icons.arrow_back_ios_new, size: 20, color: isLgbtMode ? AppColors.ink : Colors.black),
                           style: IconButton.styleFrom(backgroundColor: Colors.white, elevation: 2),
                         ),

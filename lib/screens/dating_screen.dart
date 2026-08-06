@@ -7,10 +7,12 @@ import '../shared_widgets.dart';
 
 class DatingScreen extends StatelessWidget {
   final UserModel user;
+  final VoidCallback? onBack;
 
   const DatingScreen({
     super.key,
     required this.user,
+    this.onBack,
   });
 
   @override
@@ -35,7 +37,13 @@ class DatingScreen extends StatelessWidget {
                   Row(
                     children: [
                       IconButton(
-                        onPressed: () => Navigator.of(context).pop(),
+                        onPressed: () {
+                          if (onBack != null) {
+                            onBack!();
+                          } else if (Navigator.canPop(context)) {
+                            Navigator.of(context).pop();
+                          }
+                        },
                         icon: Icon(Icons.arrow_back_ios_new, size: 20, color: isLgbtMode ? AppColors.ink : Colors.black),
                         style: IconButton.styleFrom(backgroundColor: Colors.white, elevation: 2),
                       ),
