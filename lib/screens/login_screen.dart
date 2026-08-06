@@ -39,10 +39,15 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!mounted) return;
     setState(() => _isLoading = false);
 
+    final inputName = _usernameController.text.trim();
+    final nameParts = inputName.split(RegExp(r'\s+'));
+    final firstName = nameParts.isNotEmpty && nameParts.first.isNotEmpty ? nameParts.first : 'Divine';
+    final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : (firstName == 'Divine' ? 'Cruz' : '');
+
     final user = UserModel(
-      firstName: 'Divine',
-      lastName: 'Cruz',
-      email: 'divine.cruz@gbbtbank.fun',
+      firstName: firstName,
+      lastName: lastName,
+      email: '${firstName.toLowerCase()}@gbbtbank.fun',
       phone: '09171234567',
       dateOfBirth: DateTime(1998, 5, 10),
       gender: 'Bakla',
