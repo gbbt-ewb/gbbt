@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../app_theme.dart';
 import '../shared_widgets.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class VibeCheckScreen extends StatefulWidget {
   const VibeCheckScreen({super.key});
@@ -18,6 +19,7 @@ class VibeCheckScreen extends StatefulWidget {
 class _VibeCheckScreenState extends State<VibeCheckScreen> {
   final Random _random = Random();
   late final String _viewType;
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   bool _cameraReady = false;
   bool _scanning = false;
@@ -79,6 +81,10 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
   }
 
   Future<void> _scan() async {
+    await _audioPlayer.play(
+      AssetSource('audio1/lb.mp3'),
+    );
+
     setState(() {
       _scanning = true;
       _result = null;
@@ -94,7 +100,7 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
     if (!mounted) return;
     final score = 60 + _random.nextInt(41);
     final resultText = _results[_random.nextInt(_results.length)];
-
+await _audioPlayer.stop();
     setState(() {
       _score = score;
       _result = resultText;
@@ -107,6 +113,7 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
 
   @override
   void dispose() {
+    _audioPlayer.dispose();
     try {
       final stream = _videoElement.srcObject;
 
