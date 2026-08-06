@@ -19,6 +19,30 @@ class _BrokeFinderScreenState extends State<BrokeFinderScreen> {
 
   double _zoom = 5.3;
 
+  Color _pinColor(double savings) {
+    if (savings >= 800000) {
+      return const Color(0xFF006D32);
+    } else if (savings >= 500000) {
+      return Colors.green;
+    } else if (savings >= 300000) {
+      return Colors.lime;
+    } else if (savings >= 200000) {
+      return Colors.orange;
+    } else if (savings >= 100000) {
+      return Colors.deepOrange;
+    }
+    return Colors.red;
+  }
+
+  double _pinSize(double savings) {
+    if (savings >= 800000) return 58;
+    if (savings >= 500000) return 52;
+    if (savings >= 300000) return 46;
+    if (savings >= 200000) return 42;
+    if (savings >= 100000) return 38;
+    return 34;
+  }
+
   @override
   Widget build(BuildContext context) {
     final sorted = [...mockCityWealth]
@@ -274,16 +298,50 @@ class _BrokeFinderScreenState extends State<BrokeFinderScreen> {
       ),
     );
   }
+
+  Widget _legendRow(Color color, String label) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.location_on, color: color, size: 18),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: GoogleFonts.inter(fontSize: 11, color: AppColors.ink),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _CityRow extends StatelessWidget {
   final int rank;
   final CityWealth city;
   final bool isLgbtMode;
+  Color _getPinColor(double savings) {
+    if (savings >= 800000) {
+      return const Color(0xFF006D32);
+    } else if (savings >= 500000) {
+      return Colors.green;
+    } else if (savings >= 300000) {
+      return Colors.lime;
+    } else if (savings >= 200000) {
+      return Colors.orange;
+    } else if (savings >= 100000) {
+      return Colors.deepOrange;
+    }
+    return Colors.red;
+  }
+
   const _CityRow({required this.rank, required this.city, required this.isLgbtMode});
 
   @override
   Widget build(BuildContext context) {
+    final pinColor = _getPinColor(city.avgSavings);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
@@ -310,8 +368,9 @@ class _CityRow extends StatelessWidget {
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: isLgbtMode ? AppColors.electricPurple.withOpacity(0.12) : const Color(0xFFF1F5F9),
+              color: isLgbtMode ? pinColor.withOpacity(0.15) : const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(isLgbtMode ? 10 : 6),
+              border: Border.all(color: pinColor, width: 1.5),
             ),
             child: Center(
               child: Text(
@@ -319,7 +378,7 @@ class _CityRow extends StatelessWidget {
                 style: isLgbtMode
                     ? GoogleFonts.fredoka(
                         fontWeight: FontWeight.w700,
-                        color: AppColors.electricPurple,
+                        color: pinColor,
                         fontSize: 13,
                       )
                     : GoogleFonts.inter(
@@ -341,7 +400,7 @@ class _CityRow extends StatelessWidget {
                       ? GoogleFonts.fredoka(
                           fontWeight: FontWeight.w700,
                           fontSize: 14.5,
-                          color: AppColors.ink,
+                          color: pinColor,
                         )
                       : GoogleFonts.inter(
                           fontWeight: FontWeight.w700,
@@ -365,7 +424,7 @@ class _CityRow extends StatelessWidget {
                 ? GoogleFonts.fredoka(
                     fontWeight: FontWeight.w700,
                     fontSize: 14,
-                    color: AppColors.hotPink,
+                    color: pinColor,
                   )
                 : GoogleFonts.inter(
                     fontWeight: FontWeight.w700,

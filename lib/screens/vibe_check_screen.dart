@@ -17,6 +17,7 @@ class VibeCheckScreen extends StatefulWidget {
 
 class _VibeCheckScreenState extends State<VibeCheckScreen> {
   final Random _random = Random();
+  late final String _viewType;
 
   bool _cameraReady = false;
   bool _scanning = false;
@@ -41,6 +42,9 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
   @override
   void initState() {
     super.initState();
+
+    _viewType = 'webcam-view-${DateTime.now().millisecondsSinceEpoch}';
+
     _initializeCamera();
   }
 
@@ -60,7 +64,7 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
 
       // ignore: undefined_prefixed_name
       ui.platformViewRegistry.registerViewFactory(
-        'webcam-view',
+        _viewType,
         (int viewId) => _videoElement,
       );
 
@@ -102,6 +106,26 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
   }
 
   @override
+  void dispose() {
+    try {
+      final stream = _videoElement.srcObject;
+
+      if (stream is html.MediaStream) {
+        for (final track in stream.getTracks()) {
+          track.stop();
+        }
+      }
+
+      _videoElement.srcObject = null;
+      _cameraReady = false;
+    } catch (e) {
+      debugPrint('Error stopping camera: $e');
+    }
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
       valueListenable: AppModeController.instance,
@@ -117,15 +141,18 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                       children: [
                         IconButton(
                           onPressed: () => Navigator.of(context).pop(),
-                          icon: Icon(Icons.arrow_back_ios_new, size: 20, color: isLgbtMode ? AppColors.ink : Colors.black),
-                          style: IconButton.styleFrom(backgroundColor: Colors.white, elevation: 2),
+                          icon: Icon(Icons.arrow_back_ios_new,
+                              size: 20,
+                              color: isLgbtMode ? AppColors.ink : Colors.black),
+                          style: IconButton.styleFrom(
+                              backgroundColor: Colors.white, elevation: 2),
                         ),
                         const SizedBox(width: 12),
-                        const RainbowShimmerText(text: 'Vibe Check ✨', fontSize: 24),
+                        const RainbowShimmerText(
+                            text: 'Vibe Check ✨', fontSize: 24),
                       ],
                     ),
                     const SizedBox(height: 20),
-
                     BonggaCard(
                       padding: const EdgeInsets.all(22),
                       child: Column(
@@ -133,16 +160,26 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                           const RainbowMark(size: 84),
                           const SizedBox(height: 18),
                           InteractiveSticker(
-                            text: isLgbtMode ? '✨ AI ENERGY WEBCAM SCANNER' : 'WEBCAM SCANNER',
+                            text: isLgbtMode
+                                ? '✨ AI ENERGY WEBCAM SCANNER'
+                                : 'WEBCAM SCANNER',
                             rotateAngle: isLgbtMode ? -0.05 : 0.0,
                           ),
                           const SizedBox(height: 12),
                           Text(
-                            isLgbtMode ? 'GBBT AI Vibe Check ✨' : 'GBBT Vibe Check',
+                            isLgbtMode
+                                ? 'GBBT AI Vibe Check ✨'
+                                : 'GBBT Vibe Check',
                             textAlign: TextAlign.center,
                             style: isLgbtMode
-                                ? GoogleFonts.fredoka(color: AppColors.ink, fontSize: 24, fontWeight: FontWeight.w700)
-                                : GoogleFonts.inter(color: Colors.black, fontSize: 22, fontWeight: FontWeight.w700),
+                                ? GoogleFonts.fredoka(
+                                    color: AppColors.ink,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w700)
+                                : GoogleFonts.inter(
+                                    color: Colors.black,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w700),
                           ),
                           const SizedBox(height: 8),
                           Text(
@@ -151,7 +188,9 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                                 : 'Live webcam preview & vibe score analysis',
                             textAlign: TextAlign.center,
                             style: GoogleFonts.inter(
-                              color: isLgbtMode ? AppColors.inkMuted : Colors.grey[700],
+                              color: isLgbtMode
+                                  ? AppColors.inkMuted
+                                  : Colors.grey[700],
                               fontSize: 13.5,
                             ),
                           ),
@@ -163,29 +202,37 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                             height: 250,
                             clipBehavior: Clip.antiAlias,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(isLgbtMode ? 28 : 16),
+                              borderRadius:
+                                  BorderRadius.circular(isLgbtMode ? 28 : 16),
                               border: Border.all(
-                                color: isLgbtMode ? AppColors.hotPink : Colors.black,
+                                color: isLgbtMode
+                                    ? AppColors.hotPink
+                                    : Colors.black,
                                 width: isLgbtMode ? 3.5 : 2.0,
                               ),
                               boxShadow: isLgbtMode ? AppShadow.neonGlow : null,
                             ),
                             child: _cameraReady
-                                ? const HtmlElementView(
-                                    viewType: 'webcam-view',
+                                ? HtmlElementView(
+                                    viewType: _viewType,
                                   )
                                 : Center(
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         CircularProgressIndicator(
-                                          color: isLgbtMode ? AppColors.hotPink : Colors.black,
+                                          color: isLgbtMode
+                                              ? AppColors.hotPink
+                                              : Colors.black,
                                         ),
                                         const SizedBox(height: 12),
                                         Text(
                                           'Starting Camera... 📸',
                                           style: TextStyle(
-                                            color: isLgbtMode ? AppColors.inkMuted : Colors.grey[700],
+                                            color: isLgbtMode
+                                                ? AppColors.inkMuted
+                                                : Colors.grey[700],
                                             fontSize: 13,
                                           ),
                                         ),
@@ -206,7 +253,9 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                                   child: Icon(
                                     Icons.auto_awesome_rounded,
                                     size: 48,
-                                    color: isLgbtMode ? AppColors.hotPink : Colors.black,
+                                    color: isLgbtMode
+                                        ? AppColors.hotPink
+                                        : Colors.black,
                                   ),
                                 );
                               },
@@ -215,8 +264,15 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                             Text(
                               'Scanning Camera Aura...',
                               style: isLgbtMode
-                                  ? GoogleFonts.fredoka(color: AppColors.ink, fontSize: 18, fontWeight: FontWeight.w700)
-                                  : GoogleFonts.inter(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700),
+                                  ? GoogleFonts.fredoka(
+                                      color: AppColors.ink,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700)
+                                  : GoogleFonts.inter(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                             ),
                             const SizedBox(height: 12),
                             ClipRRect(
@@ -224,7 +280,9 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                               child: LinearProgressIndicator(
                                 value: _progress / 100,
                                 minHeight: 12,
-                                backgroundColor: isLgbtMode ? AppColors.line : const Color(0xFFE5E7EB),
+                                backgroundColor: isLgbtMode
+                                    ? AppColors.line
+                                    : const Color(0xFFE5E7EB),
                                 valueColor: AlwaysStoppedAnimation(
                                   isLgbtMode ? AppColors.hotPink : Colors.black,
                                 ),
@@ -234,8 +292,15 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                             Text(
                               '$_progress%',
                               style: isLgbtMode
-                                  ? GoogleFonts.fredoka(fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.hotPink)
-                                  : GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.w700, color: Colors.black),
+                                  ? GoogleFonts.fredoka(
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.hotPink,
+                                    )
+                                  : GoogleFonts.inter(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.black),
                             ),
                           ],
 
@@ -244,8 +309,11 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                               width: double.infinity,
                               padding: const EdgeInsets.all(22),
                               decoration: BoxDecoration(
-                                gradient: isLgbtMode ? electricRainbowGradient : monoDarkGradient,
-                                borderRadius: BorderRadius.circular(isLgbtMode ? 22 : 12),
+                                gradient: isLgbtMode
+                                    ? electricRainbowGradient
+                                    : monoDarkGradient,
+                                borderRadius:
+                                    BorderRadius.circular(isLgbtMode ? 22 : 12),
                                 boxShadow: isLgbtMode ? AppShadow.lifted : null,
                               ),
                               child: Column(
@@ -253,8 +321,15 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                                   Text(
                                     '$_score%',
                                     style: isLgbtMode
-                                        ? GoogleFonts.fredoka(color: Colors.white, fontSize: 44, fontWeight: FontWeight.w700)
-                                        : GoogleFonts.inter(color: Colors.white, fontSize: 40, fontWeight: FontWeight.w700),
+                                        ? GoogleFonts.fredoka(
+                                            color: Colors.white,
+                                            fontSize: 44,
+                                            fontWeight: FontWeight.w700,
+                                          )
+                                        : GoogleFonts.inter(
+                                            color: Colors.white,
+                                            fontSize: 40,
+                                            fontWeight: FontWeight.w700),
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
@@ -271,8 +346,15 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                                     _result!,
                                     textAlign: TextAlign.center,
                                     style: isLgbtMode
-                                        ? GoogleFonts.fredoka(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700)
-                                        : GoogleFonts.inter(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w600),
+                                        ? GoogleFonts.fredoka(
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w700,
+                                          )
+                                        : GoogleFonts.inter(
+                                            color: Colors.white,
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.w600),
                                   ),
                                 ],
                               ),
@@ -281,7 +363,6 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
-
                     GradientButton(
                       label: _scanning ? 'Scanning Vibes...' : 'Scan My Vibe ✨',
                       icon: Icons.auto_awesome_rounded,
